@@ -1,1 +1,114 @@
 /* You can add global styles to this file, and also import other style files */
+/*Choose your primary and secondary colors. Primary is for main CTAs and sections, and Secondary is for less important buttons and info cards.*/
+/*Accent color is an additional color. It appears in images, highlights, hyperlinks, boxes, cards, etc.*/
+@media (prefers-color-scheme: light) {
+  :root {
+    --text: hsl(263, 20%, 8%);
+    --background: hsl(270, 20%, 98%);
+    --primary: hsl(268, 39%, 52%);
+    --secondary: hsl(269, 48%, 72%);
+    --accent: hsl(268, 58%, 62%);
+    --secondary30: hsl(269, 48%, 72%, 30%);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: hsl(262, 20%, 92%);
+    --background: hsl(270, 20%, 2%);
+    --primary: hsl(268, 39%, 48%);
+    --secondary: hsl(269, 48%, 28%);
+    --accent: hsl(268, 58%, 38%);
+    --secondary30: hsl(269, 48%, 28%, 30%)
+  }
+}
+
+:root {
+  --static: rgba(0, 0, 0, 0.5);
+}
+
+
+/*@media (prefers-color-scheme: light) {*/
+/*  :root {*/
+/*    --text: #131018;*/
+/*    --background: #faf9fb;*/
+/*    --primary: #8155b4;*/
+/*    --secondary: #b695da;*/
+/*    --accent: #9a66d6;*/
+/*  }*/
+/*}*/
+/*@media (prefers-color-scheme: dark) {*/
+/*  :root {*/
+/*    --text: #eae7ef;*/
+/*    --background: #050406;*/
+/*    --primary: #774baa;*/
+/*    --secondary: #46256a;*/
+/*    --accent: #5d2999;*/
+/*  }*/
+/*}*/
+
+html,
+body {
+  height: 100%;
+  background: var(--background);
+  color: var(--text);
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+@font-face {
+  font-family: "Prata";
+  src: url("assets/fonts/prata/Prata-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("assets/fonts/montserrat/static/Montserrat-Regular.ttf")
+  format("truetype");
+  font-display: swap;
+}
+
+* {
+  font-family: "Montserrat", sans-serif;
+  color: var(--text);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Prata", serif;
+}
+
+a {
+  /*color: var(--accent);*/
+  text-decoration: none;
+}
+
+button {
+  background: var(--primary);
+  padding: 0.5em 2em;
+  border-radius: 0.5rem;
+  display: inline-block;
+  white-space: nowrap;
+  font-size: 1rem;
+}
+
+.primary-button {
+  background-color: var(--primary);
+  color: var(--text);
+  transition: transform ease 0.2s, box-shadow ease 0.2s;
+  z-index: 2;
+}
+
+.secondary-button {
+  background-color: var(--secondary30);
+  color: var(--text);
+  z-index: 1;
+  /*cursor: pointer;*/
+  transition: transform ease 0.2s;
+}

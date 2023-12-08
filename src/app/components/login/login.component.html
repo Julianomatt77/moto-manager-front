@@ -1,25 +1,27 @@
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-  <div class="form-group">
-    <label for="username">Username</label>
-    <input type="text" class="form-control" id="username" formControlName="username">
-  </div>
-  <div class="form-group">
-    <label for="password">Password</label>
-    <input type="password" class="form-control" id="password" formControlName="password">
-  </div>
-  <button type="submit" class="btn btn-primary">Login</button>
-</form>
+<div>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" class="form-control" id="username" formControlName="username">
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" class="form-control" id="password" formControlName="password">
+    </div>
+    <button type="submit" class="primary-button">Login</button>
+  </form>
 
-@if (isLoginFailed){
-<div
-  class="alert alert-danger"
-  role="alert">
-  La connexion a échoué: {{ error }}
-</div>
-}
+  @if (isLoginFailed){
+  <div
+    class="alert alert-danger"
+    role="alert">
+    La connexion a échoué: {{ error }}
+  </div>
+  }
 
-@if (isLoggedIn){
-<div class="alert alert-success">
-  Vous êtes connecté avec l'email {{ email }}. Vous allez être redirigé vers la page d'accueil.
+  @if (isLoggedIn){
+  <div class="alert alert-success">
+    Vous êtes connecté avec l'email {{ email }}. Vous allez être redirigé vers la page d'accueil.
 </div>
-}
+  }
+</div>
