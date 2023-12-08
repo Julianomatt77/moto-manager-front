@@ -1,12 +1,17 @@
 import { Component } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AuthService} from "../../services/auth/auth.service";
+import {Router} from "@angular/router";
+import {CommonModule, NgIf} from "@angular/common";
+import {StorageService} from "../../services/storage/storage.service";
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    CommonModule,
+    NgIf,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
@@ -15,10 +20,11 @@ import {AuthService} from "../../services/auth/auth.service";
 export class LoginComponent {
   loginForm: FormGroup;
   token: string;
-  isLoggedIn: boolean;
+  isLoggedIn= false;
+  isLoginFailed = false;
   error: string;
 
-  constructor(private authService: AuthService) {  }
+  constructor(private authService: AuthService, private router: Router, private storageService: StorageService) {  }
 
   ngOnInit() {
     this.loginForm = new FormGroup({
@@ -32,7 +38,7 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    const username = this.loginForm.value.username;
+    const username = this.loginForm.value.username.toLowerCase();
     const password = this.loginForm.value.password;
 
     this.authService.login(username, password)
@@ -40,10 +46,20 @@ export class LoginComponent {
         next: (data) => {
           this.token = data.token;
           this.isLoggedIn = true;
+          this.isLoginFailed = false;
 
           this.authService.saveToken(this.token)
+
+          // Redirection après login
+          setTimeout(() => {
+            this.router.navigateByUrl('');
+          }, 2000);
+
         },
-        error: (error) => console.log(error.error.message),
+        error: (error) => {
+          this.error = error.error.message
+          this.isLoginFailed = true;
+        },
       })
   }
 
