@@ -23,6 +23,7 @@ export class LoginComponent {
   isLoggedIn= false;
   isLoginFailed = false;
   error: string;
+  email = '';
 
   constructor(private authService: AuthService, private router: Router, private storageService: StorageService) {  }
 
@@ -45,16 +46,22 @@ export class LoginComponent {
       .subscribe({
         next: (data) => {
           this.token = data.token;
-          this.isLoggedIn = true;
           this.isLoginFailed = false;
-
           this.authService.saveToken(this.token)
 
-          // Redirection après login
-          setTimeout(() => {
-            this.router.navigateByUrl('');
-          }, 2000);
+          this.authService.getUserInfos()
+            .subscribe({
+              next: (data) => {
+                this.storageService.saveUser(data)
+                this.email = this.storageService.getUser().email
+                this.isLoggedIn = true;
 
+                // Redirection après login
+                setTimeout(() => {
+                  this.router.navigateByUrl('');
+                }, 2000);
+              }
+            })
         },
         error: (error) => {
           this.error = error.error.message

@@ -10,14 +10,16 @@
   <button type="submit" class="btn btn-primary">Login</button>
 </form>
 
+@if (isLoginFailed){
 <div
-  *ngIf="isLoginFailed"
   class="alert alert-danger"
-  role="alert"
->
+  role="alert">
   La connexion a échoué: {{ error }}
 </div>
+}
 
-<div class="alert alert-success" *ngIf="isLoggedIn">
-  Vous êtes connecté en tant . Vous allez être redirigé vers la page d'accueil.
+@if (isLoggedIn){
+<div class="alert alert-success">
+  Vous êtes connecté avec l'email {{ email }}. Vous allez être redirigé vers la page d'accueil.
 </div>
+}

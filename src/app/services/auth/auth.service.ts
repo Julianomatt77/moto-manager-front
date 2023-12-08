@@ -20,11 +20,11 @@ export class AuthService {
   }
 
   saveToken(token: string): void {
-    localStorage.setItem('mm_token', token);
+    window.sessionStorage.setItem('mm_token', token);
   }
 
   getToken(): string | null {
-    return localStorage.getItem('mm_token');
+    return window.sessionStorage.getItem('mm_token');
   }
 
   isLoggedIn(): boolean {
@@ -32,7 +32,7 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
+    window.sessionStorage.removeItem('token');
   }
 
   getUserInfos(): Observable<any> {
