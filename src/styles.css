@@ -24,6 +24,10 @@
 
 :root {
   --static: rgba(0, 0, 0, 0.5);
+  --xsmall: 390px;
+  --small: 768px;
+  --medium: 1024px;
+  --large: 1280px;
 }
 
 
@@ -55,6 +59,13 @@ body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+@font-face {
+  font-family: 'Material Symbols Outlined';
+  font-style: normal;
+  font-weight: 100;
+  src: url(assets/fonts/material-symbols/material-symbols.woff2) format('woff2');
 }
 
 @font-face {
@@ -96,6 +107,9 @@ button {
   display: inline-block;
   white-space: nowrap;
   font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .primary-button {
@@ -111,4 +125,18 @@ button {
   z-index: 1;
   /*cursor: pointer;*/
   transition: transform ease 0.2s;
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 40px; /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
 }

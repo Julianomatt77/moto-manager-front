@@ -1,8 +1,18 @@
-<button class="primary-button">
-  <a [routerLink]= "['']">Home</a>
-</button>
+<div class="burger-logo-div" (click)="toggleMenu()" [class.is-open]="isMenuOpen">
+  <span class="material-symbols-outlined burger-logo">{{ isMenuOpen ? "close" : "menu"}}</span>
+</div>
 
-<button class="secondary-button">
-  <a [routerLink]= "['login']">Login</a>
-</button>
+<nav class="nav-div" [class.is-open]="isMenuOpen">
+  <div class="menu">
+    <button class="primary-button sidebar-button" [routerLink]="['']">
+      <span>Home</span>
+    </button>
+
+    <button class="secondary-button sidebar-button" [routerLink]="['login']">
+      <span>Login</span>
+    </button>
+  </div>
+</nav>
+
+
 
