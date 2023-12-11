@@ -4,12 +4,16 @@
 
 <nav class="nav-div" [class.is-open]="isMenuOpen">
   <div class="menu">
-    <button class="primary-button sidebar-button" [routerLink]="['']">
+    <button class="primary-button sidebar-button" [routerLink]="['']" (click)="isMenuOpen && toggleMenu()">
       <span>Home</span>
     </button>
 
-    <button class="secondary-button sidebar-button" [routerLink]="['login']">
+    <button class="secondary-button sidebar-button" [routerLink]="['login']" (click)="isMenuOpen && toggleMenu()">
       <span>Login</span>
+    </button>
+
+    <button class="secondary-button sidebar-button" [routerLink]="['depenses']" (click)="isMenuOpen && toggleMenu()">
+      <span>Dépenses</span>
     </button>
   </div>
 </nav>
