@@ -8,13 +8,21 @@
       <span>Home</span>
     </button>
 
-    <button class="secondary-button sidebar-button" [routerLink]="['login']" (click)="isMenuOpen && toggleMenu()">
-      <span>Login</span>
-    </button>
-
     <button class="secondary-button sidebar-button" [routerLink]="['depenses']" (click)="isMenuOpen && toggleMenu()">
       <span>Dépenses</span>
     </button>
+
+    @if (!isLoggedIn){
+    <button class="secondary-button sidebar-button" [routerLink]="['login']" (click)="isMenuOpen && toggleMenu()">
+      <span>Login</span>
+    </button>
+    }
+
+    @if (isLoggedIn){
+    <button class="secondary-button sidebar-button" (click)="logout()">
+      <span>Se déconnecter</span>
+    </button>
+    }
   </div>
 </nav>
 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-accueil',
@@ -7,6 +7,16 @@ import { Component } from '@angular/core';
   templateUrl: './accueil.component.html',
   styleUrl: './accueil.component.css'
 })
-export class AccueilComponent {
+export class AccueilComponent implements OnInit{
+  isPageReloaded: boolean = false;
 
+  constructor() {}
+
+  ngOnInit(): void {
+    const hasReloaded = window.sessionStorage.getItem('mm_hasReloaded');
+    if (!hasReloaded) {
+      window.sessionStorage.setItem('mm_hasReloaded', 'true');
+      window.location.reload();
+    }
+  }
 }

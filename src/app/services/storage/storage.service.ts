@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
 
-const USER_KEY = 'mm_user';
+const USER_KEY = environment.user_key;
 
 @Injectable({
   providedIn: 'root'

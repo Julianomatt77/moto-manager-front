@@ -48,6 +48,7 @@ export class LoginComponent {
           this.token = data.token;
           this.isLoginFailed = false;
           this.authService.saveToken(this.token)
+          this.isLoggedIn = true;
 
           this.authService.getUserInfos()
             .subscribe({
@@ -56,6 +57,7 @@ export class LoginComponent {
                 this.email = this.storageService.getUser().email
                 this.isLoggedIn = true;
 
+                window.sessionStorage.removeItem('mm_hasReloaded');
                 // Redirection après login
                 setTimeout(() => {
                   this.router.navigateByUrl('');

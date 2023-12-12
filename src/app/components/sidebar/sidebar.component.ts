@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
-import {RouterModule} from "@angular/router";
+import {Component, OnInit} from '@angular/core';
+import {Router, RouterModule} from "@angular/router";
+import {StorageService} from "../../services/storage/storage.service";
+import {BehaviorSubject, Subscription} from "rxjs";
+import {AuthService} from "../../services/auth/auth.service";
 
 @Component({
   selector: 'app-sidebar',
@@ -8,13 +11,30 @@ import {RouterModule} from "@angular/router";
         RouterModule
     ],
   templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css'
+  styleUrl: './sidebar.component.css',
+  providers: [AuthService]
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit{
   isMenuOpen = false;
+  isLoggedIn: boolean;
 
-    toggleMenu(){
-        this.isMenuOpen = !this.isMenuOpen;
+  constructor(private authService: AuthService, private storageService: StorageService, private router: Router) {}
+
+  ngOnInit(): void {
+    if (this.storageService.isLoggedIn()) {
+      this.isLoggedIn = true;
     }
+  }
 
+  toggleMenu(){
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  logout(){
+    this.authService.logout().subscribe(() => {
+      this.router.navigateByUrl('');
+      this.storageService.clean();
+    });
+    this.isLoggedIn = false;
+  }
 }
