@@ -1,16 +1,16 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {DepensesService} from "../../services/depenses/depenses.service";
 import {StorageService} from "../../services/storage/storage.service";
 import {User} from "../../models/User";
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {NgForOf, NgIf} from "@angular/common";
+import {DatePipe, NgForOf, NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-depenses',
   standalone: true,
   imports: [MatTableModule, NgForOf, NgIf],
   templateUrl: './depenses.component.html',
-  styleUrl: './depenses.component.css'
+  styleUrl: './depenses.component.css',
 })
 export class DepensesComponent {
 
@@ -33,6 +33,12 @@ export class DepensesComponent {
       next: (data) => {
         this.isLoading = false;
         this.depenses = data;
+        console.log(this.depenses)
+
+        const datePipe = new DatePipe('en-US');
+        this.depenses.forEach((depense) => {
+          depense.date = datePipe.transform(depense.date, 'dd/MM/yyyy');
+        });
 
         // console.log(this.depenses)
         this.dataSource = new MatTableDataSource(this.depenses);
