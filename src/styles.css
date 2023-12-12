@@ -109,6 +109,7 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 }
 
 .primary-button {
@@ -140,11 +141,10 @@ button {
   direction: ltr;
 }
 
-.ring
-{
+.ring {
   position:absolute;
   top:50%;
-  left:50%;
+  left:60%;
   transform:translate(-50%,-50%);
   width:150px;
   height:150px;
@@ -161,8 +161,7 @@ button {
   text-shadow:0 0 10px var(--text);
   box-shadow:0 0 20px rgba(0,0,0,.5);
 }
-.ring:before
-{
+.ring:before {
   content:'';
   position:absolute;
   top:-3px;
@@ -175,20 +174,18 @@ button {
   border-radius:50%;
   animation:animateC 2s linear infinite;
 }
-.loading
-{
+.loading {
   display:block;
   position:absolute;
   top:calc(50% - 2px);
-  left:50%;
+  left:60%;
   width:50%;
   height:4px;
   background:transparent;
   transform-origin:left;
   animation:animate 2s linear infinite;
 }
-.loading:before
-{
+.loading:before {
   content:'';
   position:absolute;
   width:16px;
@@ -199,25 +196,25 @@ button {
   right:-8px;
   box-shadow:0 0 20px var(--text);
 }
-@keyframes animateC
-{
-  0%
-  {
+@keyframes animateC {
+  0% {
     transform:rotate(0deg);
   }
-  100%
-  {
+  100% {
     transform:rotate(360deg);
   }
 }
-@keyframes animate
-{
-  0%
-  {
+@keyframes animate {
+  0% {
     transform:rotate(45deg);
   }
-  100%
-  {
+  100% {
     transform:rotate(405deg);
+  }
+}
+
+@media (width <= 768px) {
+  .ring, .loading {
+    left:50%;
   }
 }

@@ -1,4 +1,5 @@
 <div>
+  @if (!isLoggedIn){
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
       <label for="username">Username</label>
@@ -8,8 +9,9 @@
       <label for="password">Password</label>
       <input type="password" class="form-control" id="password" formControlName="password">
     </div>
-    <button type="submit" class="primary-button">Login</button>
+    <button type="submit" class="primary-button">Se connecter</button>
   </form>
+  }
 
   @if (isLoginFailed){
   <div

@@ -4,25 +4,30 @@
 
 <nav class="nav-div" [class.is-open]="isMenuOpen">
   <div class="menu">
+    <div>
     <button class="primary-button sidebar-button" [routerLink]="['']" (click)="isMenuOpen && toggleMenu()">
-      <span>Home</span>
+      <span class="material-symbols-outlined">home</span>
     </button>
 
+    @if (isLoggedIn){
     <button class="secondary-button sidebar-button" [routerLink]="['depenses']" (click)="isMenuOpen && toggleMenu()">
       <span>Dépenses</span>
     </button>
-
+    }
+    </div>
+    <div>
     @if (!isLoggedIn){
     <button class="secondary-button sidebar-button" [routerLink]="['login']" (click)="isMenuOpen && toggleMenu()">
-      <span>Login</span>
+      <span class="material-symbols-outlined">account_circle</span>
     </button>
     }
 
     @if (isLoggedIn){
     <button class="secondary-button sidebar-button" (click)="logout()">
-      <span>Se déconnecter</span>
+      <span class="material-symbols-outlined">account_circle_off</span>
     </button>
     }
+      </div>
   </div>
 </nav>
 

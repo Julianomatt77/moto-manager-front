@@ -1,7 +1,7 @@
 .nav-div {
   backdrop-filter: blur(50px);
-  display: flex;
-  flex-direction: column;
+  /*display: flex;*/
+  /*flex-direction: column;*/
   background-color: var(--static);
   padding: 0 10px 0 10px;
   border-radius: 6px;
@@ -12,8 +12,15 @@
   height: 100vh;
 }
 
+.menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%
+}
+
 .sidebar-button {
-  margin-top: 20px;
+  margin: 20px 0;
   width: 90%;
   cursor: pointer;
 }
@@ -55,7 +62,9 @@
   }
 
   .menu {
-    margin: 50px 0 0 50px;
+    margin: 0 0 0 50px;
+    width: 70%;
+    padding-left: 5%;
   }
 
 }
