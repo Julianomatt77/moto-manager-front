@@ -4,5 +4,9 @@
 
 .depenses-container {
   padding: 20px;
-  width: 90%;
+  /*width: 90%;*/
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 50px
 }

@@ -1,52 +1,45 @@
-<h1>Liste des dépenses</h1>
-
 @if (isLoading){
 <div class="ring">Loading
   <span class="loading"></span>
 </div>
 }
 
-
 <section id="depenses-list">
+  <h1>Liste des dépenses</h1>
   @if (!isLoading) {
   <div class="depenses-recap"></div>
   <div class="depenses-container">
     @for (depense of depenses; track depense.id){
       <div class="card">
-        <div class="card-title">
-          <div>{{depense.depenseType.name}}</div>
-          <div>{{depense.moto.modele}}</div>
+        <div class="card-top">
+          <div class="card-title-div">
+            <h2 class="card-title">{{depense.depenseType.name}}</h2>
+            <p>{{depense.montant}} €</p>
+            <div class="card-moto">
+              <p>{{depense.moto.modele}}</p>
+              <p>{{depense.kilometrage}} Km</p>
+            </div>
+          </div>
+          <div class="card-date">{{depense.date}}</div>
         </div>
 
         <div class="card-body">
-          <div class="card-body-left">
-            <div>
-              <div>{{depense.date}}</div>
-            </div>
+          <div class="card-left">
+            @if (depense.kmParcouru){
+            <div class="card-info card-info-1"><p>Distance parcourue:</p><p>{{depense.kmParcouru}} Km</p></div>
+            }
 
+            @if (depense.essenceConsomme){
+            <div class="card-info card-info-2"><p>Essence consommé:</p><p>{{depense.essenceConsomme}} L</p></div>
+            }
           </div>
-          <div class="card-body-right">
-            <div>{{depense.montant}} €</div>
-            <div>{{depense.kilometrage}} Km</div>
-          </div>
-        </div>
-        <div class="card-subtitle">
-          <div>
-          @if (depense.kmParcouru){
-          <div class="card-info"><p>Distance parcouru:</p><p>{{depense.kmParcouru}} Km</p></div>
-          }
-
-          @if (depense.essenceConsomme){
-          <div class="card-info"><p>Essence consommé:</p><p>{{depense.essenceConsomme}} L</p></div>
-          }
-          </div>
-          <div>
-          @if (depense.consoMoyenne){
-          <div class="card-info"><p>Conso moyenne:</p><p>{{depense.consoMoyenne}} l/100</p></div>
-          }
-          @if (depense.essencePrice){
-          <div class="card-info"><p>Prix de l'essence:</p><p>{{depense.essencePrice}} €/L</p></div>
-          }
+          <div class="card-right">
+            @if (depense.consoMoyenne){
+            <div class="card-info card-info-3"><p>Conso moyenne:</p><p>{{depense.consoMoyenne}} l/100</p></div>
+            }
+            @if (depense.essencePrice){
+            <div class="card-info card-info-4"><p>Prix de l'essence:</p><p>{{depense.essencePrice}} €/L</p></div>
+            }
           </div>
         </div>
       </div>

@@ -4,7 +4,7 @@
 }
 
 .sidebar-div {
-  width: 30%;
+  width: 20%;
 }
 
 .content-div {
@@ -15,5 +15,6 @@
 @media (width <= 768px) {
   .content-div {
     margin-top: 60px;
+    margin-left: -20%
   }
 }
