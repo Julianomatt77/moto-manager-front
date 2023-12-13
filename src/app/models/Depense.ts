@@ -9,24 +9,43 @@ export class Depense {
   private _essenceConsomme: number;
   private _consoMoyenne: number;
   private _essencePrice: string;
+  private _commentaire: string;
   private _kilometrage: number;
   private _date: Date;
-  private _depenseType: DepenseType;
-  private _user: User;
-  private _moto: Moto;
+  // private _depenseType: DepenseType;
+  private _depense_type: string;
+  // private _user: User;
+  // private _moto: Moto;
+  private _moto: string;
 
 
-  constructor(id: string, montant: number, kmParcouru: number, essenceConsomme: number, consoMoyenne: number, essencePrice: string, kilometrage: number, date: Date, depenseType: DepenseType, user: User, moto: Moto) {
+  constructor(
+    id: string,
+    montant: number,
+    kmParcouru: number,
+    essenceConsomme: number,
+    consoMoyenne: number,
+    essencePrice: string,
+    commentaire: string,
+    kilometrage: number,
+    date: Date,
+    depense_type: string,
+    // depenseType: DepenseType,
+    // user: User,
+    // moto: Moto
+    moto: string
+  ) {
     this._id = id;
     this._montant = montant;
     this._kmParcouru = kmParcouru;
     this._essenceConsomme = essenceConsomme;
     this._consoMoyenne = consoMoyenne;
     this._essencePrice = essencePrice;
+    this._commentaire = commentaire;
     this._kilometrage = kilometrage;
     this._date = date;
-    this._depenseType = depenseType;
-    this._user = user;
+    this._depense_type = depense_type;
+    // this._user = user;
     this._moto = moto;
   }
 
@@ -74,6 +93,14 @@ export class Depense {
     this._essencePrice = value;
   }
 
+  get commentaire(): string {
+    return this._commentaire;
+  }
+
+  set commentaire(value: string) {
+    this._commentaire = value;
+  }
+
   get kilometrage(): number {
     return this._kilometrage;
   }
@@ -90,27 +117,31 @@ export class Depense {
     this._date = value;
   }
 
-  get depenseType(): DepenseType {
-    return this._depenseType;
+  // get depenseType(): DepenseType {
+  get depenseType(): string {
+    return this._depense_type;
   }
 
-  set depenseType(value: DepenseType) {
-    this._depenseType = value;
+  // set depenseType(value: DepenseType) {
+  set depenseType(value: string) {
+    this._depense_type = value;
   }
 
-  get user(): User {
-    return this._user;
-  }
+  // get user(): User {
+  //   return this._user;
+  // }
+  //
+  // set user(value: User) {
+  //   this._user = value;
+  // }
 
-  set user(value: User) {
-    this._user = value;
-  }
-
-  get moto(): Moto {
+  // get moto(): Moto {
+  get moto(): string {
     return this._moto;
   }
 
-  set moto(value: Moto) {
+  // set moto(value: Moto) {
+  set moto(value: string) {
     this._moto = value;
   }
 }

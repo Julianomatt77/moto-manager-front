@@ -127,6 +127,22 @@ button {
   direction: ltr;
 }
 
+.blur-background {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(31px);
+  z-index: 500;
+}
+
+input, select, option {
+  background: var(--primary)
+}
+
 /****************************************** LOADING ANIMATION  ************/
 .ring {
   position:absolute;
@@ -286,6 +302,31 @@ button {
   background: var(--secondary30);
 }
 
+/****************************************** FIN CARDS  ************/
+
+
+
+/****************************************** POPUP ************/
+.cdk-overlay-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 12;
+  background: var(--primary);
+  border-radius: 20px
+}
+
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  background: var(--primary) !important;
+  border-radius: 20px !important;
+}
+
+.popup {
+  margin: 20px
+}
+
+/****************************************** FIN POPUP  ************/
 
 /****************************************** FIN CARDS  ************/
 @media (width <= 768px) {
@@ -294,7 +335,7 @@ button {
   }
 
   .card {
-    min-width: 0;
+    min-width: 250px;
   }
 
   .card-moto {

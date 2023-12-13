@@ -1,0 +1,108 @@
+<div class="popup">
+<form [formGroup]="form" (ngSubmit)="onSubmitDepense()">
+
+  <div class="">
+    <label for="montant">Montant</label>
+    <input
+      id="montant"
+      class=""
+      formControlName="montant"
+      type="number"
+    />
+  </div>
+
+  <div class="">
+    <label for="depenseDate">Date de l'opération</label>
+    <input
+      id="depenseDate"
+      type="datetime-local"
+      class="form-control"
+      formControlName="date"
+      [value]="datePipe.transform(depense.date, 'yyyy-MM-ddThh:mm')"
+    />
+  </div>
+
+  <div class="">
+    <label for="kmParcouru">Km parcouru</label>
+    <input
+      id="kmParcouru"
+      class=""
+      formControlName="kmParcouru"
+      type="number"
+    />
+  </div>
+
+  <div class="">
+    <label for="essenceConsomme">Essence consommée</label>
+    <input
+      id="essenceConsomme"
+      class=""
+      formControlName="essenceConsomme"
+      type="number"
+    />
+  </div>
+
+  <div class="">
+    <label for="essencePrice">Prix de l'essence</label>
+    <input
+      id="essencePrice"
+      class=""
+      formControlName="essencePrice"
+      type="number"
+    />
+  </div>
+
+  <div class="">
+    <label for="commentaire">Commentaire</label>
+    <input
+      id="commentaire"
+      class=""
+      formControlName="commentaire"
+      type="text"
+    />
+  </div>
+
+  <div class="">
+    <label for="kilometrage">Kilométrage</label>
+    <input
+      id="kilometrage"
+      class=""
+      formControlName="kilometrage"
+      type="number"
+    />
+  </div>
+
+  <div class="">
+    <label for="depense_type">Type de dépense</label>
+    <select
+      id="depense_type"
+      class="form-control"
+      formControlName="depense_type"
+    >
+      <option *ngFor="let type of depensesType" [ngValue]="type.id.toString()">
+        {{ type.name }}
+      </option>
+    </select>
+  </div>
+
+  <div class="">
+    <label for="moto">Moto</label>
+    <select
+      id="moto"
+      class="form-control"
+      formControlName="moto"
+    >
+      <option *ngFor="let moto of motoList" [ngValue]="moto.id.toString()">
+        {{ moto.name }}
+      </option>
+    </select>
+  </div>
+
+  <div class="">
+    <button type="submit" class="secondary-button" [disabled]="!form.valid">
+      {{ buttonLabel }}
+    </button>
+  </div>
+
+</form>
+</div>

@@ -6,6 +6,10 @@
 
 <section id="depenses-list">
   <h1>Liste des dépenses</h1>
+  <div>
+    <a href="javascript:;" (click)="addDepense()" class="material-symbols-outlined burger-logo">add</a>
+  </div>
+
   @if (!isLoading) {
   <div class="depenses-recap"></div>
   <div class="depenses-container">

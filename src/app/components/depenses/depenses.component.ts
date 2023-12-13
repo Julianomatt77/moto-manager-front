@@ -3,6 +3,8 @@ import {DepensesService} from "../../services/depenses/depenses.service";
 import {StorageService} from "../../services/storage/storage.service";
 import {User} from "../../models/User";
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
+import {MatDialog} from "@angular/material/dialog";
+import {DepenseFormComponent} from "../../form/depense-form/depense-form.component";
 
 @Component({
   selector: 'app-depenses',
@@ -18,10 +20,15 @@ export class DepensesComponent {
   isLoading = true;
   error: string;
 
-  constructor(private depensesService: DepensesService, private storageService: StorageService){}
+
+  constructor(private depensesService: DepensesService, private storageService: StorageService, public dialog: MatDialog){}
 
   ngOnInit(): void {
     this.user = this.storageService.getUser();
+    this.getAllDepenses();
+  }
+
+  getAllDepenses(){
     this.depensesService.getDepenses().subscribe({
       next: (data) => {
         this.isLoading = false;
@@ -38,6 +45,21 @@ export class DepensesComponent {
         this.error = err.error.message
       }
     })
+  }
+
+  addDepense() {
+    this.dialog
+      .open(DepenseFormComponent, {
+        data: {
+          addOrEdit: 'add',
+        },
+        width: '80vw',
+        height: '80vh',
+      })
+      .afterClosed()
+      .subscribe(() => {
+        this.getAllDepenses();
+      });
   }
 
 }

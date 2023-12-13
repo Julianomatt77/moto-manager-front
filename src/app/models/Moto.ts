@@ -4,14 +4,12 @@ export class Moto{
   private _id: string;
   private _marque: string;
   private _modele: string;
-  private _user: User;
 
 
-  constructor(id: string, marque: string, modele: string, user: User) {
+  constructor(id: string, marque: string, modele: string) {
     this._id = id;
     this._marque = marque;
     this._modele = modele;
-    this._user = user;
   }
 
 
@@ -34,13 +32,5 @@ export class Moto{
 
   set modele(value: string) {
     this._modele = value;
-  }
-
-  get user(): User {
-    return this._user;
-  }
-
-  set user(value: User) {
-    this._user = value;
   }
 }
