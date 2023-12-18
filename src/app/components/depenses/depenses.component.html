@@ -7,24 +7,27 @@
 <section id="depenses-list">
   <h1>Liste des dépenses</h1>
   <div>
-    <a href="javascript:;" (click)="addDepense()" class="material-symbols-outlined burger-logo">add</a>
+    <a href="javascript:;" (click)="addDepense()" class="material-symbols-outlined">add_circle</a>
   </div>
 
   @if (!isLoading) {
-  <div class="depenses-recap"></div>
+  <div class="depenses-recap">TODO Recap</div>
   <div class="depenses-container">
     @for (depense of depenses; track depense.id){
       <div class="card">
         <div class="card-top">
           <div class="card-title-div">
+            <div>
+              <a href="javascript:;" (click)="editDepense(depense)" class="material-symbols-outlined">edit_note</a>
+            </div>
             <h2 class="card-title">{{depense.depenseType.name}}</h2>
-            <p>{{depense.montant}} €</p>
+            <p>{{depense.montant }} €</p>
             <div class="card-moto">
               <p>{{depense.moto.modele}}</p>
               <p>{{depense.kilometrage}} Km</p>
             </div>
           </div>
-          <div class="card-date">{{depense.date}}</div>
+          <div class="card-date">{{depense.date | date: "dd/MM/y" }}</div>
         </div>
 
         <div class="card-body">
@@ -46,6 +49,9 @@
             }
           </div>
         </div>
+<!--        <div>-->
+<!--          <a href="javascript:;" (click)="openConfirmation(depense)" class="material-symbols-outlined">delete</a>-->
+<!--        </div>-->
       </div>
     } @empty {
     <span>Vous n'avez aucune dépense</span>

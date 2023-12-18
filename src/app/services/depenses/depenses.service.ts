@@ -18,7 +18,8 @@ export class DepensesService {
   }
 
   getDepense(id: string){
-    return this.http.get<Depense>(this.depensesUrl + '/${id}');
+    let url = this.depensesUrl + '/' + id
+    return this.http.get<Depense>(url);
   }
 
   saveDepense(depense: Depense){
@@ -26,11 +27,13 @@ export class DepensesService {
   }
 
   patchDepense(id: string, data: any){
-    return this.http.patch<Depense>(this.depensesUrl + '/${id}', data);
+    let url = this.depensesUrl + '/' + id
+    return this.http.patch<Depense>(url, data);
   }
 
   deleteDepense(id: string){
-    return this.http.delete<Depense>(this.depensesUrl + '/${id}')
+    let url = this.depensesUrl + '/' + id
+    return this.http.delete<Depense>(url)
   }
 
 }

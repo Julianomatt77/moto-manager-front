@@ -12,13 +12,12 @@
   </div>
 
   <div class="">
-    <label for="depenseDate">Date de l'opération</label>
+    <label for="date">Date de l'opération</label>
     <input
-      id="depenseDate"
+      id="date"
       type="datetime-local"
       class="form-control"
       formControlName="date"
-      [value]="datePipe.transform(depense.date, 'yyyy-MM-ddThh:mm')"
     />
   </div>
 

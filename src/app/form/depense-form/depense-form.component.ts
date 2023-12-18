@@ -54,11 +54,14 @@ export class DepenseFormComponent implements OnInit{
     if (data.addOrEdit == 'edit') {
       this.addOrEdit = 'edit';
       this.buttonLabel = 'Mettre à jour';
-      // this.id = data.operation._id;
       this.depense = data.depense;
-      // this.operation.operationDate = new Date(
-      //   this.operation.operationDate.toString()
-      // );
+      this.id = this.depense.id
+      // TODO Voir pour affichage de la date
+      // console.log(typeof this.depense.date)
+      // this.depense.date = new Date(this.depense.date)
+      this.depense.moto = data.depense.moto.id.toString()
+      this.depense.depenseType = data.depense.depenseType.id.toString()
+      // console.log(typeof this.depense.date)
     } else {
       this.addOrEdit = 'add';
       this.buttonLabel = 'Ajouter';
@@ -79,17 +82,31 @@ export class DepenseFormComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.form = this.fb.group({
-      montant: [null, [Validators.required]],
-      kmParcouru: null,
-      essenceConsomme: null,
-      essencePrice: null,
-      commentaire: null,
-      kilometrage: null,
-      date: [null, [Validators.required]],
-      depense_type: ['', [Validators.required]],
-      moto: ['', [Validators.required]]
-    })
+    if (this.addOrEdit == 'add') {
+      this.form = this.fb.group({
+        montant: [null, [Validators.required]],
+        kmParcouru: null,
+        essenceConsomme: null,
+        essencePrice: null,
+        commentaire: null,
+        kilometrage: null,
+        date: [null, [Validators.required]],
+        depense_type: ['', [Validators.required]],
+        moto: ['', [Validators.required]]
+      })
+    } else {
+      this.form = this.fb.group({
+        montant: [this.depense.montant, [Validators.required]],
+        kmParcouru: this.depense.kmParcouru,
+        essenceConsomme: this.depense.essenceConsomme,
+        essencePrice: this.depense.essencePrice,
+        commentaire: this.depense.commentaire,
+        kilometrage: this.depense.kilometrage,
+        date: [, [Validators.required]],
+        depense_type: [this.depense.depenseType, [Validators.required]],
+        moto: [this.depense.moto, [Validators.required]]
+      })
+    }
 
     this.montantErrorMessage = 'Le montant est obligatoire.';
     this.dateErrorMessage = 'La date est obligatoire.';
@@ -100,24 +117,26 @@ export class DepenseFormComponent implements OnInit{
       data.forEach((type) => {
         this.depensesType.push({'id': type.id, 'name': type.name})
       })
-      // console.log(this.depensesType)
     })
 
     this.motoService.getMotos().subscribe(data => {
       data.forEach(moto => {
         this.motoList.push({'id': moto.id, 'name': moto.modele})
       })
-      // console.log(this.motoList)
     })
-
-
   }
 
   onSubmitDepense(): void {
     this.depense = this.form.value;
-    this.depensesService.saveDepense(this.depense).subscribe(() => {
-      this.dialogRef.close();
-    });
+    if (this.addOrEdit == 'add'){
+      this.depensesService.saveDepense(this.depense).subscribe(() => {
+        this.dialogRef.close();
+      });
+    } else {
+      this.depensesService.patchDepense(this.id, this.depense).subscribe(() => {
+        this.dialogRef.close();
+      });
+    }
   }
 
   changeFn(e: any) {
