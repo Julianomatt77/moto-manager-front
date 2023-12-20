@@ -3,8 +3,9 @@ import {DepensesService} from "../../services/depenses/depenses.service";
 import {StorageService} from "../../services/storage/storage.service";
 import {User} from "../../models/User";
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
-import {MatDialog} from "@angular/material/dialog";
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {DepenseFormComponent} from "../../form/depense-form/depense-form.component";
+import {ConfirmationDialogComponent} from "../confirmation-dialog/confirmation-dialog.component";
 
 @Component({
   selector: 'app-depenses',
@@ -19,7 +20,7 @@ export class DepensesComponent {
   user: User;
   isLoading = true;
   error: string;
-
+  dialogRef!: MatDialogRef<ConfirmationDialogComponent>;
 
   constructor(private depensesService: DepensesService, private storageService: StorageService, public dialog: MatDialog){}
 
@@ -78,21 +79,26 @@ export class DepensesComponent {
       });
   }
 
-  // openConfirmation(operation: any) {
-  //   this.dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-  //     // width: '250px',
-  //     disableClose: false,
-  //   });
-  //   this.dialogRef.componentInstance.confirmMessage =
-  //     'Etes vous sûr de vouloir supprimer cette opération ?';
-  //
-  //   this.dialogRef.afterClosed().subscribe((result) => {
-  //     if (result) {
-  //       // do confirmation actions
-  //       this.deleteOperation(operation);
-  //     }
-  //     // this.dialogRef = null;
-  //   });
-  // }
+  openConfirmation(depense: any) {
+    this.dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      disableClose: false,
+    });
+    this.dialogRef.componentInstance.confirmMessage =
+      'Etes vous sûr de vouloir supprimer cette opération ?';
+
+    this.dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.deleteDepense(depense);
+      }
+    });
+  }
+
+  deleteDepense(depense: any){
+    // console.log(depense.id)
+    this.depensesService.deleteDepense(depense.id).subscribe(()=>{
+      this.isLoading = true;
+      this.getAllDepenses()
+    })
+  }
 
 }

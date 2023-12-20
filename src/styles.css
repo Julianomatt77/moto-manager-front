@@ -113,6 +113,21 @@ button {
   transition: transform ease 0.2s;
 }
 
+.danger-button {
+  color: var(--text);
+  background-color: #dc3545;
+  border-color: #dc3545;
+  transition: transform ease 0.2s;
+}
+
+.mat-mdc-dialog-actions {
+  justify-content: space-evenly!important;
+}
+
+.mat-mdc-dialog-container .mdc-dialog__content, .mat-mdc-dialog-container .mdc-dialog__title {
+  color: var(--text) !important;
+}
+
 .material-symbols-outlined {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;
