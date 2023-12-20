@@ -72,16 +72,22 @@
   </div>
 
   <div class="">
-    <label for="depense_type">Type de dépense</label>
+    <label for="depenseType">Type de dépense</label>
     <select
-      id="depense_type"
+      id="depenseType"
       class="form-control"
-      formControlName="depense_type"
+      formControlName="depenseType"
+      (change)="onTypeSelection($event)"
     >
       <option *ngFor="let type of depensesType" [ngValue]="type.id.toString()">
         {{ type.name }}
       </option>
     </select>
+    @if (selectedType == '0') {
+    <div>
+      <input type="text" class="form-control" placeholder="Autre dépense" formControlName="autre_depense">
+    </div>
+    }
   </div>
 
   <div class="">

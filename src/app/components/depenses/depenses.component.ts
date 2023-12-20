@@ -29,6 +29,7 @@ export class DepensesComponent {
     this.getAllDepenses();
   }
 
+  /***************  DISPLAY *****************/
   getAllDepenses(){
     this.depensesService.getDepenses().subscribe({
       next: (data) => {
@@ -48,6 +49,7 @@ export class DepensesComponent {
     })
   }
 
+  /*************** CRUD *******************/
   addDepense() {
     this.dialog
       .open(DepenseFormComponent, {
@@ -94,11 +96,11 @@ export class DepensesComponent {
   }
 
   deleteDepense(depense: any){
-    // console.log(depense.id)
     this.depensesService.deleteDepense(depense.id).subscribe(()=>{
       this.isLoading = true;
       this.getAllDepenses()
     })
   }
 
+  /****************************************/
 }

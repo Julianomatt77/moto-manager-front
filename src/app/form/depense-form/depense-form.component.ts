@@ -34,6 +34,7 @@ export class DepenseFormComponent implements OnInit{
   userId!: string;
   depensesType: any[] = [];
   motoList: any[] = [];
+  selectedType: string = '';
 
   montantErrorMessage = '';
   dateErrorMessage = '';
@@ -56,12 +57,11 @@ export class DepenseFormComponent implements OnInit{
       this.buttonLabel = 'Mettre à jour';
       this.depense = data.depense;
       this.id = this.depense.id
-      // TODO Voir pour affichage de la date
-      // console.log(typeof this.depense.date)
+      // TODO Voir pour affichage de la date lors de l'edit
+      // TODO Ajouter les commentaires
       // this.depense.date = new Date(this.depense.date)
       this.depense.moto = data.depense.moto.id.toString()
       this.depense.depenseType = data.depense.depenseType.id.toString()
-      // console.log(typeof this.depense.date)
     } else {
       this.addOrEdit = 'add';
       this.buttonLabel = 'Ajouter';
@@ -91,7 +91,8 @@ export class DepenseFormComponent implements OnInit{
         commentaire: null,
         kilometrage: null,
         date: [null, [Validators.required]],
-        depense_type: ['', [Validators.required]],
+        depenseType: ['', [Validators.required]],
+        autre_depense: '',
         moto: ['', [Validators.required]]
       })
     } else {
@@ -102,8 +103,9 @@ export class DepenseFormComponent implements OnInit{
         essencePrice: this.depense.essencePrice,
         commentaire: this.depense.commentaire,
         kilometrage: this.depense.kilometrage,
-        date: [, [Validators.required]],
-        depense_type: [this.depense.depenseType, [Validators.required]],
+        date: [null, [Validators.required]],
+        depenseType: [this.depense.depenseType, [Validators.required]],
+        autre_depense: '',
         moto: [this.depense.moto, [Validators.required]]
       })
     }
@@ -117,6 +119,7 @@ export class DepenseFormComponent implements OnInit{
       data.forEach((type) => {
         this.depensesType.push({'id': type.id, 'name': type.name})
       })
+      this.depensesType.push({'id': 0, 'name': 'autre'})
     })
 
     this.motoService.getMotos().subscribe(data => {
@@ -128,6 +131,18 @@ export class DepenseFormComponent implements OnInit{
 
   onSubmitDepense(): void {
     this.depense = this.form.value;
+    if (this.form.value['depenseType'] == '0' && this.form.value['autre_depense']){
+      let newTypeName = this.form.value['autre_depense'];
+      this.depensesTypeService.saveDepenseType(newTypeName).subscribe((data) => {
+        this.depense.depenseType = data.id
+        this.saveDepense();
+      })
+    } else {
+      this.saveDepense();
+    }
+  }
+
+  saveDepense(){
     if (this.addOrEdit == 'add'){
       this.depensesService.saveDepense(this.depense).subscribe(() => {
         this.dialogRef.close();
@@ -141,5 +156,9 @@ export class DepenseFormComponent implements OnInit{
 
   changeFn(e: any) {
     this.depense.date = e.target.value;
+  }
+
+  onTypeSelection(e: any) {
+    this.selectedType = e.target.value.split(':')[1].trim()
   }
 }

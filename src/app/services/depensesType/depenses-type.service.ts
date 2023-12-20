@@ -21,8 +21,11 @@ export class DepensesTypeService {
     return this.http.get<DepenseType>(this.depensesUrl + '/${id}');
   }
 
-  saveDepenseType(depenseType: DepenseType){
-    return this.http.post<DepenseType>(this.depensesUrl, depenseType);
+  // saveDepenseType(depenseType: DepenseType){
+  saveDepenseType(name: string){
+    let data = {'name': name}
+    let json = JSON.stringify(data)
+    return this.http.post<DepenseType>(this.depensesUrl, json);
   }
 
   patchDepenseType(id: string, data: any){

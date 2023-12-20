@@ -1,7 +1,3 @@
-import {User} from "./User";
-import {Moto} from "./Moto";
-import {DepenseType} from "./DepenseType";
-
 export class Depense {
   private _id: string;
   private _montant: number;
@@ -13,7 +9,7 @@ export class Depense {
   private _kilometrage: number;
   private _date: Date;
   // private _depenseType: DepenseType;
-  private _depense_type: string;
+  private _depenseType: string;
   // private _user: User;
   // private _moto: Moto;
   private _moto: string;
@@ -44,7 +40,7 @@ export class Depense {
     this._commentaire = commentaire;
     this._kilometrage = kilometrage;
     this._date = date;
-    this._depense_type = depense_type;
+    this._depenseType = depense_type;
     // this._user = user;
     this._moto = moto;
   }
@@ -119,12 +115,12 @@ export class Depense {
 
   // get depenseType(): DepenseType {
   get depenseType(): string {
-    return this._depense_type;
+    return this._depenseType;
   }
 
   // set depenseType(value: DepenseType) {
   set depenseType(value: string) {
-    this._depense_type = value;
+    this._depenseType = value;
   }
 
   // get user(): User {

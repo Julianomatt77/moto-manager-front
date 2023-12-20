@@ -1,7 +1,7 @@
 import {User} from "./User";
 
 export class DepenseType {
-  private _id: string;
+  _id: string;
   private _name: string;
 
   constructor(id: string, name: string
@@ -10,17 +10,16 @@ export class DepenseType {
     this._name = name;
   }
 
-
-  get id(): string {
+  public get id(): string {
     return this._id;
   }
 
 
-  get name(): string {
+  public get name(): string {
     return this._name;
   }
 
-  set name(value: string) {
+  public set name(value: string) {
     this._name = value;
   }
 }
