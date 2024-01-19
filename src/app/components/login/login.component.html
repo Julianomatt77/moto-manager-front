@@ -1,15 +1,17 @@
-<div>
+<div class="popup">
   @if (!isLoggedIn){
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form-container">
     <div class="form-group">
-      <label for="username">Username</label>
+      <div><label for="username">Username</label></div>
       <input type="text" class="form-control" id="username" formControlName="username">
     </div>
     <div class="form-group">
-      <label for="password">Password</label>
+      <div><label for="password">Password</label></div>
       <input type="password" class="form-control" id="password" formControlName="password">
     </div>
+    <div class="form-submit">
     <button type="submit" class="primary-button">Se connecter</button>
+    </div>
   </form>
   }
 
@@ -24,6 +26,6 @@
   @if (isLoggedIn){
   <div class="alert alert-success">
     Vous êtes connecté avec l'email {{ email }}. Vous allez être redirigé vers la page d'accueil.
-</div>
+  </div>
   }
 </div>
