@@ -24,6 +24,9 @@ export class LoginComponent {
   isLoginFailed = false;
   error: string;
   email = '';
+  submitted: boolean = false;
+  usernameErrorMessage = '';
+  passwordErrorMessage = '';
 
   constructor(private authService: AuthService, private router: Router, private storageService: StorageService) {  }
 
@@ -36,40 +39,46 @@ export class LoginComponent {
         Validators.required
       ])
     });
+
+    this.usernameErrorMessage = 'Un email est obligatoire est obligatoire.';
+    this.passwordErrorMessage = 'Un mot de passe est obligatoire.';
   }
 
   onSubmit() {
     const username = this.loginForm.value.username.toLowerCase();
     const password = this.loginForm.value.password;
+    this.submitted = true;
 
-    this.authService.login(username, password)
-      .subscribe({
-        next: (data) => {
-          this.token = data.token;
-          this.isLoginFailed = false;
-          this.authService.saveToken(this.token)
-          this.isLoggedIn = true;
+    if (this.loginForm.valid) {
+      this.authService.login(username, password)
+        .subscribe({
+          next: (data) => {
+            this.token = data.token;
+            this.isLoginFailed = false;
+            this.authService.saveToken(this.token)
+            this.isLoggedIn = true;
 
-          this.authService.getUserInfos()
-            .subscribe({
-              next: (data) => {
-                this.storageService.saveUser(data)
-                this.email = this.storageService.getUser().email
-                this.isLoggedIn = true;
+            this.authService.getUserInfos()
+              .subscribe({
+                next: (data) => {
+                  this.storageService.saveUser(data)
+                  this.email = this.storageService.getUser().email
+                  this.isLoggedIn = true;
 
-                window.sessionStorage.removeItem('mm_hasReloaded');
-                // Redirection après login
-                setTimeout(() => {
-                  this.router.navigateByUrl('');
-                }, 2000);
-              }
-            })
-        },
-        error: (error) => {
-          this.error = error.error.message
-          this.isLoginFailed = true;
-        },
-      })
+                  window.sessionStorage.removeItem('mm_hasReloaded');
+                  // Redirection après login
+                  setTimeout(() => {
+                    this.router.navigateByUrl('');
+                  }, 2000);
+                }
+              })
+          },
+          error: (error) => {
+            this.error = error.error.message
+            this.isLoginFailed = true;
+          },
+        })
+    }
   }
 
 }

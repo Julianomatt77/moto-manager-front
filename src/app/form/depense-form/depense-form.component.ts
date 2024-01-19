@@ -35,6 +35,7 @@ export class DepenseFormComponent implements OnInit{
   depensesType: any[] = [];
   motoList: any[] = [];
   selectedType: string = '';
+  submitted: boolean = false;
 
   montantErrorMessage = '';
   dateErrorMessage = '';
@@ -130,14 +131,17 @@ export class DepenseFormComponent implements OnInit{
 
   onSubmitDepense(): void {
     this.depense = this.form.value;
-    if (this.form.value['depenseType'] == '0' && this.form.value['autre_depense']){
-      let newTypeName = this.form.value['autre_depense'];
-      this.depensesTypeService.saveDepenseType(newTypeName).subscribe((data) => {
-        this.depense.depenseType = data.id
+    this.submitted = true;
+    if (this.form.valid){
+      if (this.form.value['depenseType'] == '0' && this.form.value['autre_depense']){
+        let newTypeName = this.form.value['autre_depense'];
+        this.depensesTypeService.saveDepenseType(newTypeName).subscribe((data) => {
+          this.depense.depenseType = data.id
+          this.saveDepense();
+        })
+      } else {
         this.saveDepense();
-      })
-    } else {
-      this.saveDepense();
+      }
     }
   }
 

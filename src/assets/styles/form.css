@@ -43,6 +43,13 @@
   margin-top: 1.5rem;
 }
 
+.error-message {
+  background-color: var(--error-color);
+  color: var(--blanc);
+  border-radius: 1rem;
+  padding: 0.5rem;
+}
+
 @media (width <= 768px) {
   .form-container {
     width: 100%;

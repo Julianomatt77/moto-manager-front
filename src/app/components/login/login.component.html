@@ -5,10 +5,22 @@
       <div><label for="username">Username</label></div>
       <input type="text" class="form-control" id="username" formControlName="username">
     </div>
+    @if(!loginForm.get('username')?.valid && submitted){
+  <div class="error-message">
+    {{ usernameErrorMessage }}
+  </div>
+  }
+
     <div class="form-group">
       <div><label for="password">Password</label></div>
       <input type="password" class="form-control" id="password" formControlName="password">
     </div>
+    @if(!loginForm.get('password')?.valid && submitted){
+  <div class="error-message">
+    {{ passwordErrorMessage }}
+  </div>
+  }
+
     <div class="form-submit">
     <button type="submit" class="primary-button">Se connecter</button>
     </div>

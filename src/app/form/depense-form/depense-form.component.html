@@ -10,6 +10,11 @@
         type="number"
       />
     </div>
+    @if(!form.get('montant')?.valid && submitted){
+    <div class="error-message">
+      {{ montantErrorMessage }}
+    </div>
+    }
 
     <div class="form-group">
       <div><label for="date">Date de l'opération</label></div>
@@ -20,6 +25,11 @@
         formControlName="date"
       />
     </div>
+    @if(!form.get('date')?.valid && submitted){
+    <div class="error-message">
+    {{ dateErrorMessage }}
+    </div>
+    }
 
     <div class="form-group">
       <div>
@@ -92,6 +102,11 @@
       </div>
       }
     </div>
+    @if(!form.get('depenseType')?.valid && submitted){
+    <div class="error-message">
+    {{ depenseTypeErrorMessage }}
+    </div>
+    }
 
     <div class="form-group">
       <div><label for="moto">Moto</label></div>
@@ -105,9 +120,15 @@
         </option>
       </select>
     </div>
+    @if(!form.get('moto')?.valid && submitted){
+    <div class="error-message">
+    {{ motoErrorMessage }}
+    </div>
+    }
 
     <div class="form-submit">
-      <button type="submit" class="secondary-button" [disabled]="!form.valid">
+<!--      <button type="submit" class="secondary-button" [disabled]="!form.valid">-->
+      <button type="submit" class="secondary-button">
         {{ buttonLabel }}
       </button>
     </div>
