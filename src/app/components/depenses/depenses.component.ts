@@ -57,7 +57,7 @@ export class DepensesComponent {
           addOrEdit: 'add',
         },
         width: '80vw',
-        height: '80vh',
+        height: '85vh',
       })
       .afterClosed()
       .subscribe(() => {
@@ -73,7 +73,7 @@ export class DepensesComponent {
           addOrEdit: 'edit',
         },
         width: '80vw',
-        height: '80vh',
+        height: '85vh',
       })
       .afterClosed()
       .subscribe(() => {

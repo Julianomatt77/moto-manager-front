@@ -1,113 +1,116 @@
 <div class="popup">
-<form [formGroup]="form" (ngSubmit)="onSubmitDepense()">
+  <form [formGroup]="form" (ngSubmit)="onSubmitDepense()" class="form-container">
 
-  <div class="">
-    <label for="montant">Montant</label>
-    <input
-      id="montant"
-      class=""
-      formControlName="montant"
-      type="number"
-    />
-  </div>
-
-  <div class="">
-    <label for="date">Date de l'opération</label>
-    <input
-      id="date"
-      type="datetime-local"
-      class="form-control"
-      formControlName="date"
-    />
-  </div>
-
-  <div class="">
-    <label for="kmParcouru">Km parcouru</label>
-    <input
-      id="kmParcouru"
-      class=""
-      formControlName="kmParcouru"
-      type="number"
-    />
-  </div>
-
-  <div class="">
-    <label for="essenceConsomme">Essence consommée</label>
-    <input
-      id="essenceConsomme"
-      class=""
-      formControlName="essenceConsomme"
-      type="number"
-    />
-  </div>
-
-  <div class="">
-    <label for="essencePrice">Prix de l'essence</label>
-    <input
-      id="essencePrice"
-      class=""
-      formControlName="essencePrice"
-      type="number"
-    />
-  </div>
-
-  <div class="">
-    <label for="commentaire">Commentaire</label>
-    <input
-      id="commentaire"
-      class=""
-      formControlName="commentaire"
-      type="text"
-    />
-  </div>
-
-  <div class="">
-    <label for="kilometrage">Kilométrage</label>
-    <input
-      id="kilometrage"
-      class=""
-      formControlName="kilometrage"
-      type="number"
-    />
-  </div>
-
-  <div class="">
-    <label for="depenseType">Type de dépense</label>
-    <select
-      id="depenseType"
-      class="form-control"
-      formControlName="depenseType"
-      (change)="onTypeSelection($event)"
-    >
-      <option *ngFor="let type of depensesType" [ngValue]="type.id.toString()">
-        {{ type.name }}
-      </option>
-    </select>
-    @if (selectedType == '0') {
-    <div>
-      <input type="text" class="form-control" placeholder="Autre dépense" formControlName="autre_depense">
+    <div class="form-group">
+      <div><label for="montant">Montant</label></div>
+      <input
+        id="montant"
+        class="form-control"
+        formControlName="montant"
+        type="number"
+      />
     </div>
-    }
-  </div>
 
-  <div class="">
-    <label for="moto">Moto</label>
-    <select
-      id="moto"
-      class="form-control"
-      formControlName="moto"
-    >
-      <option *ngFor="let moto of motoList" [ngValue]="moto.id.toString()">
-        {{ moto.name }}
-      </option>
-    </select>
-  </div>
+    <div class="form-group">
+      <div><label for="date">Date de l'opération</label></div>
+      <input
+        id="date"
+        type="datetime-local"
+        class="form-control"
+        formControlName="date"
+      />
+    </div>
 
-  <div class="">
-    <button type="submit" class="secondary-button" [disabled]="!form.valid">
-      {{ buttonLabel }}
-    </button>
-  </div>
+    <div class="form-group">
+      <div>
+        <label for="kmParcouru">Km parcouru</label>
+      </div>
 
-</form>
+      <input
+        id="kmParcouru"
+        class="form-control"
+        formControlName="kmParcouru"
+        type="number"
+      />
+    </div>
+
+    <div class="form-group">
+      <div><label for="essenceConsomme">Essence consommée</label></div>
+      <input
+        id="essenceConsomme"
+        class="form-control"
+        formControlName="essenceConsomme"
+        type="number"
+      />
+    </div>
+
+    <div class="form-group">
+      <div><label for="essencePrice">Prix de l'essence</label></div>
+      <input
+        id="essencePrice"
+        class="form-control"
+        formControlName="essencePrice"
+        type="number"
+      />
+    </div>
+
+    <div class="form-group">
+      <div><label for="commentaire">Commentaire</label></div>
+      <input
+        id="commentaire"
+        class="form-control"
+        formControlName="commentaire"
+        type="text"
+      />
+    </div>
+
+    <div class="form-group">
+      <div><label for="kilometrage">Kilométrage</label></div>
+      <input
+        id="kilometrage"
+        class="form-control"
+        formControlName="kilometrage"
+        type="number"
+      />
+    </div>
+
+    <div class="form-group">
+      <div><label for="depenseType">Type de dépense</label></div>
+      <select
+        id="depenseType"
+        class="form-control"
+        formControlName="depenseType"
+        (change)="onTypeSelection($event)"
+      >
+        <option *ngFor="let type of depensesType" [ngValue]="type.id.toString()">
+          {{ type.name }}
+        </option>
+      </select>
+      @if (selectedType == '0') {
+      <div>
+        <input type="text" class="form-control" placeholder="Autre dépense" formControlName="autre_depense">
+      </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <div><label for="moto">Moto</label></div>
+      <select
+        id="moto"
+        class="form-control"
+        formControlName="moto"
+      >
+        <option *ngFor="let moto of motoList" [ngValue]="moto.id.toString()">
+          {{ moto.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-submit">
+      <button type="submit" class="secondary-button" [disabled]="!form.valid">
+        {{ buttonLabel }}
+      </button>
+    </div>
+
+  </form>
 </div>

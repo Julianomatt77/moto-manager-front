@@ -58,7 +58,6 @@ export class DepenseFormComponent implements OnInit{
       this.depense = data.depense;
       this.id = this.depense.id
       // TODO Voir pour affichage de la date lors de l'edit
-      // TODO Ajouter les commentaires
       // this.depense.date = new Date(this.depense.date)
       this.depense.moto = data.depense.moto.id.toString()
       this.depense.depenseType = data.depense.depenseType.id.toString()
@@ -103,7 +102,7 @@ export class DepenseFormComponent implements OnInit{
         essencePrice: this.depense.essencePrice,
         commentaire: this.depense.commentaire,
         kilometrage: this.depense.kilometrage,
-        date: [null, [Validators.required]],
+        date: [this.depense.date, [Validators.required]],
         depenseType: [this.depense.depenseType, [Validators.required]],
         autre_depense: '',
         moto: [this.depense.moto, [Validators.required]]
