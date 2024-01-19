@@ -19,7 +19,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --text: hsl(262, 20%, 92%); /*    --text: #eae7ef;*/
-    --background: hsl(270, 20%, 2%); /*    --background: #050406;*/
+    --background: hsl(270, 11%, 14%); /*    --background: #231F27;*/
     --primary: hsl(268, 39%, 48%); /*    --primary: #774baa;*/
     --secondary: hsl(269, 48%, 28%); /*    --secondary: #46256a;*/
     --accent: hsl(268, 58%, 38%); /*    --accent: #5d2999;*/

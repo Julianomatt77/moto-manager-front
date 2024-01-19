@@ -9,11 +9,12 @@ export class Entretien {
   private _pressionAr: number;
   private _kilometrage: number;
   private _date: Date;
-  private _user: User;
-  private _moto: Moto;
+  // private _user: User;
+  // private _moto: Moto;
+  private _moto: string;
 
 
-  constructor(id: string, graissage: boolean, lavage: boolean, pressionAv: number, pressionAr: number, kilometrage: number, date: Date, user: User, moto: Moto) {
+  constructor(id: string, graissage: boolean, lavage: boolean, pressionAv: number, pressionAr: number, kilometrage: number, date: Date, moto: string) {
     this._id = id;
     this._graissage = graissage;
     this._lavage = lavage;
@@ -21,7 +22,7 @@ export class Entretien {
     this._pressionAr = pressionAr;
     this._kilometrage = kilometrage;
     this._date = date;
-    this._user = user;
+    // this._user = user;
     this._moto = moto;
   }
 
@@ -78,7 +79,7 @@ export class Entretien {
   set date(value: Date) {
     this._date = value;
   }
-
+/*
   get user(): User {
     return this._user;
   }
@@ -86,12 +87,12 @@ export class Entretien {
   set user(value: User) {
     this._user = value;
   }
-
-  get moto(): Moto {
+*/
+  get moto(): string {
     return this._moto;
   }
 
-  set moto(value: Moto) {
+  set moto(value: string) {
     this._moto = value;
   }
 }

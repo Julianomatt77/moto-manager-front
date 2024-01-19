@@ -50,6 +50,24 @@
   padding: 0.5rem;
 }
 
+.slide {
+  margin-top: 0.1rem;
+}
+
+.mat-mdc-slide-toggle.mat-accent {
+  --mdc-switch-selected-focus-state-layer-color: var(--accent);
+  --mdc-switch-selected-handle-color: var(--accent);
+  --mdc-switch-selected-hover-state-layer-color: var(--accent);
+  --mdc-switch-selected-pressed-state-layer-color: var(--accent);
+  --mdc-switch-selected-focus-handle-color: var(--secondary);
+  --mdc-switch-selected-hover-handle-color: var(--secondary);
+  --mdc-switch-selected-pressed-handle-color: var(--secondary);
+  --mdc-switch-selected-focus-track-color: var(--text);
+  --mdc-switch-selected-hover-track-color: var(--text);
+  --mdc-switch-selected-pressed-track-color: var(--text);
+  --mdc-switch-selected-track-color: var(--text);
+}
+
 @media (width <= 768px) {
   .form-container {
     width: 100%;

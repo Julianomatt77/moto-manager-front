@@ -1,0 +1,98 @@
+<div class="popup">
+  <form [formGroup]="form" (ngSubmit)="onSubmitEntretien()" class="form-container">
+
+
+      <div class="form-group">
+        <div><label for="kilometrage">Kilométrage</label></div>
+        <input
+          id="kilometrage"
+          class="form-control"
+          formControlName="kilometrage"
+          type="number"
+        />
+      </div>
+
+      <div class="form-group">
+        <div><label for="date">Date de l'opération</label></div>
+        <input
+          id="date"
+          type="datetime-local"
+          class="form-control"
+          formControlName="date"
+        />
+      </div>
+      @if(!form.get('date')?.valid && submitted){
+      <div class="error-message">
+      {{ dateErrorMessage }}
+      </div>
+      }
+
+    <div class="form-group">
+      <div><label for="graissage">Graissage</label></div>
+      <mat-slide-toggle
+        id="graissage"
+        class="slide"
+        formControlName="graissage"
+      >
+      </mat-slide-toggle>
+    </div>
+
+    <div class="form-group">
+      <div>
+        <label for="lavage">Lavage</label>
+      </div>
+      <mat-slide-toggle
+        id="lavage"
+        class="slide"
+        formControlName="lavage"
+      >
+      </mat-slide-toggle>
+    </div>
+
+    <div class="form-group">
+      <div><label for="pressionAv">Pression avant</label></div>
+      <input
+        id="pressionAv"
+        class="form-control"
+        formControlName="pressionAv"
+        type="number"
+      />
+    </div>
+
+    <div class="form-group">
+      <div><label for="pressionAr">Pression arrière</label></div>
+      <input
+        id="pressionAr"
+        class="form-control"
+        formControlName="pressionAr"
+        type="number"
+      />
+    </div>
+
+    <div class="form-group">
+      <div><label for="moto">Moto</label></div>
+      <select
+        id="moto"
+        class="form-control"
+        formControlName="moto"
+      >
+        <option *ngFor="let moto of motoList" [ngValue]="moto.id.toString()">
+          {{ moto.name }}
+        </option>
+      </select>
+    </div>
+    @if(!form.get('moto')?.valid && submitted){
+    <div class="error-message">
+    {{ motoErrorMessage }}
+    </div>
+    }
+
+    <div class="form-submit">
+      <button type="submit" class="secondary-button">
+        {{ buttonLabel }}
+      </button>
+    </div>
+
+  </form>
+</div>
+

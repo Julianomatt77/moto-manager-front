@@ -1,0 +1,11 @@
+#depenses-list, #entretien-list {
+  width: 100%;
+}
+
+.depenses-container, .entretiens-container {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 50px
+}

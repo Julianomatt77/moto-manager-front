@@ -1,0 +1,72 @@
+@if (isLoading){
+<div class="ring">Loading
+<span class="loading"></span>
+</div>
+}
+
+<section id="entretien-list">
+  <h1>Liste des entretiens</h1>
+  <div>
+    <a href="javascript:;" (click)="addEntretien()" class="material-symbols-outlined">add_circle</a>
+  </div>
+
+  @if (!isLoading) {
+  <div class="entretiens-recap">TODO Recap</div>
+
+  <div class="entretiens-container">
+  @for (entretien of entretiens; track entretien.id){
+  <div class="card">
+    <div class="card-top">
+      <div class="card-title-div">
+        <div>
+          <a href="javascript:;" (click)="editEntretien(entretien)" class="material-symbols-outlined">edit_note</a>
+        </div>
+<!--        <h2 class="card-title">{{entretien.entretienType.name}}</h2>-->
+<!--        <p>{{entretien.montant }} €</p>-->
+        <div class="card-moto">
+          <p>{{entretien.moto.modele}}</p>
+          <p>{{entretien.kilometrage}} Km</p>
+        </div>
+      </div>
+      <div class="card-date">{{entretien.date | date: "dd/MM/y" }}</div>
+    </div>
+
+    <div class="card-body">
+      <div class="card-left">
+        @if (entretien.pressionAv){
+        <div class="card-info card-info-1"><p>Pression avant:</p><p>{{entretien.pressionAv}}</p></div>
+        }
+
+        @if (entretien.graissage){
+        <div class="card-info card-info-2"><p>Graissage de la chaine</p></div>
+        }
+      </div>
+      <div class="card-right">
+        @if (entretien.pressionAr){
+        <div class="card-info card-info-3"><p>Pression arrière:</p><p>{{entretien.pressionAr}}</p></div>
+        }
+        @if (entretien.lavage){
+        <div class="card-info card-info-4"><p>Lavage</p></div>
+        }
+      </div>
+    </div>
+
+    <div class="card-body">
+      @if (entretien.commentaire){
+      <p>{{entretien.commentaire}}</p>
+      }
+    </div>
+    <!--        TODO: Ajouter commentaires-->
+    <div>
+      <a href="javascript:;" (click)="openConfirmation(entretien)" class="material-symbols-outlined">delete</a>
+    </div>
+  </div>
+
+  } @empty {
+  <span>Vous n'avez aucun entretien</span>
+  }
+
+  </div>
+  }
+
+</section>
