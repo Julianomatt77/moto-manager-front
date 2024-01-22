@@ -9,6 +9,7 @@ import {EntretienComponent} from "./components/entretien/entretien.component";
 export const routes: Routes = [
   { path: '', component: AccueilComponent },
   {path: 'login', component: LoginComponent},
+  {path: 'register', component: LoginComponent, data:{registration:true}},
   {path: 'depenses', canActivate: [authGuard], component: DepensesComponent},
   {path: 'entretien', canActivate: [authGuard], component: EntretienComponent},
   { path: 'not-found', component: ErrorComponent },

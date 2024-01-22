@@ -1,9 +1,9 @@
-<div class="popup">
+<div class="login-form">
   @if (!isLoggedIn){
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form-container">
     <div class="form-group">
       <div><label for="username">Username</label></div>
-      <input type="text" class="form-control" id="username" formControlName="username">
+      <input type="email" class="form-control" id="username" formControlName="username">
     </div>
     @if(!loginForm.get('username')?.valid && submitted){
   <div class="error-message">
@@ -22,14 +22,19 @@
   }
 
     <div class="form-submit">
-    <button type="submit" class="primary-button">Se connecter</button>
+      <button type="submit" class="primary-button">{{ label}}</button>
     </div>
+
+    @if(!isRegistration){
+      <div class="mt-1-5">Vous n'avez pas encore de compte? <a [routerLink]="['/register']" class="underline"> S'enregistrer</a></div>
+    }
+
   </form>
   }
 
   @if (isLoginFailed){
   <div
-    class="alert alert-danger"
+    class="error-message login-error mt-1-5"
     role="alert">
     La connexion a échoué: {{ error }}
   </div>

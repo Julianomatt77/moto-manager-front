@@ -4,6 +4,7 @@ import { environment } from '../../../environments/environment';
 import {BehaviorSubject, Observable, tap} from 'rxjs';
 import {StorageService} from "../storage/storage.service";
 import {Router} from "@angular/router";
+import {Depense} from "../../models/Depense";
 
 @Injectable({
   providedIn: 'root',
@@ -58,4 +59,12 @@ export class AuthService {
   getUserInfos(): Observable<any> {
     return this.http.get(this.userInfosUrl);
   }
+
+  register(email: string, password: string){
+    return this.http.post<any>(this.registerUrl, {
+      email,
+      password,
+    });
+  }
+
 }
