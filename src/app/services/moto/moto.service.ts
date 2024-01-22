@@ -18,7 +18,8 @@ export class MotoService {
   }
 
   getMoto(id: string){
-    return this.http.get<Moto>(this.motoUrl + '/${id}');
+    let url = this.motoUrl + '/' + id
+    return this.http.get<Moto>(url);
   }
 
   saveMoto(moto: Moto){
@@ -26,10 +27,12 @@ export class MotoService {
   }
 
   patchMoto(id: string, data: any){
-    return this.http.patch<Moto>(this.motoUrl + '/${id}', data);
+    let url = this.motoUrl + '/' + id
+    return this.http.patch<Moto>(url, data);
   }
 
-  deleteMotoType(id: string){
-    return this.http.delete<Moto>(this.motoUrl + '/${id}')
+  deleteMoto(id: string){
+    let url = this.motoUrl + '/' + id
+    return this.http.delete<Moto>(url)
   }
 }

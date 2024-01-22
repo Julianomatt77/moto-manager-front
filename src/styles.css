@@ -163,12 +163,21 @@ input, select, option {
   background: var(--primary)
 }
 
+/****************************************** GLOBAL  ************/
+
 .mt-1-5 {
   margin-top: 1.5rem;
 }
 
 .underline {
   text-decoration: underline;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
 }
 
 /****************************************** LOADING ANIMATION  ************/

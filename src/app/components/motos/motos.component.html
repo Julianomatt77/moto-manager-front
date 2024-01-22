@@ -1,0 +1,41 @@
+@if (isLoading){
+<div class="ring">Loading
+<span class="loading"></span>
+</div>
+}
+
+<section id="motos-list">
+  <h1>Liste des Motos</h1>
+  <div>
+    <a href="javascript:;" (click)="addMoto()" class="material-symbols-outlined">add_circle</a>
+  </div>
+
+  @if (!isLoading) {
+  <div class="motos-recap">TODO Recap</div>
+
+  <div class="motos-container">
+    @for (moto of motos; track moto.id){
+      <div class="card-motos-list">
+
+        <div class="flex-center">
+          <div>{{moto.marque}}</div>
+          <div>{{moto.modele}}</div>
+        </div>
+
+        <div>
+          <a href="javascript:;" (click)="editMoto(moto)" class="material-symbols-outlined">edit_note</a>
+        </div>
+
+        <div>
+          <a href="javascript:;" (click)="openConfirmation(moto)" class="material-symbols-outlined">delete</a>
+        </div>
+
+      </div>
+
+    } @empty {
+  <span>Vous n'avez aucune moto</span>
+  }
+
+  </div>
+  }
+</section>
