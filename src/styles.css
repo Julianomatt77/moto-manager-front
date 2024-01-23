@@ -180,6 +180,10 @@ input, select, option {
   gap: 2rem;
 }
 
+.pr-1-5 {
+  padding-right: 1.5rem;
+}
+
 /****************************************** LOADING ANIMATION  ************/
 .ring {
   position:absolute;
@@ -375,11 +379,16 @@ input, select, option {
 
   .card {
     min-width: 250px;
+    border-radius: 20px;
   }
 
   .card-moto {
     display: none;
   }
 
+  .card-top {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+  }
 
 }
