@@ -127,4 +127,8 @@ export class EntretienFormComponent {
     this.entretien.date = e.target.value;
   }
 
+  closePopup(){
+    this.dialogRef.close();
+  }
+
 }

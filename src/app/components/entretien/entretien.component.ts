@@ -56,7 +56,7 @@ export class EntretienComponent {
           addOrEdit: 'add',
         },
         width: '80vw',
-        height: '65vh',
+        height: '75vh',
       })
       .afterClosed()
       .subscribe(() => {
@@ -74,7 +74,7 @@ export class EntretienComponent {
           addOrEdit: 'edit',
         },
         width: '80vw',
-        height: '65vh',
+        height: '75vh',
       })
       .afterClosed()
       .subscribe(() => {

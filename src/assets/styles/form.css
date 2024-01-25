@@ -1,7 +1,13 @@
 .popup {
+  position: relative;
   display: flex;
   justify-content: center;
   margin: 20px;
+}
+
+.popup-close {
+  position: absolute;
+  right: 1rem;
 }
 
 .login-form {

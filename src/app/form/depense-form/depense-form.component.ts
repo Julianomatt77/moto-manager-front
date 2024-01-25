@@ -164,4 +164,9 @@ export class DepenseFormComponent implements OnInit{
   onTypeSelection(e: any) {
     this.selectedType = e.target.value.split(':')[1].trim()
   }
+
+  closePopup(){
+    this.dialogRef.close();
+  }
+
 }

@@ -52,7 +52,7 @@ export class MotosComponent {
           addOrEdit: 'add',
         },
         width: '80vw',
-        height: '65vh',
+        height: '40vh',
       })
       .afterClosed()
       .subscribe(() => {
@@ -70,7 +70,7 @@ export class MotosComponent {
           addOrEdit: 'edit',
         },
         width: '80vw',
-        height: '65vh',
+        height: '40vh',
       })
       .afterClosed()
       .subscribe(() => {

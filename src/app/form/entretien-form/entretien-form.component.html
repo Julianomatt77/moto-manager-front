@@ -1,6 +1,11 @@
 <div class="popup">
+  <div class="popup-close">
+    <a href="javascript:;" (click)="closePopup()" class="material-symbols-outlined">close</a>
+  </div>
+
   <form [formGroup]="form" (ngSubmit)="onSubmitEntretien()" class="form-container">
 
+      <h3>{{ buttonLabel }} un entretien</h3>
 
       <div class="form-group">
         <div><label for="kilometrage">Kilométrage</label></div>

@@ -92,4 +92,9 @@ export class MotoFormComponent {
       });
     }
   }
+
+  closePopup(){
+    this.dialogRef.close();
+  }
+
 }

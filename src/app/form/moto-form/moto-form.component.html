@@ -1,6 +1,10 @@
 <div class="popup">
+  <div class="popup-close">
+    <a href="javascript:;" (click)="closePopup()" class="material-symbols-outlined">close</a>
+  </div>
   <form [formGroup]="form" (ngSubmit)="onSubmitMoto()" class="form-container">
 
+    <h3>{{ buttonLabel }} une moto</h3>
 
     <div class="form-group">
       <div><label for="marque">Marque</label></div>
