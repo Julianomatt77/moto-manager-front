@@ -35,7 +35,7 @@ export class MotosComponent {
       next: (data) => {
         this.isLoading = false;
         this.motos = data;
-        console.log(this.motos)
+        // console.log(this.motos)
       },
       error: (err) => {
         this.error = err.error.message

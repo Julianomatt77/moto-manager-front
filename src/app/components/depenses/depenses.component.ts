@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {DepensesService} from "../../services/depenses/depenses.service";
 import {StorageService} from "../../services/storage/storage.service";
 import {User} from "../../models/User";
@@ -6,11 +6,13 @@ import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {DepenseFormComponent} from "../../form/depense-form/depense-form.component";
 import {ConfirmationDialogComponent} from "../confirmation-dialog/confirmation-dialog.component";
+import {MatPaginator, MatPaginatorModule, PageEvent} from "@angular/material/paginator";
+import {MatTableDataSource} from "@angular/material/table";
 
 @Component({
   selector: 'app-depenses',
   standalone: true,
-  imports: [NgForOf, NgIf, DatePipe],
+  imports: [NgForOf, NgIf, DatePipe, MatPaginatorModule],
   templateUrl: './depenses.component.html',
   styleUrl: './depenses.component.css',
 })
@@ -21,6 +23,19 @@ export class DepensesComponent {
   isLoading = true;
   error: string;
   dialogRef!: MatDialogRef<ConfirmationDialogComponent>;
+
+  length = 50;
+  pageSize = 10;
+  currentPage = 0;
+  pageSizeOptions = [5, 10, 25];
+  pageEvent: PageEvent;
+  hidePageSize = false;
+  showPageSizeOptions = true;
+  showFirstLastButtons = true;
+  disabled = false;
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  public dataSource: any;
 
   constructor(private depensesService: DepensesService, private storageService: StorageService, public dialog: MatDialog){}
 
@@ -35,6 +50,12 @@ export class DepensesComponent {
       next: (data) => {
         this.isLoading = false;
         this.depenses = data;
+
+        this.dataSource = new MatTableDataSource<Element>(data);
+        this.dataSource.paginator = this.paginator;
+        this.length = data.length;
+        this.iterator();
+
         // console.log(this.depenses)
 
         // const datePipe = new DatePipe('en-US');
@@ -103,4 +124,20 @@ export class DepensesComponent {
   }
 
   /****************************************/
+
+  handlePageEvent(e: PageEvent) {
+    this.pageEvent = e;
+    this.length = e.length;
+    this.pageSize = e.pageSize;
+    this.currentPage = e.pageIndex;
+
+    this.iterator();
+  }
+
+  private iterator() {
+    const end = (this.currentPage + 1) * this.pageSize;
+    const start = this.currentPage * this.pageSize;
+    const part = this.depenses.slice(start, end);
+    this.dataSource = part;
+  }
 }

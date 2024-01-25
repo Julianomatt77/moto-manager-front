@@ -4,12 +4,14 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import {HttpClient, HttpClientModule, provideHttpClient} from "@angular/common/http";
 import {tokenInterceptorProvider} from "./auth.interceptor";
+import {provideAnimations} from "@angular/platform-browser/animations";
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(),
     importProvidersFrom(HttpClientModule),
-    tokenInterceptorProvider
+    tokenInterceptorProvider,
+    provideAnimations()
   ]
 };

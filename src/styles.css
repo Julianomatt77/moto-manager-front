@@ -344,9 +344,6 @@ input, select, option {
 }
 
 /****************************************** FIN CARDS  ************/
-
-
-
 /****************************************** POPUP ************/
 .cdk-overlay-container {
   position: fixed;
@@ -354,8 +351,12 @@ input, select, option {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 12;
-  background: var(--primary);
+  /*background: var(--primary);*/
   border-radius: 20px;
+}
+
+.cdk-global-overlay-wrapper{
+  background: var(--primary);
 }
 
 .mat-mdc-dialog-container .mdc-dialog__surface {
@@ -363,15 +364,39 @@ input, select, option {
   border-radius: 20px !important;
 }
 
-/*.popup {*/
-/*  display: flex;*/
-/*  justify-content: center;*/
-/*  margin: 20px;*/
-/*}*/
-
 /****************************************** FIN POPUP  ************/
+/****************************************** PAGINATOR ************/
+.mat-mdc-paginator{
+  display: flex !important;
+  justify-content: center !important;
+  background-color: var(--background) !important;
+}
+.mat-mdc-paginator-outer-container{
+  background: var(--background);
+}
 
-/****************************************** FIN CARDS  ************/
+.mat-mdc-paginator-icon {
+  fill: var(--text) !important;
+}
+
+.mat-mdc-icon-button[disabled] .mat-mdc-paginator-icon{
+  /*fill: var(--mdc-icon-button-disabled-icon-color) !important;*/
+  fill: var(--background) !important;
+}
+
+.mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled) .mdc-list-item__primary-text{
+  color: var(--text) !important;
+}
+
+
+.mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled):not(.mat-mdc-option-multiple){
+  background-color: var(--primary) !important;
+}
+
+.cdk-overlay-pane:not(.mat-mdc-select-panel-above) div.mat-mdc-select-panel {
+  background-color: var(--primary);
+}
+/****************************************** FIN PAGINATOR  ************/
 @media (width <= 768px) {
   .ring, .loading {
     left:50%;
