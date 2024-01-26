@@ -1,0 +1,52 @@
+<!--<div class="dropzone">-->
+<!--  <input type="file" #fileDropRef id="fileDropRef" onchange="console.log(event.target.files)">-->
+<!--  <h3>Drag  and drop file here</h3>-->
+<!--  <h3>or</h3>-->
+<!--  <label for="fileDropRef">Browse for file</label>-->
+<!--</div>-->
+<div class="popup">
+  <div class="popup-close">
+    <a href="javascript:;" (click)="closePopup()" class="material-symbols-outlined">close</a>
+  </div>
+
+  <input type="file" class="file-input"
+         (change)="onFileSelected($event)" #fileUpload>
+<!--TODO: N'autoriser que les fichier xlsx-->
+  <div class="file-upload">
+
+    {{fileName || "Aucun fichier uploadé pour l'instant."}}
+
+    <button mat-mini-fab color="primary" class="upload-btn"
+            (click)="fileUpload.click()">
+      <span class="material-symbols-outlined">attach_file</span>
+    </button>
+  </div>
+
+  <form [formGroup]="form" (submit)="onSubmitUpload()" class="form-container">
+    <div class="form-group">
+      <div><label for="moto">Moto</label></div>
+      <select
+        id="moto"
+        class="form-control"
+        formControlName="moto"
+      >
+        <option *ngFor="let moto of motoList" [ngValue]="moto.id.toString()">
+          {{ moto.name }}
+        </option>
+      </select>
+    </div>
+    @if(!form.get('moto')?.valid && submitted){
+    <div class="error-message">
+    {{ motoErrorMessage }}
+    </div>
+    }
+<!--    TODO: a disable si pas de fichier-->
+    <div class="form-submit">
+      <button type="submit" class="secondary-button">
+        Importer
+      </button>
+    </div>
+  </form>
+
+</div>
+

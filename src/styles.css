@@ -184,6 +184,10 @@ input, select, option {
   padding-right: 1.5rem;
 }
 
+.hidden {
+  display: none;
+}
+
 /****************************************** LOADING ANIMATION  ************/
 .ring {
   position:absolute;

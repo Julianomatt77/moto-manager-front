@@ -4,7 +4,7 @@ export class Depense {
   private _kmParcouru: number;
   private _essenceConsomme: number;
   private _consoMoyenne: number;
-  private _essencePrice: string;
+  private _essencePrice: number;
   private _commentaire: string;
   private _kilometrage: number;
   private _date: Date;
@@ -21,7 +21,7 @@ export class Depense {
     kmParcouru: number,
     essenceConsomme: number,
     consoMoyenne: number,
-    essencePrice: string,
+    essencePrice: number,
     commentaire: string,
     kilometrage: number,
     date: Date,
@@ -32,7 +32,7 @@ export class Depense {
     moto: string
   ) {
     this._id = id;
-    this._montant = montant;
+    this.montant = montant;
     this._kmParcouru = kmParcouru;
     this._essenceConsomme = essenceConsomme;
     this._consoMoyenne = consoMoyenne;
@@ -81,11 +81,11 @@ export class Depense {
     this._consoMoyenne = value;
   }
 
-  get essencePrice(): string {
+  get essencePrice(): number {
     return this._essencePrice;
   }
 
-  set essencePrice(value: string) {
+  set essencePrice(value: number) {
     this._essencePrice = value;
   }
 

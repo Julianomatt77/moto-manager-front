@@ -71,7 +71,7 @@ export class DepenseFormComponent implements OnInit{
         0,
         0,
         0,
-        '',
+        0,
         '',
         0,
         new Date(Date.now()),

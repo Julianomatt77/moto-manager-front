@@ -6,12 +6,20 @@
 
 <section id="depenses-list">
   <h1>Liste des dépenses</h1>
-  <div>
-    <a href="javascript:;" (click)="addDepense()" class="material-symbols-outlined">add_circle</a>
+  <div class="flex-center">
+    <div>
+      <a href="javascript:;" (click)="addDepense()" class="material-symbols-outlined">add_circle</a>
+    </div>
+
+    <div>
+      <a href="javascript:;" (click)="openUploadDialog()" class="material-symbols-outlined">upload_file</a>
+    </div>
   </div>
 
+
   @if (!isLoading) {
-  <div class="depenses-recap">TODO Recap</div>
+<!--  TODO-->
+  <div class="depenses-recap hidden">TODO Recap</div>
 
   <mat-paginator
                (page)="handlePageEvent($event)"

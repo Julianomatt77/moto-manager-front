@@ -8,6 +8,7 @@ import {DepenseFormComponent} from "../../form/depense-form/depense-form.compone
 import {ConfirmationDialogComponent} from "../confirmation-dialog/confirmation-dialog.component";
 import {MatPaginator, MatPaginatorModule, PageEvent} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
+import {UploadPopupComponent} from "../../form/upload-popup/upload-popup.component";
 
 @Component({
   selector: 'app-depenses',
@@ -123,7 +124,7 @@ export class DepensesComponent {
     })
   }
 
-  /****************************************/
+  /****************** PAGINATOR **********************/
 
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
@@ -139,5 +140,20 @@ export class DepensesComponent {
     const start = this.currentPage * this.pageSize;
     const part = this.depenses.slice(start, end);
     this.dataSource = part;
+  }
+
+  /****************** UPLOAD **********************/
+  openUploadDialog(){
+    this.dialog.open(UploadPopupComponent, {
+      data: {
+        type: 'depense'
+      },
+      width: '80vw',
+      height: '85vh'
+    })
+      .afterClosed()
+      .subscribe(() => {
+        this.getAllDepenses();
+      });
   }
 }
