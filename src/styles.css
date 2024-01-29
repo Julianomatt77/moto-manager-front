@@ -180,6 +180,14 @@ input, select, option {
   gap: 2rem;
 }
 
+.flex-center-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 2rem;
+}
+
 .pr-1-5 {
   padding-right: 1.5rem;
 }

@@ -1,28 +1,45 @@
 <!--<div class="dropzone">-->
-<!--  <input type="file" #fileDropRef id="fileDropRef" onchange="console.log(event.target.files)">-->
+<!--  <input type="file" #fileDropRef id="fileDropRef" (change)="onFileSelected($event)">-->
 <!--  <h3>Drag  and drop file here</h3>-->
 <!--  <h3>or</h3>-->
 <!--  <label for="fileDropRef">Browse for file</label>-->
 <!--</div>-->
-<div class="popup">
+<div class="popup-upload">
   <div class="popup-close">
     <a href="javascript:;" (click)="closePopup()" class="material-symbols-outlined">close</a>
   </div>
 
   <input type="file" class="file-input"
-         (change)="onFileSelected($event)" #fileUpload>
-<!--TODO: N'autoriser que les fichier xlsx-->
-  <div class="file-upload">
+         (change)="onFileSelected($event)" #fileUpload accept=".xls, .xlsx">
 
-    {{fileName || "Aucun fichier uploadé pour l'instant."}}
-
+  <div class="file-upload flex-center">
     <button mat-mini-fab color="primary" class="upload-btn"
             (click)="fileUpload.click()">
       <span class="material-symbols-outlined">attach_file</span>
     </button>
+
+    {{fileName || "Aucun fichier uploadé pour l'instant."}}
   </div>
+  @if(!fileImported && submitted){
+  <div class="error-message">
+    Un fichier est obligatoire !
+  </div>
+  }
+
+  @if(fileErrorMessage){
+  <div class="error-message">
+  {{ fileErrorMessage }}
+  </div>
+  }
+
+  @if (isLoading){
+  <div class="ring-upload ring">Loading
+    <span class="loading"></span>
+  </div>
+  }
 
   <form [formGroup]="form" (submit)="onSubmitUpload()" class="form-container">
+    @if (!isLoading) {
     <div class="form-group">
       <div><label for="moto">Moto</label></div>
       <select
@@ -37,7 +54,7 @@
     </div>
     @if(!form.get('moto')?.valid && submitted){
     <div class="error-message">
-    {{ motoErrorMessage }}
+    La moto est obligatoire !
     </div>
     }
 <!--    TODO: a disable si pas de fichier-->
@@ -46,6 +63,7 @@
         Importer
       </button>
     </div>
+    }
   </form>
 
 </div>

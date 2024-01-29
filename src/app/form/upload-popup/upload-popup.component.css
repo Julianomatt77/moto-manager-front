@@ -3,3 +3,18 @@
 .file-input {
   display: none;
 }
+
+.popup-upload {
+  position: relative;
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 2rem;
+}
+
+.ring-upload {
+  top: 35vh;
+  left: 50%;
+}

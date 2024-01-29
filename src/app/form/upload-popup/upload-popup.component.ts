@@ -10,6 +10,7 @@ import {MotoService} from "../../services/moto/moto.service";
 import {Moto} from "../../models/Moto";
 import {NgForOf} from "@angular/common";
 import {forkJoin} from "rxjs";
+import {MatProgressBarModule} from "@angular/material/progress-bar";
 
 @Component({
   selector: 'app-upload-popup',
@@ -17,7 +18,8 @@ import {forkJoin} from "rxjs";
   imports: [
     ReactiveFormsModule,
     NgForOf,
-    FormsModule
+    FormsModule,
+    MatProgressBarModule
   ],
   templateUrl: './upload-popup.component.html',
   styleUrl: './upload-popup.component.css'
@@ -37,8 +39,12 @@ export class UploadPopupComponent {
   selectedType: string = '';
   submitted: boolean = false;
   depenseList: Depense[] = [];
+  entretienList: Entretien[] = [];
   moto!: Moto;
-  motoErrorMessage = 'La moto est obligatoire.';
+  // motoErrorMessage = 'La moto est obligatoire.';
+  isLoading = false;
+  fileImported = false;
+  fileErrorMessage = '';
 
 
   constructor(private fb: FormBuilder,
@@ -66,12 +72,14 @@ export class UploadPopupComponent {
       moto: ['', [Validators.required]]
     })
 
-    this.depensesTypeService.getDepensesTypes().subscribe((data) => {
-      data.forEach((type) => {
-        this.depensesType.push({'id': type.id, 'name': type.name})
+    if (this.type == 'depense') {
+      this.depensesTypeService.getDepensesTypes().subscribe((data) => {
+        data.forEach((type) => {
+          this.depensesType.push({'id': type.id, 'name': type.name})
+        })
+        this.depensesType.push({'id': 0, 'name': 'autre'})
       })
-      this.depensesType.push({'id': 0, 'name': 'autre'})
-    })
+    }
 
     this.motoService.getMotos().subscribe(data => {
       data.forEach(moto => {
@@ -81,6 +89,8 @@ export class UploadPopupComponent {
   }
 
   onFileSelected(event: any) {
+    this.isLoading = true;
+    this.fileErrorMessage = '';
     const file: File = event.target.files[0];
 
     if (file) {
@@ -97,7 +107,17 @@ export class UploadPopupComponent {
           this.uploadData = rows;
         }
 
-        this.transformDataToDepense(this.uploadData);
+        this.isLoading = false;
+
+        const error = this.checkFileDataFormat(this.uploadData);
+
+        if (!error){
+          this.transformDataToDepense(this.uploadData);
+          this.fileImported = true;
+        } else {
+          this.fileErrorMessage = error;
+        }
+
       }
       reader.readAsArrayBuffer(file);
     }
@@ -105,15 +125,15 @@ export class UploadPopupComponent {
 
   onSubmitUpload() {
     this.submitted = true;
-    if (this.form.valid) {
-      const saveDepenseObservables = this.depenseList.map((depense: Depense) => {
-        depense.moto = this.form.value['moto'];
-        return this.depensesService.saveDepense(depense);
-      });
+    if (this.form.valid && !this.fileErrorMessage) {
+        const saveDepenseObservables = this.depenseList.map((depense: Depense) => {
+          depense.moto = this.form.value['moto'];
+          return this.depensesService.saveDepense(depense);
+        });
 
-      forkJoin(saveDepenseObservables).subscribe(() => {
-        this.dialogRef.close();
-      });
+        forkJoin(saveDepenseObservables).subscribe(() => {
+          this.dialogRef.close();
+        });
     }
   }
 
@@ -157,7 +177,6 @@ export class UploadPopupComponent {
           moto: depense.moto,
         };
       });
-
   }
 
   checkDepenseType(data: any) {
@@ -172,6 +191,55 @@ export class UploadPopupComponent {
       }
     })
     return data;
+  }
+
+  checkFileDataFormat (data : any){
+    // Vérifier l'existence des colonnes attendues
+    let expectedColumns: any[] = [];
+    if (this.type == 'depense') {
+      expectedColumns = ['montant', 'date', 'depenseType'];
+    } else if (this.type == 'entretien'){
+      expectedColumns = ['date'];
+    }
+    const actualColumns = Object.keys(data[0]);
+    if (!expectedColumns.every(col => actualColumns.includes(col))) {
+      console.error('Le fichier XLS ne contient pas toutes les colonnes requises. (montant, date, depenseType');
+      return 'Le fichier XLS ne contient pas toutes les colonnes requises.';
+    }
+
+    // Vérifier le type des données
+    if (this.type == 'depense') {
+      const invalidData = data.find((depense: any) => {
+        return typeof depense.montant !== 'number' || typeof depense.date !== 'string';
+      });
+      if (invalidData) {
+        console.error('Certaines données ne sont pas du type attendu.');
+        return 'Certaines données ne sont pas du type attendu.';
+      }
+    }
+    if (this.type == 'entretien') {
+      const invalidData = data.find((depense: any) => {
+        return typeof depense.date !== 'string';
+      });
+      if (invalidData) {
+        console.error('Certaines données ne sont pas du type attendu.');
+        return 'Certaines données ne sont pas du type attendu.';
+      }
+    }
+
+    // Vérifier le format des dates
+    const invalidDateEntries = data.filter((depenseData: any) => !this.isValidDate(depenseData.date));
+    if (invalidDateEntries.length > 0) {
+      console.error('Certaines dates ne sont pas valides.');
+      return 'Certaines dates ne sont pas valides.';
+    }
+
+    return ;
+  }
+
+  isValidDate(dateString: string): boolean {
+    const dateObject = new Date(dateString);
+    return !isNaN(dateObject.getTime()) && dateString.trim() !== '';
   }
 
 }
