@@ -11,6 +11,7 @@ import {Moto} from "../../models/Moto";
 import {NgForOf} from "@angular/common";
 import {forkJoin} from "rxjs";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
+import {EntretiensService} from "../../services/entretiens/entretiens.service";
 
 @Component({
   selector: 'app-upload-popup',
@@ -51,6 +52,7 @@ export class UploadPopupComponent {
               public dialogRef: MatDialogRef<UploadPopupComponent>,
               @Inject(MAT_DIALOG_DATA) private data: any,
               private depensesService: DepensesService,
+              private entretiensService: EntretiensService,
               private depensesTypeService: DepensesTypeService,
               private motoService: MotoService,
   ) {
@@ -112,7 +114,11 @@ export class UploadPopupComponent {
         const error = this.checkFileDataFormat(this.uploadData);
 
         if (!error){
-          this.transformDataToDepense(this.uploadData);
+          if (this.type == 'depense') {
+            this.transformDataToDepense(this.uploadData);
+          } else {
+            this.transformDataToEntretien(this.uploadData);
+          }
           this.fileImported = true;
         } else {
           this.fileErrorMessage = error;
@@ -126,6 +132,8 @@ export class UploadPopupComponent {
   onSubmitUpload() {
     this.submitted = true;
     if (this.form.valid && !this.fileErrorMessage) {
+      console.log(this.entretienList)
+      if (this.type == 'depense') {
         const saveDepenseObservables = this.depenseList.map((depense: Depense) => {
           depense.moto = this.form.value['moto'];
           return this.depensesService.saveDepense(depense);
@@ -134,6 +142,16 @@ export class UploadPopupComponent {
         forkJoin(saveDepenseObservables).subscribe(() => {
           this.dialogRef.close();
         });
+      } else {
+        const saveEntretienObservables = this.entretienList.map((entretien: Entretien) => {
+          entretien.moto = this.form.value['moto'];
+          return this.entretiensService.saveEntretien(entretien);
+        });
+
+        forkJoin(saveEntretienObservables).subscribe(() => {
+          this.dialogRef.close();
+        });
+      }
     }
   }
 
@@ -142,9 +160,7 @@ export class UploadPopupComponent {
   }
 
   transformDataToDepense(data: any) {
-    if (this.type == 'depense') {
-      data = this.checkDepenseType(data)
-    }
+    data = this.checkDepenseType(data)
 
     this.depenseList = data
       .filter((depenseData: any) => depenseData.montant !== null && depenseData.date !== null && depenseData.depenseType !== null)
@@ -177,6 +193,37 @@ export class UploadPopupComponent {
           moto: depense.moto,
         };
       });
+  }
+
+  transformDataToEntretien(data: any) {
+    this.entretienList = data
+      .filter((entretienData: any) => entretienData.date !== null)
+      .map((entretienData: any) => {
+        entretienData.graissage = !!entretienData.graissage;
+        entretienData.lavage = entretienData.lavage ? true : false;
+
+        const entretien = new Entretien(
+            entretienData.id || '',
+            entretienData.graissage || false,
+            entretienData.lavage || false,
+            entretienData.pressionAv || 0,
+            entretienData.pressionAr || 0,
+            entretienData.kilometrage || 0,
+            entretienData.date || new Date(),
+            entretienData.moto || '',
+          );
+
+          return {
+            id: entretien.id,
+            graissage: entretien.graissage,
+            lavage: entretien.lavage,
+            pressionAv: entretien.pressionAv,
+            pressionAr: entretien.pressionAr,
+            kilometrage: entretien.kilometrage,
+            date: entretien.date,
+            moto: entretien.moto,
+          }
+        });
   }
 
   checkDepenseType(data: any) {

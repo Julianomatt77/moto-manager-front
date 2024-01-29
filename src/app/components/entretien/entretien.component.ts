@@ -9,6 +9,7 @@ import {CommonModule} from "@angular/common";
 import {EntretienFormComponent} from "../../form/entretien-form/entretien-form.component";
 import {MatPaginator, MatPaginatorModule, PageEvent} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
+import {UploadPopupComponent} from "../../form/upload-popup/upload-popup.component";
 
 @Component({
   selector: 'app-entretien',
@@ -142,5 +143,20 @@ export class EntretienComponent {
     const start = this.currentPage * this.pageSize;
     const part = this.entretiens.slice(start, end);
     this.dataSource = part;
+  }
+
+  /****************** UPLOAD **********************/
+  openUploadDialog(){
+    this.dialog.open(UploadPopupComponent, {
+      data: {
+        type: 'entretien'
+      },
+      width: '80vw',
+      height: '85vh'
+    })
+      .afterClosed()
+      .subscribe(() => {
+        this.getAllEntretiens();
+      });
   }
 }
