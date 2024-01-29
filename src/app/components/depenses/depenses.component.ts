@@ -149,7 +149,7 @@ export class DepensesComponent {
         type: 'depense'
       },
       width: '80vw',
-      height: '85vh'
+      height: '50vh'
     })
       .afterClosed()
       .subscribe(() => {

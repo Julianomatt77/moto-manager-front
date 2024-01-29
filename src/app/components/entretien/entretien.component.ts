@@ -152,7 +152,7 @@ export class EntretienComponent {
         type: 'entretien'
       },
       width: '80vw',
-      height: '85vh'
+      height: '50vh'
     })
       .afterClosed()
       .subscribe(() => {

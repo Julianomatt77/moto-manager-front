@@ -46,6 +46,7 @@ export class UploadPopupComponent {
   isLoading = false;
   fileImported = false;
   fileErrorMessage = '';
+  templateName = '';
 
 
   constructor(private fb: FormBuilder,
@@ -81,6 +82,10 @@ export class UploadPopupComponent {
         })
         this.depensesType.push({'id': 0, 'name': 'autre'})
       })
+
+      this.templateName = 'depense-moto-template.xlsx';
+    } else {
+      this.templateName = 'entretien-moto-template.xlsx';
     }
 
     this.motoService.getMotos().subscribe(data => {
@@ -287,6 +292,10 @@ export class UploadPopupComponent {
   isValidDate(dateString: string): boolean {
     const dateObject = new Date(dateString);
     return !isNaN(dateObject.getTime()) && dateString.trim() !== '';
+  }
+
+  getFileName(){
+    return '../../../assets/files/' + this.templateName;
   }
 
 }
