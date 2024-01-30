@@ -1,5 +1,5 @@
 .nav-div {
-  backdrop-filter: blur(50px);
+  /*backdrop-filter: blur(50px);*/
   /*display: flex;*/
   /*flex-direction: column;*/
   background-color: var(--static);
@@ -11,6 +11,7 @@
   background: var(--primary);
   height: 100vh;
   position: fixed;
+  width: 20%;
 }
 
 .menu {

@@ -188,8 +188,42 @@ input, select, option {
   gap: 2rem;
 }
 
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}
+
+.mt-2 {
+  margin-top: 2rem;
+}
+
+.mb-2 {
+  margin-bottom: 2rem;
+}
+
+.mr-ml-2{
+  margin-left: 2rem;
+  margin-right: 2rem;
+}
+
+.p-1{
+  padding: 1rem;
+}
+
+.pr-1 {
+  padding-right: 1rem;
+}
+
+.pl-2{
+  padding-left: 2rem;
+}
+
 .pr-1-5 {
   padding-right: 1.5rem;
+}
+
+.border-30 {
+  border-radius: 30px;
 }
 
 .hidden {

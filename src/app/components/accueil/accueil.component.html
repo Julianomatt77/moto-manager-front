@@ -1,1 +1,67 @@
-<p>accueil works!</p>
+<section>
+  <div class="flex-center">
+    <h1>Moto Manager</h1>
+    <div >
+      <img src="assets/images/moto-manager.png" class="logo img-fluid border-30" alt="moto-manager-logo" title="moto manager logo"/>
+    </div>
+  </div>
+
+  <div>
+    <p>Gérer les dépenses et entretiens réguliers de vos motos</p>
+  </div>
+
+  @if(!isLoggedIn){
+  <div class="flex-center mt-2 mb-2">
+      <button class="primary-button"><a [routerLink]="['/register']" >Inscrivez-vous !</a></button>
+  </div>
+  }
+
+  <div class="flex-center">
+    <h2>Comment ça marche ?</h2>
+  </div>
+
+  <div class="flex-center-column pr-1 pl-2">
+
+    <div class="card card-accueil flex-center">
+      <div class="card-left-image p-1 ">
+        <img src="assets/images/01_depenses.png" class="img-fluid border-30" alt="dépenses" title="dépenses"/>
+      </div>
+      <div class="card-right-accueil">
+        <h3>Vos dépenses</h3>
+        <p class="card-accueil-text">Voir la liste de toutes vos dépenses</p>
+      </div>
+    </div>
+
+    <div class="card card-accueil flex-center">
+      <div class="card-left-image p-1 ">
+        <img src="assets/images/02_entretiens.png" class="img-fluid border-30" alt="entretiens" title="entretiens"/>
+      </div>
+      <div class="card-right-accueil">
+        <h3>Vos entretiens</h3>
+        <p class="card-accueil-text">Voir la liste de toutes vos entretiens réguliers (graissage de la chaîne, pression des pneus, lavage, etc...)</p>
+      </div>
+    </div>
+
+    <div class="card card-accueil flex-center">
+      <div class="card-left-image p-1 ">
+        <img src="assets/images/03_import.png" class="img-fluid border-30" alt="import" title="import"/>
+      </div>
+      <div class="card-right-accueil">
+        <h3>Importer vos données</h3>
+        <p class="card-accueil-text">Vous avez la possibilité d'importer directement vos données depuis un fichier xls (template en téléchargement)</p>
+      </div>
+    </div>
+
+    <div class="card card-accueil flex-center">
+      <div class="card-left-image p-1 ">
+        <img src="assets/images/04_ajout_manuel.png" class="img-fluid border-30" alt="ajout_manuel" title="ajout_manuel" />
+      </div>
+      <div class="card-right-accueil">
+        <h3>Saisie manuelle</h3>
+        <p class="card-accueil-text">Pour une utilisation régulière, vous pouvez saisir manuellement vos dépenses et entretiens, ainsi que la possibilité d'ajouter ou supprimer des motos de votre garage</p>
+      </div>
+    </div>
+
+
+  </div>
+</section>

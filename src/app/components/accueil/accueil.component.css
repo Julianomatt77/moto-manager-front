@@ -1,0 +1,38 @@
+.div-50{
+  width: 50%;
+}
+
+.card-accueil{
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-left-image{
+  width: 50%;
+}
+
+.card-accueil-text {
+  width: 305px;
+}
+
+.card-right-accueil {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo {
+  width: 100px;
+}
+
+@media (width <= 1068px) {
+  .card-left-image{
+    width: 100%;
+  }
+
+  .card-accueil-text {
+    width: 80%;
+  }
+}

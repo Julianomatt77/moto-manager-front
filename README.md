@@ -1,6 +1,10 @@
 # MotoManager
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.6.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.1
+
+## Installation
+
+- `npm i`
 
 ## Development server
 
