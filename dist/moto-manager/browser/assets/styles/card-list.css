@@ -1,0 +1,16 @@
+#depenses-list, #entretien-list, #motos-list {
+  width: 100%;
+}
+
+.depenses-container, .entretiens-container, .motos-container {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 50px
+}
+
+.motos-container {
+  flex-direction: column;
+  align-items: center;
+}

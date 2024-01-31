@@ -1,0 +1,89 @@
+.popup {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+}
+
+.popup-close {
+  position: absolute;
+  right: 1rem;
+}
+
+.login-form {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+}
+
+.form-group{
+  margin-bottom: 10px;
+}
+::placeholder {
+  color: var(--text);
+  opacity: 0.6;
+}
+
+::-ms-input-placeholder { /* Edge 12 -18 */
+  color: var(--text);
+  opacity: 0.6;
+}
+
+.form-control {
+  display: block;
+  width: 90%;
+  padding: 0.375rem 0.75rem;
+  margin-top: 0.1rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  background-clip: padding-box;
+  border: 1px solid var(--text);
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 0.375rem;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.form-container {
+  width: 60%;
+}
+
+.form-submit {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.error-message {
+  background-color: var(--error-color);
+  color: var(--blanc);
+  border-radius: 1rem;
+  padding: 0.5rem;
+}
+
+.slide {
+  margin-top: 0.1rem;
+}
+
+.mat-mdc-slide-toggle.mat-accent {
+  --mdc-switch-selected-focus-state-layer-color: var(--accent);
+  --mdc-switch-selected-handle-color: var(--accent);
+  --mdc-switch-selected-hover-state-layer-color: var(--accent);
+  --mdc-switch-selected-pressed-state-layer-color: var(--accent);
+  --mdc-switch-selected-focus-handle-color: var(--secondary);
+  --mdc-switch-selected-hover-handle-color: var(--secondary);
+  --mdc-switch-selected-pressed-handle-color: var(--secondary);
+  --mdc-switch-selected-focus-track-color: var(--text);
+  --mdc-switch-selected-hover-track-color: var(--text);
+  --mdc-switch-selected-pressed-track-color: var(--text);
+  --mdc-switch-selected-track-color: var(--text);
+}
+
+@media (width <= 768px) {
+  .form-container {
+    width: 100%;
+  }
+}
