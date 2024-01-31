@@ -4,7 +4,7 @@
 
 export const environment = {
   production: true,
-  baseUrl: 'https://moto-manager-api.martin-julien-dev.fr/api',
+  baseUrl: 'https://moto-manager-api.martin-julien-dev.fr/api/',
   user_key: 'mm_user',
   token_name: 'mm_token'
 };
