@@ -42,7 +42,7 @@
               <a href="javascript:;" (click)="editDepense(depense)" class="material-symbols-outlined">edit_note</a>
             </div>
             <h2 class="card-title">{{depense.depenseType.name}}</h2>
-            <p class="pr-1-5">{{depense.montant }} €</p>
+            <p class="pr-1-5">{{depense.montant | number: "1.0-2"}} €</p>
             <div class="card-moto">
               <p>{{depense.moto.modele}}</p>
               <p>{{depense.kilometrage}} Km</p>

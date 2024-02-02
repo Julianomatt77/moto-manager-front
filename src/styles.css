@@ -323,10 +323,11 @@ input, select, option {
 .card-top {
   display: flex;
   flex-direction: column;
-  height: 80px;
+  /*height: 80px;*/
   background: var(--accent);
   border-top-right-radius: 50px;
   border-top-left-radius: 50px;
+  min-height: 80px;
 }
 
 .card-title-div {
@@ -338,7 +339,9 @@ input, select, option {
 }
 
 .card-title {
-  margin: 0
+  margin: 0;
+  max-width: 150px;
+  word-break: break-word;
 }
 
 .card-moto {
@@ -439,7 +442,7 @@ input, select, option {
   background-color: var(--primary) !important;
 }
 
-.cdk-overlay-pane:not(.mat-mdc-select-panel-above) div.mat-mdc-select-panel {
+.cdk-overlay-pane div.mat-mdc-select-panel {
   background-color: var(--primary);
 }
 /****************************************** FIN PAGINATOR  ************/

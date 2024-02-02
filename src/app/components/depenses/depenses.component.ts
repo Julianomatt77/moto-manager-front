@@ -2,7 +2,7 @@ import {Component, ViewChild} from '@angular/core';
 import {DepensesService} from "../../services/depenses/depenses.service";
 import {StorageService} from "../../services/storage/storage.service";
 import {User} from "../../models/User";
-import {DatePipe, NgForOf, NgIf} from "@angular/common";
+import {DatePipe, DecimalPipe, NgForOf, NgIf} from "@angular/common";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {DepenseFormComponent} from "../../form/depense-form/depense-form.component";
 import {ConfirmationDialogComponent} from "../confirmation-dialog/confirmation-dialog.component";
@@ -13,7 +13,7 @@ import {UploadPopupComponent} from "../../form/upload-popup/upload-popup.compone
 @Component({
   selector: 'app-depenses',
   standalone: true,
-  imports: [NgForOf, NgIf, DatePipe, MatPaginatorModule],
+    imports: [NgForOf, NgIf, DatePipe, MatPaginatorModule, DecimalPipe],
   templateUrl: './depenses.component.html',
   styleUrl: './depenses.component.css',
 })
