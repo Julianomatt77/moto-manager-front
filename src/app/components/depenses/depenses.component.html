@@ -8,11 +8,11 @@
   <h1>Liste des dépenses</h1>
   <div class="flex-center">
     <div>
-      <a href="javascript:;" (click)="addDepense()" class="material-symbols-outlined">add_circle</a>
+      <a href="javascript:;" (click)="addDepense()" class="material-symbols-outlined" title="ajouter une dépense">add_circle</a>
     </div>
 
     <div>
-      <a href="javascript:;" (click)="openUploadDialog()" class="material-symbols-outlined">upload_file</a>
+      <a href="javascript:;" (click)="openUploadDialog()" class="material-symbols-outlined" title="importer des dépenses depuis un fichier">upload_file</a>
     </div>
   </div>
 
@@ -39,7 +39,7 @@
         <div class="card-top">
           <div class="card-title-div">
             <div>
-              <a href="javascript:;" (click)="editDepense(depense)" class="material-symbols-outlined">edit_note</a>
+              <a href="javascript:;" (click)="editDepense(depense)" class="material-symbols-outlined" title="éditer la dépense">edit_note</a>
             </div>
             <h2 class="card-title">{{depense.depenseType.name}}</h2>
             <p class="pr-1-5">{{depense.montant | number: "1.0-2"}} €</p>
@@ -78,7 +78,7 @@
         </div>
 
         <div>
-          <a href="javascript:;" (click)="openConfirmation(depense)" class="material-symbols-outlined">delete</a>
+          <a href="javascript:;" (click)="openConfirmation(depense)" class="material-symbols-outlined" title="supprimer la dépense">delete</a>
         </div>
       </div>
     } @empty {

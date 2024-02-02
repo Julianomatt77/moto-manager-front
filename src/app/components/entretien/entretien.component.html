@@ -8,11 +8,11 @@
   <h1>Liste des entretiens réguliers</h1>
   <div class="flex-center">
     <div>
-      <a href="javascript:;" (click)="addEntretien()" class="material-symbols-outlined">add_circle</a>
+      <a href="javascript:;" (click)="addEntretien()" class="material-symbols-outlined" title="ajouter une dépense">add_circle</a>
     </div>
 
     <div>
-      <a href="javascript:;" (click)="openUploadDialog()" class="material-symbols-outlined">upload_file</a>
+      <a href="javascript:;" (click)="openUploadDialog()" class="material-symbols-outlined" title="importer des entretiens depuis un fichier">upload_file</a>
     </div>
   </div>
 
@@ -38,10 +38,8 @@
     <div class="card-top">
       <div class="card-title-div">
         <div>
-          <a href="javascript:;" (click)="editEntretien(entretien)" class="material-symbols-outlined">edit_note</a>
+          <a href="javascript:;" (click)="editEntretien(entretien)" class="material-symbols-outlined" title="éditer l'entretien">edit_note</a>
         </div>
-<!--        <h2 class="card-title">{{entretien.entretienType.name}}</h2>-->
-<!--        <p>{{entretien.montant }} €</p>-->
         <div class="card-moto">
           <p>{{entretien.moto.modele}}</p>
           <p>{{entretien.kilometrage}} Km</p>
@@ -77,7 +75,7 @@
 <!--    </div>-->
 
     <div>
-      <a href="javascript:;" (click)="openConfirmation(entretien)" class="material-symbols-outlined">delete</a>
+      <a href="javascript:;" (click)="openConfirmation(entretien)" class="material-symbols-outlined" title="supprimer l'entretien">delete</a>
     </div>
   </div>
 
