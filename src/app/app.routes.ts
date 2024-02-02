@@ -6,6 +6,7 @@ import {DepensesComponent} from "./components/depenses/depenses.component";
 import {authGuard} from "./guards/auth.guard";
 import {EntretienComponent} from "./components/entretien/entretien.component";
 import {MotosComponent} from "./components/motos/motos.component";
+import {CguComponent} from "./pages/cgu/cgu.component";
 
 export const routes: Routes = [
   { path: '', component: AccueilComponent },
@@ -14,6 +15,7 @@ export const routes: Routes = [
   {path: 'depenses', canActivate: [authGuard], component: DepensesComponent},
   {path: 'entretien', canActivate: [authGuard], component: EntretienComponent},
   {path: 'motos', canActivate: [authGuard], component: MotosComponent},
+  {path: 'cgu', component: CguComponent},
   { path: 'not-found', component: ErrorComponent },
   { path: '**', redirectTo: 'not-found'}
 ];
