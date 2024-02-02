@@ -105,7 +105,7 @@ export class UploadPopupComponent {
       this.fileName = file.name;
 
       const reader = new FileReader();
-      reader.onload = (event: any) => {
+      reader.onload = async (event: any) => {
         const wb = read(event.target.result);
         const sheets = wb.SheetNames;
 
@@ -114,17 +114,17 @@ export class UploadPopupComponent {
           this.uploadData = rows;
         }
 
-        this.isLoading = false;
-
         const error = this.checkFileDataFormat(this.uploadData);
 
         if (!error){
           if (this.type == 'depense') {
+            this.uploadData = await this.transformDepenseType(this.uploadData);
             this.transformDataToDepense(this.uploadData);
           } else {
             this.transformDataToEntretien(this.uploadData);
           }
           this.fileImported = true;
+          this.isLoading = false;
         } else {
           this.fileErrorMessage = error;
         }
@@ -137,7 +137,7 @@ export class UploadPopupComponent {
   onSubmitUpload() {
     this.submitted = true;
     if (this.form.valid && !this.fileErrorMessage) {
-      console.log(this.entretienList)
+      this.isLoading = true;
       if (this.type == 'depense') {
         const saveDepenseObservables = this.depenseList.map((depense: Depense) => {
           depense.moto = this.form.value['moto'];
@@ -145,6 +145,7 @@ export class UploadPopupComponent {
         });
 
         forkJoin(saveDepenseObservables).subscribe(() => {
+          this.isLoading = false;
           this.dialogRef.close();
         });
       } else {
@@ -154,6 +155,7 @@ export class UploadPopupComponent {
         });
 
         forkJoin(saveEntretienObservables).subscribe(() => {
+          this.isLoading = false;
           this.dialogRef.close();
         });
       }
@@ -165,7 +167,6 @@ export class UploadPopupComponent {
   }
 
   transformDataToDepense(data: any) {
-    data = this.checkDepenseType(data)
 
     this.depenseList = data
       .filter((depenseData: any) => depenseData.montant !== null && depenseData.date !== null && depenseData.depenseType !== null)
@@ -229,20 +230,6 @@ export class UploadPopupComponent {
             moto: entretien.moto,
           }
         });
-  }
-
-  checkDepenseType(data: any) {
-    data.forEach((depense: any) => {
-      const matchingType = this.depensesType.find(type => type.name == depense.depenseType);
-      if (matchingType) {
-        depense.depenseType = matchingType.id;
-      } else {
-        this.depensesTypeService.saveDepenseType(depense.depenseType).subscribe((newTypeData) => {
-          depense.depenseType = newTypeData.id;
-        });
-      }
-    })
-    return data;
   }
 
   checkFileDataFormat (data : any){
@@ -309,6 +296,36 @@ export class UploadPopupComponent {
 
   getFileName(){
     return '../../../assets/files/' + this.templateName;
+  }
+
+  // ************************************************* GESTION DES TYPES DE DEPENSE *******************************
+  private async transformDepenseType(data: any[]) {
+    // Pour chaque dépense on va vérifier le type de dépense
+    for (const depense of data) {
+      await this.processDepenseType(depense);
+    }
+    return data;
+  }
+
+  private async processDepenseType(depense: any) {
+    const matchingType = this.depensesType.find(type => type.name === depense.depenseType);
+
+    if (matchingType) {
+      depense.depenseType = matchingType.id;
+    } else {
+      // Si le type de dépense n'existe pas encore, on le crée puis on l'ajoute au tableau
+      const newTypeData = await this.saveDepenseType(depense.depenseType);
+      this.depensesType.push({ 'id': newTypeData.id, 'name': depense.depenseType });
+      depense.depenseType = newTypeData.id;
+    }
+  }
+
+  private saveDepenseType(depenseTypeName: string): Promise<any> {
+    return new Promise<any>((resolve) => {
+      this.depensesTypeService.saveDepenseType(depenseTypeName).subscribe((newTypeData) => {
+        resolve(newTypeData);
+      });
+    });
   }
 
 }
