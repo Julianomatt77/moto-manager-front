@@ -262,20 +262,33 @@ export class UploadPopupComponent {
     // Vérifier le type des données
     if (this.type == 'depense') {
       const invalidData = data.find((depense: any) => {
-        return typeof depense.montant !== 'number' || typeof depense.date !== 'string';
+        const isMontantInvalid = depense.montant !== null && typeof depense.montant !== 'number';
+        const isKmParcouruInvalid = depense.kmParcouru ? typeof depense.kmParcouru !== 'number' : null;
+        const isEssenceConsommeInvalid = depense.essenceConsomme ? typeof depense.essenceConsomme !== 'number' : null;
+        const isKilometrageInvalid = depense.kilometrage ? typeof depense.kilometrage !== 'number' : null;
+        const isEssencePriceInvalid = depense.essencePrice ? typeof depense.essencePrice !== 'number' : null;
+        const isDateInvalid = typeof depense.date !== 'string' || !/^\d{4}\/\d{2}\/\d{2}$/.test(depense.date);
+
+        return isMontantInvalid || isKmParcouruInvalid || isEssenceConsommeInvalid || isKilometrageInvalid || isEssencePriceInvalid || isDateInvalid;
       });
       if (invalidData) {
-        console.error('Certaines données ne sont pas du type attendu.');
-        return 'Certaines données ne sont pas du type attendu.';
+        const errorMessage = 'Certaines données ne sont pas du type attendu pour la dépense du ' + invalidData.date;
+        console.error(errorMessage);
+        return errorMessage;
       }
     }
     if (this.type == 'entretien') {
       const invalidData = data.find((depense: any) => {
-        return typeof depense.date !== 'string';
+        const isDateInvalid = typeof depense.date !== 'string' || !/^\d{4}\/\d{2}\/\d{2}$/.test(depense.date);
+        const isPressionAvInvalid = depense.pressionAv ? typeof depense.pressionAv !== 'number' : null;
+        const isPressionArInvalid = depense.pressionAr ? typeof depense.pressionAr !== 'number' : null;
+
+        return  isDateInvalid || isPressionAvInvalid || isPressionArInvalid;
       });
       if (invalidData) {
-        console.error('Certaines données ne sont pas du type attendu.');
-        return 'Certaines données ne sont pas du type attendu.';
+        const errorMessage = 'Certaines données ne sont pas du type attendu pour l\'entretien du ' + invalidData.date
+        console.error(errorMessage);
+        return errorMessage;
       }
     }
 
