@@ -34,6 +34,7 @@ export class DepensesComponent {
   showPageSizeOptions = true;
   showFirstLastButtons = true;
   disabled = false;
+  depensesTotal = 0;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   public dataSource: any;
@@ -57,7 +58,9 @@ export class DepensesComponent {
         this.length = data.length;
         this.iterator();
 
-        // console.log(this.depenses)
+        this.depenses.forEach((depense: any) => {
+          this.depensesTotal += depense.montant;
+        })
 
         // const datePipe = new DatePipe('en-US');
         // this.depenses.forEach((depense) => {

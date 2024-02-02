@@ -18,8 +18,7 @@
 
 
   @if (!isLoading) {
-<!--  TODO-->
-  <div class="depenses-recap hidden">TODO Recap</div>
+  <div class="depenses-recap">Dépenses : {{depensesTotal | number: "1.0-2"}} €</div>
 
   <mat-paginator
                (page)="handlePageEvent($event)"
