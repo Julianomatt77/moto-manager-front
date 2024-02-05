@@ -41,6 +41,7 @@ export class DepenseFormComponent implements OnInit{
   dateErrorMessage = '';
   depenseTypeErrorMessage = '';
   motoErrorMessage = '';
+  formattedDate: string;
 
   constructor(
     private fb: FormBuilder,
@@ -58,10 +59,12 @@ export class DepenseFormComponent implements OnInit{
       this.buttonLabel = 'Mettre à jour';
       this.depense = data.depense;
       this.id = this.depense.id
-      // TODO Voir pour affichage de la date lors de l'edit
-      // this.depense.date = new Date(this.depense.date)
       this.depense.moto = data.depense.moto.id.toString()
       this.depense.depenseType = data.depense.depenseType.id.toString()
+
+      //Correction de l'erreur de l'affichage de la date
+      const dateObject = new Date(this.depense.date);
+      this.formattedDate = dateObject.toISOString().substring(0, 16);
     } else {
       this.addOrEdit = 'add';
       this.buttonLabel = 'Ajouter';
@@ -103,7 +106,7 @@ export class DepenseFormComponent implements OnInit{
         essencePrice: this.depense.essencePrice,
         commentaire: this.depense.commentaire,
         kilometrage: this.depense.kilometrage,
-        date: [this.depense.date, [Validators.required]],
+        date: [this.formattedDate, [Validators.required]],
         depenseType: [this.depense.depenseType, [Validators.required]],
         autre_depense: '',
         moto: [this.depense.moto, [Validators.required]]

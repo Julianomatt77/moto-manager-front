@@ -36,6 +36,7 @@ export class EntretienFormComponent {
   submitted: boolean = false;
   dateErrorMessage = '';
   motoErrorMessage = '';
+  formattedDate: string;
 
   constructor(private fb: FormBuilder,
               @Inject(MAT_DIALOG_DATA) private data: any,
@@ -51,9 +52,11 @@ export class EntretienFormComponent {
       this.buttonLabel = 'Mettre à jour';
       this.entretien = data.entretien;
       this.id = this.entretien.id
-      // TODO Voir pour affichage de la date lors de l'edit
-      // this.depense.date = new Date(this.depense.date)
       this.entretien.moto = data.entretien.moto.id.toString()
+
+      //Correction de l'erreur de l'affichage de la date
+      const dateObject = new Date(this.entretien.date);
+      this.formattedDate = dateObject.toISOString().substring(0, 16);
     } else {
       this.addOrEdit = 'add';
       this.buttonLabel = 'Ajouter';
@@ -88,7 +91,7 @@ export class EntretienFormComponent {
         pressionAv: this.entretien.pressionAv,
         pressionAr: this.entretien.pressionAr,
         kilometrage: this.entretien.kilometrage,
-        date: [this.entretien.date, [Validators.required]],
+        date: [this.formattedDate, [Validators.required]],
         moto: [this.entretien.moto, [Validators.required]]
       })
     }
