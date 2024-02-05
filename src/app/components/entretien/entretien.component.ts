@@ -38,6 +38,7 @@ export class EntretienComponent {
   showPageSizeOptions = true;
   showFirstLastButtons = true;
   disabled = false;
+  distLastGraissage = 0;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   public dataSource: any;
@@ -72,7 +73,6 @@ export class EntretienComponent {
 
   /*************** CRUD *******************/
   addEntretien() {
-
     this.dialog
       .open(EntretienFormComponent, {
         data: {
@@ -85,11 +85,9 @@ export class EntretienComponent {
       .subscribe(() => {
         this.getAllEntretiens();
       });
-
   }
 
   editEntretien(entretien: any){
-
     this.dialog
       .open(EntretienFormComponent, {
         data: {
@@ -159,4 +157,16 @@ export class EntretienComponent {
         this.getAllEntretiens();
       });
   }
+/*
+  getLastGraissage(){
+    let graissages:any[] = [];
+    this.entretiens.forEach((entretien: any) => {
+          if(entretien.graissage){
+              graissages.push(entretien.kilometrage);
+          }
+      })
+    console.log(graissages);
+  }
+
+ */
 }

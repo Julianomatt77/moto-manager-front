@@ -17,16 +17,32 @@
       <div class="card-motos-list">
 
         <div class="flex-center">
-          <div>{{moto.marque}}</div>
-          <div>{{moto.modele}}</div>
+          <div>{{ moto.marque }}</div>
+          <div>{{ moto.modele }}</div>
         </div>
 
-        <div>
-          <a href="javascript:;" (click)="editMoto(moto)" class="material-symbols-outlined">edit_note</a>
+        <div class="flex-center">
+          <div>{{ moto.litresTotal }} litres</div>
+          <div>{{ moto.consoMoyenne }} l/100</div>
+          <div>{{ moto.prk }} € / km</div>
         </div>
 
-        <div>
-          <a href="javascript:;" (click)="openConfirmation(moto)" class="material-symbols-outlined">delete</a>
+        <div class="flex-center">
+          <div><p>Dernier graissage: </p><p>{{ moto.dateLastGraissage }} jours</p></div>
+          <div><p>Dernière pression: </p><p>{{ moto.dateLastPression }} jours</p></div>
+        </div>
+
+
+
+
+        <div class="flex-evenly">
+          <div>
+            <a href="javascript:;" (click)="editMoto(moto)" class="material-symbols-outlined">edit_note</a>
+          </div>
+
+          <div>
+            <a href="javascript:;" (click)="openConfirmation(moto)" class="material-symbols-outlined">delete</a>
+          </div>
         </div>
 
       </div>
