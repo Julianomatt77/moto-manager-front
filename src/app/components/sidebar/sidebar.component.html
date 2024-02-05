@@ -28,6 +28,10 @@
         <span>CGU</span>
       </button>
 
+      <button class="secondary-button sidebar-button" [routerLink]="['contact']" (click)="isMenuOpen && toggleMenu()">
+        <span>Contact</span>
+      </button>
+
     @if (!isLoggedIn){
     <button class="secondary-button sidebar-button" [routerLink]="['login']" (click)="isMenuOpen && toggleMenu()">
       <span class="material-symbols-outlined">account_circle</span>

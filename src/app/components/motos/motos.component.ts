@@ -199,7 +199,6 @@ export class MotosComponent {
 
           moto.dateLastGraissage = graissageDates.length > 0 ? Math.min(...graissageDates) : null
           moto.dateLastPression = pressionDates.length > 0 ? Math.min(...pressionDates) : null
-          console.log(moto)
         })
       },
       error: (err) => {

@@ -61,7 +61,14 @@
   background-color: var(--error-color);
   color: var(--blanc);
   border-radius: 1rem;
-  padding: 0.5rem;
+  padding: 1rem;
+}
+
+.success-message {
+  background-color: var(--success-color);
+  color: var(--blanc);
+  border-radius: 1rem;
+  padding: 1rem;
 }
 
 .slide {

@@ -7,6 +7,7 @@ import {authGuard} from "./guards/auth.guard";
 import {EntretienComponent} from "./components/entretien/entretien.component";
 import {MotosComponent} from "./components/motos/motos.component";
 import {CguComponent} from "./pages/cgu/cgu.component";
+import {ContactComponent} from "./components/contact/contact.component";
 
 export const routes: Routes = [
   { path: '', component: AccueilComponent },
@@ -16,6 +17,7 @@ export const routes: Routes = [
   {path: 'entretien', canActivate: [authGuard], component: EntretienComponent},
   {path: 'motos', canActivate: [authGuard], component: MotosComponent},
   {path: 'cgu', component: CguComponent},
+  {path: 'contact', component: ContactComponent},
   { path: 'not-found', component: ErrorComponent },
   { path: '**', redirectTo: 'not-found'}
 ];
