@@ -126,6 +126,10 @@ button {
   transition: transform ease 0.2s;
 }
 
+.export-button {
+  padding: 0;
+}
+
 .mat-mdc-dialog-actions {
   justify-content: space-evenly!important;
 }
@@ -160,9 +164,7 @@ button {
   z-index: 500;
 }
 
-input, select, option {
-  background: var(--primary)
-}
+
 
 /****************************************** GLOBAL  ************/
 
@@ -203,6 +205,10 @@ input, select, option {
 
 .mt-2 {
   margin-top: 2rem;
+}
+
+.mb-1 {
+  margin-bottom: 1rem;
 }
 
 .mb-2 {

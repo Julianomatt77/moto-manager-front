@@ -9,6 +9,9 @@ import {ConfirmationDialogComponent} from "../confirmation-dialog/confirmation-d
 import {MatPaginator, MatPaginatorModule, PageEvent} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
 import {UploadPopupComponent} from "../../form/upload-popup/upload-popup.component";
+import {ExportService} from "../../services/export/export.service";
+import {getXHRResponse} from "rxjs/internal/ajax/getXHRResponse";
+import {makeShimFileName} from "@angular/compiler-cli/src/ngtsc/shims/src/util";
 
 @Component({
   selector: 'app-depenses',
@@ -39,7 +42,11 @@ export class DepensesComponent {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   public dataSource: any;
 
-  constructor(private depensesService: DepensesService, private storageService: StorageService, public dialog: MatDialog){}
+  constructor(private depensesService: DepensesService,
+              private storageService: StorageService,
+              public dialog: MatDialog,
+              private exportService: ExportService
+  ){}
 
   ngOnInit(): void {
     this.user = this.storageService.getUser();
@@ -159,4 +166,13 @@ export class DepensesComponent {
         this.getAllDepenses();
       });
   }
+
+  /****************** EXPORT **********************/
+  export(){
+    this.exportService.exportDepenses().subscribe(response => {
+      this.exportService.handleCsvDownload(response, 'depenses');
+    })
+  }
+
+
 }

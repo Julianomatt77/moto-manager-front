@@ -10,6 +10,7 @@ import {EntretienFormComponent} from "../../form/entretien-form/entretien-form.c
 import {MatPaginator, MatPaginatorModule, PageEvent} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
 import {UploadPopupComponent} from "../../form/upload-popup/upload-popup.component";
+import {ExportService} from "../../services/export/export.service";
 
 @Component({
   selector: 'app-entretien',
@@ -43,7 +44,11 @@ export class EntretienComponent {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   public dataSource: any;
 
-  constructor(private entretiensService: EntretiensService, private storageService: StorageService, public dialog: MatDialog){}
+  constructor(private entretiensService: EntretiensService,
+              private storageService: StorageService,
+              public dialog: MatDialog,
+              private exportService: ExportService
+  ){}
 
   ngOnInit(): void {
     this.user = this.storageService.getUser();
@@ -157,16 +162,11 @@ export class EntretienComponent {
         this.getAllEntretiens();
       });
   }
-/*
-  getLastGraissage(){
-    let graissages:any[] = [];
-    this.entretiens.forEach((entretien: any) => {
-          if(entretien.graissage){
-              graissages.push(entretien.kilometrage);
-          }
-      })
-    console.log(graissages);
-  }
 
- */
+  /****************** EXPORT **********************/
+  export(){
+    this.exportService.exportEntretiens().subscribe(response => {
+      this.exportService.handleCsvDownload(response, 'entretiens');
+    })
+  }
 }

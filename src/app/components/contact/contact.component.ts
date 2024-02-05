@@ -51,9 +51,11 @@ export class ContactComponent {
       this.mailService.contact(from, subject, message).subscribe(
         response => {
           this.messageSent = true;
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
+          this.contactForm = this.fb.group({
+            from: ['', [Validators.required, Validators.email]],
+            subject: ['', Validators.required],
+            message: ['', Validators.required]
+          });
         },
         error => {
           this.messageFailed = true;

@@ -6,7 +6,7 @@
 
 <section id="entretien-list">
   <h1>Liste des entretiens réguliers</h1>
-  <div class="flex-center">
+  <div class="flex-center mb-1">
     <div>
       <a href="javascript:;" (click)="addEntretien()" class="material-symbols-outlined" title="ajouter une dépense">add_circle</a>
     </div>
@@ -14,6 +14,11 @@
     <div>
       <a href="javascript:;" (click)="openUploadDialog()" class="material-symbols-outlined" title="importer des entretiens depuis un fichier">upload_file</a>
     </div>
+
+    <div>
+      <button (click)="export()" download class="material-symbols-outlined export-button" title="Exporter vos entretiens">download</button>
+    </div>
+
   </div>
 
 

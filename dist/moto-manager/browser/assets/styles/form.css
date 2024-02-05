@@ -10,6 +10,10 @@
   right: 1rem;
 }
 
+input, select, option, textarea {
+  background: var(--primary)
+}
+
 .login-form {
   display: flex;
   justify-content: center;
