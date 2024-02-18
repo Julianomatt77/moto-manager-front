@@ -4,19 +4,20 @@
 /* You can add global styles to this file, and also import other style files */
 /*Choose your primary and secondary colors. Primary is for main CTAs and sections, and Secondary is for less important buttons and info cards.*/
 /*Accent color is an additional color. It appears in images, highlights, hyperlinks, boxes, cards, etc.*/
-@media (prefers-color-scheme: light) {
-  :root {
-    --text: hsl(263, 20%, 8%); /*    --text: #131018;*/
-    --background: hsl(270, 20%, 98%); /*    --background: #faf9fb;*/
-    --primary: hsl(268, 39%, 52%); /*    --primary: #8155b4;*/
-    --secondary: hsl(269, 48%, 72%); /*    --secondary: #b695da;*/
-    --accent: hsl(268, 58%, 62%); /*    --accent: #9a66d6;*/
-    --secondary30: hsl(269, 48%, 72%, 30%);
-    --primary40: hsl(268, 39%, 52%, 40%);
-    --primary39: hsl(268, 39%, 52%, 39%);
-  }
-}
-@media (prefers-color-scheme: dark) {
+@import "assets/styles/colors.css";
+/*@media (prefers-color-scheme: light) {*/
+/*  :root {*/
+/*    --text: hsl(263, 20%, 8%); !*    --text: #131018;*!*/
+/*    --background: hsl(270, 20%, 98%); !*    --background: #faf9fb;*!*/
+/*    --primary: hsl(268, 39%, 52%); !*    --primary: #8155b4;*!*/
+/*    --secondary: hsl(269, 48%, 72%); !*    --secondary: #b695da;*!*/
+/*    --accent: hsl(268, 58%, 62%); !*    --accent: #9a66d6;*!*/
+/*    --secondary30: hsl(269, 48%, 72%, 30%);*/
+/*    --primary40: hsl(268, 39%, 52%, 40%);*/
+/*    --primary39: hsl(268, 39%, 52%, 39%);*/
+/*  }*/
+/*}*/
+/*@media (prefers-color-scheme: dark) {*/
   :root {
     --text: hsl(262, 20%, 92%); /*    --text: #eae7ef;*/
     --background: hsl(270, 11%, 14%); /*    --background: #231F27;*/
@@ -27,7 +28,9 @@
     --primary40: hsl(268, 39%, 48%, 40%);
     --primary39: hsl(268, 39%, 48%, 39%);
   }
-}
+/*}*/
+
+
 
 :root {
   --static: rgba(0, 0, 0, 0.5);
