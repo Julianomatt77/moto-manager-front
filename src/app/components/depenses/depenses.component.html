@@ -22,7 +22,7 @@
 
 
   @if (!isLoading) {
-  <div class="depenses-recap">Dépenses : {{depensesTotal | number: "1.0-2"}} €</div>
+  <div class="depenses-recap mb-1">Dépenses : <span class="badge">{{depensesTotal | number: "1.0-2"}} €</span></div>
 
   <mat-paginator
                (page)="handlePageEvent($event)"
@@ -45,10 +45,10 @@
               <a href="javascript:;" (click)="editDepense(depense)" class="material-symbols-outlined" title="éditer la dépense">edit_note</a>
             </div>
             <h2 class="card-title">{{depense.depenseType.name}}</h2>
-            <p class="pr-1-5">{{depense.montant | number: "1.0-2"}} €</p>
+            <p class="pr-1-5 badge">{{depense.montant | number: "1.0-2"}} €</p>
             <div class="card-moto">
-              <p>{{depense.moto.modele}}</p>
-              <p>{{depense.kilometrage}} Km</p>
+              <p class="badge">{{depense.moto.modele}}</p>
+              <p class="badge">{{depense.kilometrage}} Km</p>
             </div>
           </div>
           <div class="card-date">{{depense.date | date: "dd/MM/y" }}</div>
@@ -81,7 +81,7 @@
         </div>
 
         <div>
-          <a href="javascript:;" (click)="openConfirmation(depense)" class="material-symbols-outlined" title="supprimer la dépense">delete</a>
+          <a href="javascript:;" (click)="openConfirmation(depense)" class="material-symbols-outlined badge-delete mb-1" title="supprimer la dépense">delete</a>
         </div>
       </div>
     } @empty {

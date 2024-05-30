@@ -46,8 +46,8 @@
           <a href="javascript:;" (click)="editEntretien(entretien)" class="material-symbols-outlined" title="éditer l'entretien">edit_note</a>
         </div>
         <div class="card-moto">
-          <p>{{entretien.moto.modele}}</p>
-          <p>{{entretien.kilometrage}} Km</p>
+          <p class="badge">{{entretien.moto.modele}}</p>
+          <p class="badge">{{entretien.kilometrage}} Km</p>
         </div>
       </div>
       <div class="card-date">{{entretien.date | date: "dd/MM/y" }}</div>
@@ -80,7 +80,7 @@
 <!--    </div>-->
 
     <div>
-      <a href="javascript:;" (click)="openConfirmation(entretien)" class="material-symbols-outlined" title="supprimer l'entretien">delete</a>
+      <a href="javascript:;" (click)="openConfirmation(entretien)" class="material-symbols-outlined badge-delete mb-1" title="supprimer l'entretien">delete</a>
     </div>
   </div>
 

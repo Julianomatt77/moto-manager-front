@@ -10,8 +10,6 @@ import {MatPaginator, MatPaginatorModule, PageEvent} from "@angular/material/pag
 import {MatTableDataSource} from "@angular/material/table";
 import {UploadPopupComponent} from "../../form/upload-popup/upload-popup.component";
 import {ExportService} from "../../services/export/export.service";
-import {getXHRResponse} from "rxjs/internal/ajax/getXHRResponse";
-import {makeShimFileName} from "@angular/compiler-cli/src/ngtsc/shims/src/util";
 
 @Component({
   selector: 'app-depenses',
