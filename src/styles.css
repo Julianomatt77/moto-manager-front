@@ -170,11 +170,6 @@ button {
 
 
 /****************************************** GLOBAL  ************/
-
-.mt-1-5 {
-  margin-top: 1.5rem;
-}
-
 .underline {
   text-decoration: underline;
 }
@@ -201,9 +196,32 @@ button {
   gap: 2rem;
 }
 
+.flex-end {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 2rem;
+}
+
 .img-fluid {
   max-width: 100%;
   height: auto;
+}
+
+.m-0 {
+  margin: 0;
+}
+
+.mt-0-5 {
+  margin-top: 0.5rem;
+}
+
+.mt-1 {
+  margin-top: 1rem;
+}
+
+.mt-1-5 {
+  margin-top: 1.5rem;
 }
 
 .mt-2 {
@@ -225,6 +243,14 @@ button {
 
 .p-1{
   padding: 1rem;
+}
+
+.pt-1 {
+  padding-top: 1rem;
+}
+
+.pb-1 {
+  padding-bottom: 1rem;
 }
 
 .pr-1 {
@@ -249,6 +275,10 @@ button {
 
 .justify {
   text-align: justify;
+}
+
+.min-height-80 {
+  min-height: 80px !important;
 }
 
 .badge, .badge-secondary, .badge-delete {
@@ -367,10 +397,20 @@ button {
   justify-content: space-between
 }
 
+.card-container {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 2rem;
+  background: var(--accent);
+  border-top-right-radius: 50px;
+  border-top-left-radius: 50px;
+  min-height: 100px;
+}
+
 .card-top {
   display: flex;
   flex-direction: column;
-  /*height: 80px;*/
   background: var(--accent);
   border-top-right-radius: 50px;
   border-top-left-radius: 50px;
@@ -392,15 +432,14 @@ button {
 }
 
 .card-moto {
-  position: absolute;
-  right: 50px;
-  top: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
 }
 
 .card-body {
-  /*display: flex;*/
-  /*justify-content: space-between;*/
-  /*margin: 20px;*/
   display:flex;
   justify-content: space-evenly;
   flex-wrap: wrap;
@@ -437,6 +476,10 @@ button {
 
 .card-info-4 {
   background: var(--secondary30);
+}
+
+.card-montant {
+  font-size: 20px;
 }
 
 /****************************************** FIN CARDS  ************/
@@ -501,10 +544,6 @@ button {
   .card {
     min-width: 250px;
     border-radius: 20px;
-  }
-
-  .card-moto {
-    display: none;
   }
 
   .card-top {

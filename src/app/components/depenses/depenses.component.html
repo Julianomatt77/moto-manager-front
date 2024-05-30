@@ -39,19 +39,18 @@
   <div class="depenses-container">
     @for (depense of dataSource; track depense.id){
       <div class="card">
-        <div class="card-top">
+        <div class="card-top pt-1 pb-1">
           <div class="card-title-div">
-            <div>
-              <a href="javascript:;" (click)="editDepense(depense)" class="material-symbols-outlined" title="éditer la dépense">edit_note</a>
-            </div>
-            <h2 class="card-title">{{depense.depenseType.name}}</h2>
-            <p class="pr-1-5 badge">{{depense.montant | number: "1.0-2"}} €</p>
-            <div class="card-moto">
-              <p class="badge">{{depense.moto.modele}}</p>
-              <p class="badge">{{depense.kilometrage}} Km</p>
-            </div>
+            <div><h2 class="card-title">{{depense.depenseType.name}}</h2></div>
+            <div><p class="badge m-0 card-montant">{{depense.montant | number: "1.0-2"}} €</p></div>
           </div>
-          <div class="card-date">{{depense.date | date: "dd/MM/y" }}</div>
+
+          <div class="card-moto">
+            <p class="badge">{{depense.moto.modele}}</p>
+            <p class="badge">{{depense.kilometrage}} Km</p>
+          </div>
+
+          <div class="flex-end pr-1">{{depense.date | date: "dd/MM/y" }}</div>
         </div>
 
         <div class="card-body">
@@ -76,13 +75,19 @@
 
         <div class="card-body">
           @if (depense.commentaire){
-          <p>{{depense.commentaire}}</p>
+          <p class="badge-secondary">{{depense.commentaire}}</p>
           }
         </div>
 
-        <div>
-          <a href="javascript:;" (click)="openConfirmation(depense)" class="material-symbols-outlined badge-delete mb-1" title="supprimer la dépense">delete</a>
+        <div class="flex-evenly">
+          <div>
+            <a href="javascript:;" (click)="editDepense(depense)" class="material-symbols-outlined" title="éditer la dépense">edit_note</a>
+          </div>
+          <div>
+            <a href="javascript:;" (click)="openConfirmation(depense)" class="material-symbols-outlined badge-delete mb-1" title="supprimer la dépense">delete</a>
+          </div>
         </div>
+
       </div>
     } @empty {
     <span>Vous n'avez aucune dépense</span>
