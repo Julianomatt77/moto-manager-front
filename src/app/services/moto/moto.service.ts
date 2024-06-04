@@ -17,6 +17,10 @@ export class MotoService {
     return this.http.get<any[]>(this.motoUrl);
   }
 
+  getDeactivatedMotos(){
+    return this.http.get<any[]>(this.motoUrl + '/deactivated');
+  }
+
   getMoto(id: string){
     let url = this.motoUrl + '/' + id
     return this.http.get<Moto>(url);
@@ -29,6 +33,11 @@ export class MotoService {
   patchMoto(id: string, data: any){
     let url = this.motoUrl + '/' + id
     return this.http.patch<Moto>(url, data);
+  }
+
+  reactivateMoto(id: string){
+    let url = this.motoUrl + '/reactivate/' + id
+    return this.http.patch<Moto>(url, {});
   }
 
   deleteMoto(id: string){

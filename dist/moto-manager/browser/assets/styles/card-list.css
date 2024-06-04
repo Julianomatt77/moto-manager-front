@@ -15,8 +15,16 @@
   align-items: center;
 }
 
+.card-motos-list{
+  min-height: 50px;
+}
+
 @media (width <= 768px) {
   .motos-container {
     padding: 0;
+  }
+
+  .card-motos-list {
+    width: 100%;
   }
 }
