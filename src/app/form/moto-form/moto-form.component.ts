@@ -43,7 +43,6 @@ export class MotoFormComponent {
       this.addOrEdit = 'edit';
       this.buttonLabel = 'Mettre à jour';
       this.moto = data.moto;
-      console.log(this.moto)
       this.id = this.moto.id
     } else {
       this.addOrEdit = 'add';

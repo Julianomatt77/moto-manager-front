@@ -32,7 +32,7 @@
           <div><p>Dernière pression: </p><p class="badge-secondary">{{ moto.dateLastPression }} jours</p></div>
         </div>
 
-        <div class="flex-evenly">
+        <div class="flex-evenly pb-1">
           <div>
             <a href="javascript:;" (click)="editMoto(moto)" class="material-symbols-outlined" title="Mettre à jour la moto {{ moto.marque }} {{ moto.modele }}">edit_note</a>
           </div>
@@ -48,6 +48,24 @@
   <span>Vous n'avez aucune moto</span>
   }
 
+  </div>
+  <div class="motos-container">
+    <h2>Liste des Motos supprimées</h2>
+    @for (moto of deactivatedMotos; track moto.id){
+    <div class="card card-motos-list">
+
+      <div class="card-title-div pt-1 pb-1">
+        <div class="badge-secondary">{{ moto.marque }}</div>
+        <div class="badge-secondary">{{ moto.modele }}</div>
+
+        <div>
+          <button class="secondary-button" (click)="reactivateMoto(moto)" title="Réactiver {{moto.marque}} {{moto.modele}}">Réactiver</button>
+        </div>
+      </div>
+    </div>
+    } @empty {
+    <span>Vous n'avez aucune moto supprimée</span>
+    }
   </div>
   }
 </section>

@@ -8,6 +8,7 @@ import {MotoService} from "../../services/moto/moto.service";
 import {MotoFormComponent} from "../../form/moto-form/moto-form.component";
 import {DepensesService} from "../../services/depenses/depenses.service";
 import {EntretiensService} from "../../services/entretiens/entretiens.service";
+import {catchError, forkJoin, map, Observable} from "rxjs";
 
 @Component({
   selector: 'app-motos',
@@ -18,6 +19,7 @@ import {EntretiensService} from "../../services/entretiens/entretiens.service";
 })
 export class MotosComponent {
   motos: any[] = [];
+  deactivatedMotos: any[] = [];
   user: User;
   isLoading = true;
   error: string;
@@ -34,23 +36,39 @@ export class MotosComponent {
 
   ngOnInit(): void {
     this.user = this.storageService.getUser();
-    this.getAllMotos();
+    this.loadMotosData();
   }
 
-  /***************  DISPLAY *****************/
-  getAllMotos(){
-    this.motosService.getMotos().subscribe({
-      next: (data) => {
-        // this.isLoading = false;
-        this.motos = data;
-        this.getStatsDepenses()
-        this.getStatsEntretiens()
+  loadMotosData(): void {
+    this.isLoading = true; // Active l'indicateur de chargement
+
+    const motos$ = this.getAllMotos();
+    const deactivatedMotos$ = this.getAllDeactivatedMotos();
+
+    forkJoin([motos$, deactivatedMotos$]).subscribe({
+      next: ([motos, deactivatedMotos]) => {
+        this.motos = motos;
+        this.deactivatedMotos = deactivatedMotos;
+        this.getStatsDepenses();
+        this.getStatsEntretiens();
       },
       error: (err) => {
-        this.error = err.error.message
+        this.error = err.error.message;
+        this.isLoading = false;
       }
-    })
+    });
+  }
 
+  getAllMotos(): Observable<any> {
+    return this.motosService.getMotos().pipe(
+      map(data => data), // Vous pouvez transformer les données ici si nécessaire
+    );
+  }
+
+  getAllDeactivatedMotos(): Observable<any> {
+    return this.motosService.getDeactivatedMotos().pipe(
+      map(data => data), // Vous pouvez transformer les données ici si nécessaire
+    );
   }
 
   /*************** CRUD *******************/
@@ -65,13 +83,12 @@ export class MotosComponent {
       })
       .afterClosed()
       .subscribe(() => {
-        this.getAllMotos();
+        this.loadMotosData();
       });
 
   }
 
   editMoto(moto: any){
-    console.log(moto)
     this.dialog
       .open(MotoFormComponent, {
         data: {
@@ -83,7 +100,7 @@ export class MotosComponent {
       })
       .afterClosed()
       .subscribe(() => {
-        this.getAllMotos();
+        this.loadMotosData();
       });
   }
 
@@ -102,10 +119,16 @@ export class MotosComponent {
   }
 
   deleteMoto(moto: any){
-    console.log(moto.id)
     this.motosService.deleteMoto(moto.id).subscribe(()=>{
       this.isLoading = true;
-      this.getAllMotos()
+      this.loadMotosData();
+    })
+  }
+
+  reactivateMoto(moto: any){
+    this.motosService.reactivateMoto(moto.id).subscribe(()=> {
+      this.isLoading = true;
+      this.loadMotosData();
     })
 
   }
@@ -114,7 +137,6 @@ export class MotosComponent {
     this.depensesService.getDepenses().subscribe({
       next: (data) => {
         this.depenses = data;
-
 
         this.motos.forEach((moto: any)=>{
           let dep = 0;
@@ -134,7 +156,6 @@ export class MotosComponent {
 
               if (depense.essenceConsomme){
                 litresTotal += depense.essenceConsomme
-                // litresTotal = Number(litresTotal.toFixed(2))
                 litresTotal = Math.round(litresTotal);
               }
 
@@ -166,6 +187,7 @@ export class MotosComponent {
         this.isLoading = false;
       },
       error: (err) => {
+        this.isLoading = false;
         this.error = err.error.message
       }
     })
@@ -189,8 +211,6 @@ export class MotosComponent {
                 }
 
                 if (entretien.pressionAv > 0){
-                  // console.log(entretien.pressionAv)
-                  // console.log(entretien.moto.id)
                   pressionDates.push(this.differenceDate(entretien.date))
                 }
 

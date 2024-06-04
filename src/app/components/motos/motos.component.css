@@ -1,7 +1,1 @@
 @import "../../../assets/styles/card-list.css";
-
-@media (width <= 768px) {
-  .card-motos-list {
-    width: 100%;
-  }
-}
