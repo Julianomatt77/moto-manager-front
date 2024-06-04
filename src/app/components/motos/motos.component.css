@@ -1,22 +1,5 @@
 @import "../../../assets/styles/card-list.css";
 
-.card-motos-list {
-  min-height: 50px;
-  width: 400px;
-  border: none;
-  box-shadow: 10px 10px 8px 0 var(--primary40), 0 6px 20px 0 var(--primary39);
-  margin-bottom: 20px;
-  background: var(--primary);
-  border-radius: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
-  flex-wrap: wrap;
-  padding: 10px;
-  flex-direction: column;
-}
-
 @media (width <= 768px) {
   .card-motos-list {
     width: 100%;
