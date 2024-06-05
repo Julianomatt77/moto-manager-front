@@ -28,10 +28,13 @@ export class LoginComponent {
   submitted: boolean = false;
   usernameErrorMessage = '';
   passwordErrorMessage = '';
+  confirmPasswordErrorMessage = '';
+  confirmPasswordMissingErrorMessage = '';
   isRegistration = false;
   label = '';
   passwordFieldType: string = 'password';
-  passwordFieldIcon = 'visibility_off'
+  passwordFieldIcon = 'visibility_off';
+  isPasswordConfirmed = false;
 
   constructor(private authService: AuthService, private router: Router, private storageService: StorageService, private activatedroute:ActivatedRoute) {
     this.isRegistration = false;
@@ -46,7 +49,8 @@ export class LoginComponent {
       ]),
       password: new FormControl('', [
         Validators.required
-      ])
+      ]),
+      confirmPassword: new FormControl(null, )
     });
 
     this.activatedroute.data.subscribe(data => {
@@ -57,6 +61,8 @@ export class LoginComponent {
 
     this.usernameErrorMessage = 'Un email est obligatoire est obligatoire.';
     this.passwordErrorMessage = 'Un mot de passe est obligatoire.';
+    this.confirmPasswordMissingErrorMessage = 'La confirmation du mot de passe est obligatoire.';
+    this.confirmPasswordErrorMessage = 'Les mots de passe ne correspondent pas.';
   }
 
   onSubmit() {
@@ -71,21 +77,28 @@ export class LoginComponent {
       if (!this.isRegistration) {
         this.logInUser(username, password)
       } else {
-        this.authService.register(username, password)
-          .subscribe({
-            next: (data) => {
-              if (data.status){
-                this.logInUser(username, password)
-              } else {
-                this.error = data.message
+        this.validatePasswordsMatch()
+
+        if (this.isPasswordConfirmed){
+          this.authService.register(username, password)
+            .subscribe({
+              next: (data) => {
+                if (data.status){
+                  this.logInUser(username, password)
+                } else {
+                  this.error = data.message
+                  this.isLoginFailed = true;
+                }
+              },
+              error: (error) => {
+                this.error = error.error.message
                 this.isLoginFailed = true;
               }
-            },
-            error: (error) => {
-              this.error = error.error.message
-              this.isLoginFailed = true;
-            }
-          })
+            })
+        } else {
+          this.isLoginFailed = true;
+          this.error = 'Erreur lors de l\'inscription.';
+        }
       }
     }
   }
@@ -128,6 +141,19 @@ export class LoginComponent {
     } else {
       this.passwordFieldType = 'password';
       this.passwordFieldIcon = 'visibility_off';
+    }
+  }
+
+  validatePasswordsMatch(): void {
+    const passwordControl = this.loginForm.get('password')?.value;
+    const confirmPasswordControl = this.loginForm.get('confirmPassword')?.value;
+
+    if (passwordControl && confirmPasswordControl) {
+      if (passwordControl !== confirmPasswordControl) {
+        this.isPasswordConfirmed = false
+      } else {
+        this.isPasswordConfirmed = true
+      }
     }
   }
 }
