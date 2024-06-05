@@ -13,7 +13,17 @@
 
     <div class="form-group">
       <div><label for="password">Password</label></div>
-      <input type="password" class="form-control" id="password" formControlName="password">
+
+      <div class="password-field">
+        <div><input
+              [type]="passwordFieldType"
+              class="form-control"
+              id="password"
+              formControlName="password"></div>
+        <div><span class="material-symbols-outlined" (click)="togglePasswordVisibility()">{{passwordFieldIcon}}</span></div>
+      </div>
+
+
     </div>
     @if(!loginForm.get('password')?.valid && submitted){
   <div class="error-message">

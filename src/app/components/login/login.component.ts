@@ -30,6 +30,8 @@ export class LoginComponent {
   passwordErrorMessage = '';
   isRegistration = false;
   label = '';
+  passwordFieldType: string = 'password';
+  passwordFieldIcon = 'visibility_off'
 
   constructor(private authService: AuthService, private router: Router, private storageService: StorageService, private activatedroute:ActivatedRoute) {
     this.isRegistration = false;
@@ -119,4 +121,13 @@ export class LoginComponent {
       })
   }
 
+  togglePasswordVisibility(): void {
+    if (this.passwordFieldType === 'password') {
+      this.passwordFieldType = 'text';
+      this.passwordFieldIcon = 'visibility';
+    } else {
+      this.passwordFieldType = 'password';
+      this.passwordFieldIcon = 'visibility_off';
+    }
+  }
 }
