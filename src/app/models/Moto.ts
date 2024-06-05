@@ -4,12 +4,13 @@ export class Moto{
   private _id: string;
   private _marque: string;
   private _modele: string;
+  private _year: number | null;
 
-
-  constructor(id: string, marque: string, modele: string) {
+  constructor(id: string, marque: string, modele: string, year?: number | null) {
     this._id = id;
     this._marque = marque;
     this._modele = modele;
+    this._year = year !== undefined ? year : null;
   }
 
 
@@ -32,5 +33,14 @@ export class Moto{
 
   set modele(value: string) {
     this._modele = value;
+  }
+
+
+  get year(): number | null {
+    return this._year;
+  }
+
+  set year(value: number | null) {
+    this._year = value;
   }
 }

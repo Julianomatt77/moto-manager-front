@@ -6,19 +6,54 @@
       <input type="email" class="form-control" id="username" formControlName="username">
     </div>
     @if(!loginForm.get('username')?.valid && submitted){
-  <div class="error-message">
-    {{ usernameErrorMessage }}
-  </div>
+    <div class="error-message">
+      {{ usernameErrorMessage }}
+    </div>
   }
 
     <div class="form-group">
       <div><label for="password">Password</label></div>
-      <input type="password" class="form-control" id="password" formControlName="password">
+      <div class="password-field">
+        <div><input
+              [type]="passwordFieldType"
+              class="form-control"
+              id="password"
+              formControlName="password"></div>
+        <div><span class="material-symbols-outlined" (click)="togglePasswordVisibility()">{{passwordFieldIcon}}</span></div>
+      </div>
     </div>
+
     @if(!loginForm.get('password')?.valid && submitted){
-  <div class="error-message">
-    {{ passwordErrorMessage }}
-  </div>
+    <div class="error-message">
+      {{ passwordErrorMessage }}
+    </div>
+    }
+
+<!--  Confirm password-->
+  @if(isRegistration){
+    <div class="form-group">
+      <div><label for="confirmPassword">Password</label></div>
+      <div class="password-field">
+        <div><input
+          [type]="passwordFieldType"
+          class="form-control"
+          id="confirmPassword"
+          formControlName="confirmPassword"></div>
+        <div><span class="material-symbols-outlined" (click)="togglePasswordVisibility()">{{passwordFieldIcon}}</span></div>
+      </div>
+    </div>
+
+    @if(!loginForm.get('confirmPassword')?.value && submitted){
+    <div class="error-message">
+    {{ confirmPasswordMissingErrorMessage }}
+    </div>
+    }
+
+    @if(loginForm.get('confirmPassword')?.value && submitted && !isPasswordConfirmed){
+    <div class="error-message">
+    {{ confirmPasswordErrorMessage }}
+    </div>
+    }
   }
 
     <div class="form-submit">

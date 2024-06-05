@@ -7,13 +7,14 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {EntretiensService} from "../../services/entretiens/entretiens.service";
 import {MotoService} from "../../services/moto/moto.service";
 import {StorageService} from "../../services/storage/storage.service";
-import {DatePipe} from "@angular/common";
+import {DatePipe, NgForOf} from "@angular/common";
 
 @Component({
   selector: 'app-moto-form',
   standalone: true,
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgForOf
   ],
   templateUrl: './moto-form.component.html',
   styleUrl: './moto-form.component.css'
@@ -30,6 +31,7 @@ export class MotoFormComponent {
   submitted: boolean = false;
   marqueErrorMessage = '';
   modeleErrorMessage = '';
+  years: number[];
 
   constructor(private fb: FormBuilder,
               @Inject(MAT_DIALOG_DATA) private data: any,
@@ -56,15 +58,23 @@ export class MotoFormComponent {
   }
 
   ngOnInit(): void {
+    const currentYear = new Date().getFullYear();
+    this.years = [];
+    for (let year = currentYear; year >= 1900; year--) {
+      this.years.push(year);
+    }
+
     if (this.addOrEdit == 'add') {
       this.form = this.fb.group({
         marque: [null, [Validators.required]],
-        modele: [null, [Validators.required]]
+        modele: [null, [Validators.required]],
+        year: null
       })
     } else {
       this.form = this.fb.group({
         marque: [this.moto.marque, [Validators.required]],
-        modele: [this.moto.modele, [Validators.required]]
+        modele: [this.moto.modele, [Validators.required]],
+        year: this.moto.year
       })
     }
 
@@ -74,6 +84,7 @@ export class MotoFormComponent {
 
   onSubmitMoto(): void {
     this.moto = this.form.value;
+    this.moto.year = this.moto.year !== null ? +this.moto.year : null; // Convert to number
     this.submitted = true;
     if (this.form.valid){
       this.saveMoto();

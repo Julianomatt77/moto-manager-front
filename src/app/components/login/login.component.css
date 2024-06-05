@@ -1,1 +1,21 @@
 @import "../../../assets/styles/form.css";
+
+.login-form{
+  .form-control {
+    width: 100%;
+  }
+}
+
+.password-field {
+  position: relative;
+
+  .material-symbols-outlined {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 32px;
+    color: var(--background);
+  }
+}

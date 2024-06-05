@@ -19,6 +19,9 @@
         <div class="card-title-div pt-1 pb-1">
           <div class="badge-secondary">{{ moto.marque }}</div>
           <div class="badge-secondary">{{ moto.modele }}</div>
+          @if (moto.year) {
+          <div class="badge-secondary">{{ moto.year }}</div>
+          }
         </div>
 
         <div class="card-moto pr-1 pl-1">
@@ -57,6 +60,9 @@
       <div class="card-title-div pt-1 pb-1">
         <div class="badge-secondary">{{ moto.marque }}</div>
         <div class="badge-secondary">{{ moto.modele }}</div>
+        @if (moto.year) {
+        <div class="badge-secondary">{{ moto.year }}</div>
+        }
 
         <div>
           <button class="secondary-button" (click)="reactivateMoto(moto)" title="Réactiver {{moto.marque}} {{moto.modele}}">Réactiver</button>
