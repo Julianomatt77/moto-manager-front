@@ -6,6 +6,8 @@ export const environment = {
   production: false,
   baseUrl: 'http://127.0.0.1:8000/api/',
   base: 'http://127.0.0.1:8000/',
+  // baseUrl: 'https://moto-manager-api.martin-julien-dev.fr/api/',
+  // base: 'https://moto-manager-api.martin-julien-dev.fr/',
   user_key: 'mm_user',
   token_name: 'mm_token'
 };
