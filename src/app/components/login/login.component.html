@@ -57,11 +57,11 @@
   }
 
     <div class="form-submit">
-      <button type="submit" class="primary-button">{{ label}}</button>
+      <button type="submit" class="primary-button" title="Se connecter">{{ label}}</button>
     </div>
 
     @if(!isRegistration){
-      <div class="mt-1-5">Vous n'avez pas encore de compte? <a [routerLink]="['/register']" class="underline"> S'enregistrer</a></div>
+      <div class="mt-1-5">Vous n'avez pas encore de compte? <a [routerLink]="['/register']" class="underline" title="s'enregistrer"> S'enregistrer</a></div>
     }
 
   </form>

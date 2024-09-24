@@ -5,41 +5,41 @@
 <nav class="nav-div" [class.is-open]="isMenuOpen">
   <div class="menu">
     <div>
-    <button class="primary-button sidebar-button" [routerLink]="['']" (click)="isMenuOpen && toggleMenu()">
+    <button class="primary-button sidebar-button" [routerLink]="['']" (click)="isMenuOpen && toggleMenu()" title="accueil">
       <span class="material-symbols-outlined">home</span>
     </button>
 
     @if (isLoggedIn){
-    <button class="secondary-button sidebar-button" [routerLink]="['depenses']" (click)="isMenuOpen && toggleMenu()">
+    <button class="secondary-button sidebar-button" [routerLink]="['depenses']" (click)="isMenuOpen && toggleMenu()" title="dépenses">
       <span>Dépenses</span>
     </button>
 
-   <button class="secondary-button sidebar-button" [routerLink]="['entretien']" (click)="isMenuOpen && toggleMenu()">
+   <button class="secondary-button sidebar-button" [routerLink]="['entretien']" (click)="isMenuOpen && toggleMenu()" title="entretiens">
     <span>Entretiens réguliers</span>
     </button>
 
-    <button class="secondary-button sidebar-button" [routerLink]="['motos']" (click)="isMenuOpen && toggleMenu()">
+    <button class="secondary-button sidebar-button" [routerLink]="['motos']" (click)="isMenuOpen && toggleMenu()" title="motos">
     <span>Mes motos</span>
     </button>
     }
     </div>
     <div class="mb-2">
-      <button class="secondary-button sidebar-button" [routerLink]="['cgu']" (click)="isMenuOpen && toggleMenu()">
+      <button class="secondary-button sidebar-button" [routerLink]="['cgu']" (click)="isMenuOpen && toggleMenu()" title="cgu">
         <span>CGU</span>
       </button>
 
-      <button class="secondary-button sidebar-button" [routerLink]="['contact']" (click)="isMenuOpen && toggleMenu()">
+      <button class="secondary-button sidebar-button" [routerLink]="['contact']" (click)="isMenuOpen && toggleMenu()" title="contact">
         <span>Contact</span>
       </button>
 
     @if (!isLoggedIn){
-    <button class="secondary-button sidebar-button" [routerLink]="['login']" (click)="isMenuOpen && toggleMenu()">
+    <button class="secondary-button sidebar-button" [routerLink]="['login']" (click)="isMenuOpen && toggleMenu()" title="Se connecter">
       <span class="material-symbols-outlined">account_circle</span>
     </button>
     }
 
     @if (isLoggedIn){
-    <button class="secondary-button sidebar-button" (click)="logout()">
+    <button class="secondary-button sidebar-button" (click)="logout()" title="Se déconnecter">
       <span class="material-symbols-outlined">account_circle_off</span>
     </button>
     }
