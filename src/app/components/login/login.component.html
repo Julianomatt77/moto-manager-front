@@ -2,7 +2,7 @@
   @if (!isLoggedIn){
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form-container">
     <div class="form-group">
-      <div><label for="username">Username</label></div>
+      <div><label for="username">Adresse email</label></div>
       <input type="email" class="form-control" id="username" formControlName="username">
     </div>
     @if(!loginForm.get('username')?.valid && submitted){
