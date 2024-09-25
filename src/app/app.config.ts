@@ -1,18 +1,16 @@
-import {ApplicationConfig, importProvidersFrom} from '@angular/core';
+import {ApplicationConfig} from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import {HttpClient, HttpClientModule, provideHttpClient} from "@angular/common/http";
-import {tokenInterceptorProvider} from "./auth.interceptor";
+import {provideHttpClient, withInterceptors} from "@angular/common/http";
+import {AuthInterceptor} from "./auth.interceptor";
 import {provideAnimations} from "@angular/platform-browser/animations";
 import {HashLocationStrategy, LocationStrategy} from "@angular/common";
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideHttpClient(),
-    importProvidersFrom(HttpClientModule),
-    tokenInterceptorProvider,
+    provideHttpClient(withInterceptors([AuthInterceptor])),
     provideAnimations(),
     { provide: LocationStrategy, useClass: HashLocationStrategy }
   ]
