@@ -4,7 +4,6 @@ import { environment } from '../../../environments/environment';
 import {BehaviorSubject, Observable, tap} from 'rxjs';
 import {StorageService} from "../storage/storage.service";
 import {Router} from "@angular/router";
-import {Depense} from "../../models/Depense";
 
 @Injectable({
   providedIn: 'root',

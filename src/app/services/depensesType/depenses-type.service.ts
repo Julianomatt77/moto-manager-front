@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {environment} from "../../../environments/environment";
-import {HttpClient} from "@angular/common/http";
-import {DepenseType} from "../../models/DepenseType";
+import { HttpClient } from "@angular/common/http";
+import { DepenseType } from "../../models/DepenseType";
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,6 @@ export class DepensesTypeService {
     return this.http.get<DepenseType>(this.depensesUrl + '/${id}');
   }
 
-  // saveDepenseType(depenseType: DepenseType){
   saveDepenseType(name: string){
     let data = {'name': name}
     let json = JSON.stringify(data)
