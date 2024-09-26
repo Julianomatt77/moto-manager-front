@@ -20,9 +20,51 @@
     </div>
   </div>
 
-
   @if (!isLoading) {
-  <div class="depenses-recap mb-1">Dépenses : <span class="badge">{{depensesTotal | number: "1.0-2"}} €</span></div>
+  <div class="depenses-recap mb-1 mt-2">Dépenses : <span class="badge">{{depensesTotal | number: "1.0-2"}} €</span></div>
+
+  <div class="flex-center mt-2 mb-2 justify-content-center gap-3 wrap">
+    <form [formGroup]="formMotoFiltered" (ngSubmit)="onSubmitMotoFilter()" title="Filtrer par moto">
+      <div class="d-flex align-items-center">
+        <mat-form-field>
+          <mat-label>Filtrer par moto</mat-label>
+          <mat-select formControlName="moto" (selectionChange)="onSubmitMotoFilter()">
+            <mat-option value="">Toutes les motos</mat-option>
+            <mat-option *ngFor="let moto of motos " value="{{ moto.id }}">{{moto.modele}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </form>
+
+    <form [formGroup]="formTypeFiltered" (ngSubmit)="onSubmitTypeFilter()" title="Filtrer par type">
+      <div class="d-flex align-items-center">
+        <mat-form-field>
+          <mat-label>Filtrer par type</mat-label>
+          <mat-select formControlName="type" (selectionChange)="onSubmitTypeFilter()">
+            <mat-option value="">Tous</mat-option>
+            <mat-option *ngFor="let type of depensesTypes " value="{{ type.id }}">{{type.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </form>
+
+    <form [formGroup]="formYearFiltered" (ngSubmit)="onSubmitYearFilter()" title="Filtrer par année">
+      <div class="d-flex align-items-center">
+        <mat-form-field>
+          <mat-label>Filtrer par année</mat-label>
+          <mat-select formControlName="year" (selectionChange)="onSubmitYearFilter()">
+            <mat-option value="">Toutes les années</mat-option>
+            <mat-option *ngFor="let year of availableYears " value="{{ year }}">{{year}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </form>
+
+    <div>
+      <button class="shadow reset-button" (click)="resetAllFilters()">Supprimer les filtres</button>
+    </div>
+
+  </div>
 
   <mat-paginator
                (page)="handlePageEvent($event)"

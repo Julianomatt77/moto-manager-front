@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, inject, input, ViewChild} from '@angular/core';
 import {DepensesService} from "../../services/depenses/depenses.service";
 import {StorageService} from "../../services/storage/storage.service";
 import {User} from "../../models/User";
@@ -10,17 +10,27 @@ import {MatPaginator, MatPaginatorModule, PageEvent} from "@angular/material/pag
 import {MatTableDataSource} from "@angular/material/table";
 import {UploadPopupComponent} from "../../form/upload-popup/upload-popup.component";
 import {ExportService} from "../../services/export/export.service";
+import {Moto} from "../../models/Moto";
+import {MotoService} from "../../services/moto/moto.service";
+import {FormBuilder, FormGroup, ReactiveFormsModule} from "@angular/forms";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatOptionModule} from "@angular/material/core";
+import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
+import {DepenseType} from "../../models/DepenseType";
+import {DepensesTypeService} from "../../services/depensesType/depenses-type.service";
 
 @Component({
   selector: 'app-depenses',
   standalone: true,
-    imports: [NgForOf, NgIf, DatePipe, MatPaginatorModule, DecimalPipe],
+  imports: [NgForOf, NgIf, DatePipe, MatPaginatorModule, DecimalPipe, ReactiveFormsModule, MatFormFieldModule, MatOptionModule, MatInputModule, MatSelectModule],
   templateUrl: './depenses.component.html',
   styleUrl: './depenses.component.css',
 })
 export class DepensesComponent {
 
   depenses: any[] = [];
+  displayedDepenses: any[] = [];
   user: User;
   isLoading = true;
   error: string;
@@ -36,18 +46,50 @@ export class DepensesComponent {
   showFirstLastButtons = true;
   disabled = false;
   depensesTotal = 0;
+  motos: Moto[] = [];
+  depensesTypes: DepenseType[] = [];
+
+  formMotoFiltered!: FormGroup;
+  selectedMoto: string = "";
+
+  formYearFiltered!: FormGroup;
+  selectedYear: number;
+  availableYears: number[] = []
+
+  formTypeFiltered!: FormGroup;
+  selectedType: string = "";
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   public dataSource: any;
 
-  constructor(private depensesService: DepensesService,
-              private storageService: StorageService,
-              public dialog: MatDialog,
-              private exportService: ExportService
-  ){}
+  motoService = inject(MotoService);
+  depensesService = inject(DepensesService);
+  depensesTypesService = inject(DepensesTypeService);
+  storageService = inject(StorageService);
+  dialog = inject(MatDialog);
+  exportService = inject(ExportService);
+  fb = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.user = this.storageService.getUser();
+
+    this.getAllMotos()
+    this.getAllDepensesTypes()
+    this.getAvailableYears()
+
+    this.formMotoFiltered = this.fb.group({
+      moto: this.selectedMoto
+    });
+
+    this.formYearFiltered = this.fb.group({
+      year: this.selectedYear
+    });
+
+    this.formTypeFiltered = this.fb.group({
+      type: this.selectedType
+    });
+
     this.getAllDepenses();
   }
 
@@ -58,25 +100,62 @@ export class DepensesComponent {
         this.isLoading = false;
         this.depenses = data;
 
-        this.dataSource = new MatTableDataSource<Element>(data);
-        this.dataSource.paginator = this.paginator;
-        this.length = data.length;
-        this.iterator();
-
-        this.depenses.forEach((depense: any) => {
-          this.depensesTotal += depense.montant;
-        })
+        this.updatePaginator(this.depenses);
 
         // const datePipe = new DatePipe('en-US');
         // this.depenses.forEach((depense) => {
         //   depense.date = datePipe.transform(depense.date, 'dd/MM/yyyy ');
         // });
-
       },
       error: (err) => {
         this.error = err.error.message
       }
     })
+  }
+
+  updatePaginator(data: any){
+    this.displayedDepenses = data;
+
+    this.depensesTotal = 0;
+    this.displayedDepenses.forEach((depense: any) => {
+      this.depensesTotal += depense.montant;
+    })
+
+    this.dataSource = new MatTableDataSource<Element>(this.displayedDepenses);
+    this.dataSource.paginator = this.paginator;
+
+    this.length = this.displayedDepenses.length;
+    this.iterator();
+  }
+
+  getAllMotos(){
+    this.motoService.getAllMotos().subscribe({
+      next: (data) => {
+        this.motos = data;
+      },
+      error: (err) => {
+        this.error = err.error.message
+      }
+    });
+  }
+
+  getAvailableYears() {
+    const todayYear = new Date().getFullYear();
+    for (let i = 2000; i <= todayYear; i++) {
+      this.availableYears.unshift(i);
+    }
+  }
+
+  getAllDepensesTypes(){
+    this.depensesTypesService.getDepensesTypes().subscribe({
+      next: (data) => {
+        this.depensesTypes = data;
+        this.depensesTypes = data.sort((a, b) => a.name.localeCompare(b.name));
+      },
+      error: (err) => {
+        this.error = err.error.message
+      }
+    });
   }
 
   /*************** CRUD *******************/
@@ -146,7 +225,7 @@ export class DepensesComponent {
   private iterator() {
     const end = (this.currentPage + 1) * this.pageSize;
     const start = this.currentPage * this.pageSize;
-    const part = this.depenses.slice(start, end);
+    const part = this.displayedDepenses.slice(start, end);
     this.dataSource = part;
   }
 
@@ -170,6 +249,46 @@ export class DepensesComponent {
     this.exportService.exportDepenses().subscribe(response => {
       this.exportService.handleCsvDownload(response, 'depenses');
     })
+  }
+
+  /****************** FILTERS **********************/
+  onSubmitMotoFilter(){
+    this.selectedMoto = this.formMotoFiltered.value.moto;
+    this.filter();
+  }
+
+  onSubmitYearFilter(){
+    this.selectedYear = Number(this.formYearFiltered.value.year);
+    this.filter();
+  }
+
+  onSubmitTypeFilter(){
+    this.selectedType = this.formTypeFiltered.value.type;
+    this.filter();
+  }
+
+  filter() {
+    const depensesFiltered = this.depenses.filter(depense => {
+      const motoMatch = !this.selectedMoto || depense.moto.id == this.selectedMoto;
+      const yearMatch = !this.selectedYear || this.selectedYear == 0 || new Date(depense.date).getFullYear() == this.selectedYear;
+      const typeMatch = !this.selectedType || depense.depenseType.id == this.selectedType;
+      return motoMatch && yearMatch && typeMatch;
+    });
+
+    this.updatePaginator(depensesFiltered);
+  };
+
+  resetAllFilters(){
+    this.selectedMoto = "";
+    this.formMotoFiltered.get('moto')?.setValue("");
+
+    this.selectedYear = 0;
+    this.formYearFiltered.get('year')?.setValue(0);
+
+    this.selectedType = "";
+    this.formTypeFiltered.get('type')?.setValue("");
+
+    this.updatePaginator(this.depenses);
   }
 
 
