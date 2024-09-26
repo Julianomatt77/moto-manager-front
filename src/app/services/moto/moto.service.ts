@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {environment} from "../../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { Moto } from "../../models/Moto";
+import {map, Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -42,5 +43,11 @@ export class MotoService {
   deleteMoto(id: string){
     let url = this.motoUrl + '/' + id
     return this.http.delete<Moto>(url)
+  }
+
+  getAllMotos(): Observable<any> {
+    return this.getMotos().pipe(
+      map(data => data), // Vous pouvez transformer les données ici si nécessaire
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {CommonModule} from "@angular/common";
 import {User} from "../../models/User";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
@@ -27,12 +27,11 @@ export class MotosComponent {
   depenses: any[] = [];
   entretiens: any[] = [];
 
-  constructor(private motosService: MotoService,
-              private storageService: StorageService,
-              public dialog: MatDialog,
-              private depensesService: DepensesService,
-              private entretiensServices: EntretiensService
-  ){}
+  motosService = inject(MotoService);
+  storageService = inject(StorageService);
+  dialog = inject(MatDialog);
+  depensesService = inject(DepensesService);
+  entretiensServices = inject(EntretiensService);
 
   ngOnInit(): void {
     this.user = this.storageService.getUser();
@@ -40,9 +39,9 @@ export class MotosComponent {
   }
 
   loadMotosData(): void {
-    this.isLoading = true; // Active l'indicateur de chargement
+    this.isLoading = true;
 
-    const motos$ = this.getAllMotos();
+    const motos$ = this.motosService.getAllMotos();
     const deactivatedMotos$ = this.getAllDeactivatedMotos();
 
     forkJoin([motos$, deactivatedMotos$]).subscribe({
@@ -57,12 +56,6 @@ export class MotosComponent {
         this.isLoading = false;
       }
     });
-  }
-
-  getAllMotos(): Observable<any> {
-    return this.motosService.getMotos().pipe(
-      map(data => data), // Vous pouvez transformer les données ici si nécessaire
-    );
   }
 
   getAllDeactivatedMotos(): Observable<any> {
