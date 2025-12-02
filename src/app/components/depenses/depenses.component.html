@@ -1,7 +1,7 @@
 @if (isLoading){
-<div class="ring">Loading
-  <span class="loading"></span>
-</div>
+  <div class="ring">Loading
+    <span class="loading"></span>
+  </div>
 }
 
 <section id="depenses-list">
@@ -21,130 +21,136 @@
   </div>
 
   @if (!isLoading) {
-  <div class="depenses-recap mb-1 mt-2">Dépenses : <span class="badge">{{depensesTotal | number: "1.0-2"}} €</span></div>
+    <div class="depenses-recap mb-1 mt-2">Dépenses : <span class="badge">{{depensesTotal | number: "1.0-2"}} €</span></div>
 
-  <div class="flex-center mt-2 mb-2 justify-content-center gap-3 wrap">
-    <form [formGroup]="formMotoFiltered" (ngSubmit)="onSubmitMotoFilter()" title="Filtrer par moto">
-      <div class="d-flex align-items-center">
-        <mat-form-field>
-          <mat-label>Filtrer par moto</mat-label>
-          <mat-select formControlName="moto" (selectionChange)="onSubmitMotoFilter()">
-            <mat-option value="">Toutes les motos</mat-option>
-            <mat-option *ngFor="let moto of motos " value="{{ moto.id }}">{{moto.modele}}</mat-option>
-          </mat-select>
-        </mat-form-field>
+    <div class="flex-center mt-2 mb-2 justify-content-center gap-3 wrap">
+      <form [formGroup]="formMotoFiltered" (ngSubmit)="onSubmitMotoFilter()" title="Filtrer par moto">
+        <div class="d-flex align-items-center">
+          <mat-form-field>
+            <mat-label>Filtrer par moto</mat-label>
+            <mat-select formControlName="moto" (selectionChange)="onSubmitMotoFilter()">
+              <mat-option value="">Toutes les motos</mat-option>
+              @for (moto of motos ; track moto) {
+                <mat-option value="{{ moto.id }}">{{moto.modele}}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </form>
+
+      <form [formGroup]="formTypeFiltered" (ngSubmit)="onSubmitTypeFilter()" title="Filtrer par type">
+        <div class="d-flex align-items-center">
+          <mat-form-field>
+            <mat-label>Filtrer par type</mat-label>
+            <mat-select formControlName="type" (selectionChange)="onSubmitTypeFilter()">
+              <mat-option value="">Tous</mat-option>
+              @for (type of depensesTypes ; track type) {
+                <mat-option value="{{ type.id }}">{{type.name}}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </form>
+
+      <form [formGroup]="formYearFiltered" (ngSubmit)="onSubmitYearFilter()" title="Filtrer par année">
+        <div class="d-flex align-items-center">
+          <mat-form-field>
+            <mat-label>Filtrer par année</mat-label>
+            <mat-select formControlName="year" (selectionChange)="onSubmitYearFilter()">
+              <mat-option value="">Toutes les années</mat-option>
+              @for (year of availableYears ; track year) {
+                <mat-option value="{{ year }}">{{year}}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </form>
+
+      <div>
+        <button class="shadow reset-button" (click)="resetAllFilters()">Supprimer les filtres</button>
       </div>
-    </form>
 
-    <form [formGroup]="formTypeFiltered" (ngSubmit)="onSubmitTypeFilter()" title="Filtrer par type">
-      <div class="d-flex align-items-center">
-        <mat-form-field>
-          <mat-label>Filtrer par type</mat-label>
-          <mat-select formControlName="type" (selectionChange)="onSubmitTypeFilter()">
-            <mat-option value="">Tous</mat-option>
-            <mat-option *ngFor="let type of depensesTypes " value="{{ type.id }}">{{type.name}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-    </form>
-
-    <form [formGroup]="formYearFiltered" (ngSubmit)="onSubmitYearFilter()" title="Filtrer par année">
-      <div class="d-flex align-items-center">
-        <mat-form-field>
-          <mat-label>Filtrer par année</mat-label>
-          <mat-select formControlName="year" (selectionChange)="onSubmitYearFilter()">
-            <mat-option value="">Toutes les années</mat-option>
-            <mat-option *ngFor="let year of availableYears " value="{{ year }}">{{year}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-    </form>
-
-    <div>
-      <button class="shadow reset-button" (click)="resetAllFilters()">Supprimer les filtres</button>
     </div>
 
-  </div>
+    <mat-paginator
+      (page)="handlePageEvent($event)"
+      [length]="length"
+      [pageSize]="pageSize"
+      [disabled]="disabled"
+      [showFirstLastButtons]="showFirstLastButtons"
+      [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
+      [hidePageSize]="hidePageSize"
+      [pageIndex]="currentPage"
+      aria-label="Select page">
+    </mat-paginator>
 
-  <mat-paginator
-               (page)="handlePageEvent($event)"
-               [length]="length"
-               [pageSize]="pageSize"
-               [disabled]="disabled"
-               [showFirstLastButtons]="showFirstLastButtons"
-               [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
-               [hidePageSize]="hidePageSize"
-               [pageIndex]="currentPage"
-               aria-label="Select page">
-  </mat-paginator>
+    <div class="depenses-container">
+      @for (depense of dataSource; track depense.id){
+        <div class="card">
+          <div class="card-top pt-1 pb-1">
+            <div class="card-title-div">
+              <div><h2 class="card-title">{{depense.depenseType.name}}</h2></div>
+              <div><p class="badge m-0 card-montant">{{depense.montant | number: "1.0-2"}} €</p></div>
+            </div>
 
-  <div class="depenses-container">
-    @for (depense of dataSource; track depense.id){
-      <div class="card">
-        <div class="card-top pt-1 pb-1">
-          <div class="card-title-div">
-            <div><h2 class="card-title">{{depense.depenseType.name}}</h2></div>
-            <div><p class="badge m-0 card-montant">{{depense.montant | number: "1.0-2"}} €</p></div>
+            <div class="card-moto">
+              <p class="badge">{{depense.moto.modele}}</p>
+              <p class="badge">{{depense.kilometrage}} Km</p>
+            </div>
+
+            <div class="flex-end pr-1">{{depense.date | date: "dd/MM/y" }}</div>
           </div>
 
-          <div class="card-moto">
-            <p class="badge">{{depense.moto.modele}}</p>
-            <p class="badge">{{depense.kilometrage}} Km</p>
+          <div class="card-body">
+            <div class="card-left">
+              @if (depense.kmParcouru){
+                <div class="card-info card-info-1"><p>Distance parcourue:</p><p>{{depense.kmParcouru}} Km</p></div>
+              }
+
+              @if (depense.essenceConsomme){
+                <div class="card-info card-info-2"><p>Essence consommé:</p><p>{{depense.essenceConsomme}} L</p></div>
+              }
+            </div>
+            <div class="card-right">
+              @if (depense.consoMoyenne){
+                <div class="card-info card-info-3"><p>Conso moyenne:</p><p>{{depense.consoMoyenne}} l/100</p></div>
+              }
+              @if (depense.essencePrice){
+                <div class="card-info card-info-4"><p>Prix de l'essence:</p><p>{{depense.essencePrice}} €/L</p></div>
+              }
+            </div>
           </div>
 
-          <div class="flex-end pr-1">{{depense.date | date: "dd/MM/y" }}</div>
-        </div>
-
-        <div class="card-body">
-          <div class="card-left">
-            @if (depense.kmParcouru){
-            <div class="card-info card-info-1"><p>Distance parcourue:</p><p>{{depense.kmParcouru}} Km</p></div>
+          <div class="card-body">
+            @if (depense.commentaire){
+              <p class="badge-secondary">{{depense.commentaire}}</p>
             }
+          </div>
 
-            @if (depense.essenceConsomme){
-            <div class="card-info card-info-2"><p>Essence consommé:</p><p>{{depense.essenceConsomme}} L</p></div>
-            }
+          <div class="flex-evenly">
+            <div>
+              <a href="javascript:;" (click)="editDepense(depense)" class="material-symbols-outlined" title="éditer la dépense">edit_note</a>
+            </div>
+            <div>
+              <a href="javascript:;" (click)="openConfirmation(depense)" class="material-symbols-outlined badge-delete mb-1" title="supprimer la dépense">delete</a>
+            </div>
           </div>
-          <div class="card-right">
-            @if (depense.consoMoyenne){
-            <div class="card-info card-info-3"><p>Conso moyenne:</p><p>{{depense.consoMoyenne}} l/100</p></div>
-            }
-            @if (depense.essencePrice){
-            <div class="card-info card-info-4"><p>Prix de l'essence:</p><p>{{depense.essencePrice}} €/L</p></div>
-            }
-          </div>
+
         </div>
-
-        <div class="card-body">
-          @if (depense.commentaire){
-          <p class="badge-secondary">{{depense.commentaire}}</p>
-          }
-        </div>
-
-        <div class="flex-evenly">
-          <div>
-            <a href="javascript:;" (click)="editDepense(depense)" class="material-symbols-outlined" title="éditer la dépense">edit_note</a>
-          </div>
-          <div>
-            <a href="javascript:;" (click)="openConfirmation(depense)" class="material-symbols-outlined badge-delete mb-1" title="supprimer la dépense">delete</a>
-          </div>
-        </div>
-
-      </div>
-    } @empty {
-    <span>Vous n'avez aucune dépense</span>
-    }
-  </div>
-  <mat-paginator
-               (page)="handlePageEvent($event)"
-               [length]="length"
-               [pageSize]="pageSize"
-               [disabled]="disabled"
-               [showFirstLastButtons]="showFirstLastButtons"
-               [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
-               [hidePageSize]="hidePageSize"
-               [pageIndex]="currentPage"
-               aria-label="Select page">
-  </mat-paginator>
-}
+        } @empty {
+        <span>Vous n'avez aucune dépense</span>
+      }
+    </div>
+    <mat-paginator
+      (page)="handlePageEvent($event)"
+      [length]="length"
+      [pageSize]="pageSize"
+      [disabled]="disabled"
+      [showFirstLastButtons]="showFirstLastButtons"
+      [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
+      [hidePageSize]="hidePageSize"
+      [pageIndex]="currentPage"
+      aria-label="Select page">
+    </mat-paginator>
+  }
 </section>

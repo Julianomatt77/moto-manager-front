@@ -13,14 +13,13 @@ import {UploadPopupComponent} from "../../form/upload-popup/upload-popup.compone
 import {ExportService} from "../../services/export/export.service";
 
 @Component({
-  selector: 'app-entretien',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatPaginatorModule
-  ],
-  templateUrl: './entretien.component.html',
-  styleUrl: './entretien.component.css'
+    selector: 'app-entretien',
+    imports: [
+        CommonModule,
+        MatPaginatorModule
+    ],
+    templateUrl: './entretien.component.html',
+    styleUrl: './entretien.component.css'
 })
 export class EntretienComponent {
   entretiens: any[] = [];

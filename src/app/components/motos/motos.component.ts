@@ -1,5 +1,4 @@
 import {Component, inject} from '@angular/core';
-import {CommonModule} from "@angular/common";
 import {User} from "../../models/User";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {ConfirmationDialogComponent} from "../confirmation-dialog/confirmation-dialog.component";
@@ -11,11 +10,10 @@ import {EntretiensService} from "../../services/entretiens/entretiens.service";
 import {catchError, forkJoin, map, Observable} from "rxjs";
 
 @Component({
-  selector: 'app-motos',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './motos.component.html',
-  styleUrl: './motos.component.css'
+    selector: 'app-motos',
+    imports: [],
+    templateUrl: './motos.component.html',
+    styleUrl: './motos.component.css'
 })
 export class MotosComponent {
   motos: any[] = [];

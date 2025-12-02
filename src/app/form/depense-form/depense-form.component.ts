@@ -4,24 +4,19 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {DepensesService} from "../../services/depenses/depenses.service";
 import {Depense} from "../../models/Depense";
 import {StorageService} from "../../services/storage/storage.service";
-import {DepenseType} from "../../models/DepenseType";
 import {DepensesTypeService} from "../../services/depensesType/depenses-type.service";
-import {DatePipe, NgForOf, NgIf} from "@angular/common";
+import { DatePipe } from "@angular/common";
 import {MotoService} from "../../services/moto/moto.service";
 
 @Component({
-  selector: 'app-depense-form',
-  standalone: true,
-  imports: [
+    selector: 'app-depense-form',
+    imports: [
     ReactiveFormsModule,
-    DatePipe,
-    FormsModule,
-    NgForOf,
-    NgIf,
-  ],
-  providers: [DatePipe],
-  templateUrl: './depense-form.component.html',
-  styleUrl: './depense-form.component.css'
+    FormsModule
+],
+    providers: [DatePipe],
+    templateUrl: './depense-form.component.html',
+    styleUrl: './depense-form.component.css'
 })
 export class DepenseFormComponent implements OnInit{
   @Output() formSubmitted: EventEmitter<Depense>;

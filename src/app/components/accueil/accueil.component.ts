@@ -3,11 +3,10 @@ import {StorageService} from "../../services/storage/storage.service";
 import {RouterModule} from "@angular/router";
 
 @Component({
-  selector: 'app-accueil',
-  standalone: true,
-  imports: [RouterModule],
-  templateUrl: './accueil.component.html',
-  styleUrl: './accueil.component.css'
+    selector: 'app-accueil',
+    imports: [RouterModule],
+    templateUrl: './accueil.component.html',
+    styleUrl: './accueil.component.css'
 })
 export class AccueilComponent implements OnInit{
   isPageReloaded: boolean = false;

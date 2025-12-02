@@ -10,59 +10,61 @@
   </div>
 
   <input type="file" class="file-input"
-         (change)="onFileSelected($event)" #fileUpload accept=".xls, .xlsx">
+    (change)="onFileSelected($event)" #fileUpload accept=".xls, .xlsx">
 
   <div class="file-upload flex-center">
     <button mat-mini-fab color="primary" class="upload-btn"
-            (click)="fileUpload.click()">
+      (click)="fileUpload.click()">
       <span class="material-symbols-outlined">attach_file</span>
     </button>
 
     {{fileName || "Aucun fichier uploadé pour l'instant."}}
   </div>
   @if(!fileImported && submitted){
-  <div class="error-message">
-    Un fichier est obligatoire !
-  </div>
+    <div class="error-message">
+      Un fichier est obligatoire !
+    </div>
   }
 
   @if(fileErrorMessage){
-  <div class="error-message">
-  {{ fileErrorMessage }}
-  </div>
+    <div class="error-message">
+      {{ fileErrorMessage }}
+    </div>
   }
 
   @if (isLoading){
-  <div class="ring-upload ring">Loading
-    <span class="loading"></span>
-  </div>
+    <div class="ring-upload ring">Loading
+      <span class="loading"></span>
+    </div>
   }
 
   <form [formGroup]="form" (submit)="onSubmitUpload()" class="form-container">
     @if (!isLoading) {
-    <div class="form-group">
-      <div><label for="moto">Moto</label></div>
-      <select
-        id="moto"
-        class="form-control"
-        formControlName="moto"
-      >
-        <option *ngFor="let moto of motoList" [ngValue]="moto.id.toString()">
-          {{ moto.name }}
-        </option>
-      </select>
-    </div>
-    @if(!form.get('moto')?.valid && submitted){
-    <div class="error-message">
-    La moto est obligatoire !
-    </div>
-    }
-<!--    TODO: a disable si pas de fichier-->
-    <div class="form-submit">
-      <button type="submit" class="secondary-button">
-        Importer
-      </button>
-    </div>
+      <div class="form-group">
+        <div><label for="moto">Moto</label></div>
+        <select
+          id="moto"
+          class="form-control"
+          formControlName="moto"
+          >
+          @for (moto of motoList; track moto) {
+            <option [ngValue]="moto.id.toString()">
+              {{ moto.name }}
+            </option>
+          }
+        </select>
+      </div>
+      @if(!form.get('moto')?.valid && submitted){
+        <div class="error-message">
+          La moto est obligatoire !
+        </div>
+      }
+      <!--    TODO: a disable si pas de fichier-->
+      <div class="form-submit">
+        <button type="submit" class="secondary-button">
+          Importer
+        </button>
+      </div>
     }
   </form>
 

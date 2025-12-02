@@ -5,14 +5,13 @@ import {BehaviorSubject, Subscription} from "rxjs";
 import {AuthService} from "../../services/auth/auth.service";
 
 @Component({
-  selector: 'app-sidebar',
-  standalone: true,
+    selector: 'app-sidebar',
     imports: [
         RouterModule
     ],
-  templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css',
-  providers: [AuthService]
+    templateUrl: './sidebar.component.html',
+    styleUrl: './sidebar.component.css',
+    providers: [AuthService]
 })
 export class SidebarComponent implements OnInit{
   isMenuOpen = false;

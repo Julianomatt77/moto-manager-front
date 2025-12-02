@@ -13,12 +13,12 @@
         class="form-control"
         formControlName="marque"
         type="text"
-      />
+        />
     </div>
     @if(!form.get('marque')?.valid && submitted){
-    <div class="error-message">
-    {{ marqueErrorMessage }}
-    </div>
+      <div class="error-message">
+        {{ marqueErrorMessage }}
+      </div>
     }
 
     <div class="form-group">
@@ -28,12 +28,12 @@
         class="form-control"
         formControlName="modele"
         type="text"
-      />
+        />
     </div>
     @if(!form.get('modele')?.valid && submitted){
-    <div class="error-message">
-    {{ modeleErrorMessage }}
-    </div>
+      <div class="error-message">
+        {{ modeleErrorMessage }}
+      </div>
     }
 
     <div class="form-group">
@@ -43,7 +43,9 @@
       id="year"
       class="form-control"
       formControlName="year">
-      <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+      @for (year of years; track year) {
+        <option [value]="year">{{ year }}</option>
+      }
     </select>
 
     <div class="form-submit">
