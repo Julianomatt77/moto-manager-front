@@ -5,16 +5,15 @@ import {DepensesService} from "../../services/depenses/depenses.service";
 import {Depense} from "../../models/Depense";
 import {StorageService} from "../../services/storage/storage.service";
 import {DepensesTypeService} from "../../services/depensesType/depenses-type.service";
-import {DatePipe, NgForOf, NgIf} from "@angular/common";
+import { DatePipe } from "@angular/common";
 import {MotoService} from "../../services/moto/moto.service";
 
 @Component({
     selector: 'app-depense-form',
     imports: [
-        ReactiveFormsModule,
-        FormsModule,
-        NgForOf,
-    ],
+    ReactiveFormsModule,
+    FormsModule
+],
     providers: [DatePipe],
     templateUrl: './depense-form.component.html',
     styleUrl: './depense-form.component.css'

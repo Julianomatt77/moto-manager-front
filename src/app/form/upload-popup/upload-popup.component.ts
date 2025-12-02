@@ -8,7 +8,7 @@ import {DepensesService} from "../../services/depenses/depenses.service";
 import {DepensesTypeService} from "../../services/depensesType/depenses-type.service";
 import {MotoService} from "../../services/moto/moto.service";
 import {Moto} from "../../models/Moto";
-import {NgForOf} from "@angular/common";
+
 import {forkJoin} from "rxjs";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {EntretiensService} from "../../services/entretiens/entretiens.service";
@@ -16,11 +16,10 @@ import {EntretiensService} from "../../services/entretiens/entretiens.service";
 @Component({
     selector: 'app-upload-popup',
     imports: [
-        ReactiveFormsModule,
-        NgForOf,
-        FormsModule,
-        MatProgressBarModule
-    ],
+    ReactiveFormsModule,
+    FormsModule,
+    MatProgressBarModule
+],
     templateUrl: './upload-popup.component.html',
     styleUrl: './upload-popup.component.css'
 })

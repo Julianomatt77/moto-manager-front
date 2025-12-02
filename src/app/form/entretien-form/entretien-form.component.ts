@@ -5,18 +5,17 @@ import {Entretien} from "../../models/Entretien";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MotoService} from "../../services/moto/moto.service";
 import {StorageService} from "../../services/storage/storage.service";
-import {DatePipe, NgForOf} from "@angular/common";
+import { DatePipe } from "@angular/common";
 import {EntretiensService} from "../../services/entretiens/entretiens.service";
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 @Component({
     selector: 'app-entretien-form',
     imports: [
-        ReactiveFormsModule,
-        NgForOf,
-        MatSlideToggleModule,
-        FormsModule
-    ],
+    ReactiveFormsModule,
+    MatSlideToggleModule,
+    FormsModule
+],
     providers: [DatePipe],
     templateUrl: './entretien-form.component.html',
     styleUrl: './entretien-form.component.css'

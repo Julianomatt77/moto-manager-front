@@ -14,12 +14,12 @@
         class="form-control"
         formControlName="montant"
         type="number"
-      />
+        />
     </div>
     @if(!form.get('montant')?.valid && submitted){
-    <div class="error-message">
-      {{ montantErrorMessage }}
-    </div>
+      <div class="error-message">
+        {{ montantErrorMessage }}
+      </div>
     }
 
     <div class="form-group">
@@ -29,12 +29,12 @@
         type="datetime-local"
         class="form-control"
         formControlName="date"
-      />
+        />
     </div>
     @if(!form.get('date')?.valid && submitted){
-    <div class="error-message">
-    {{ dateErrorMessage }}
-    </div>
+      <div class="error-message">
+        {{ dateErrorMessage }}
+      </div>
     }
 
     <div class="form-group">
@@ -47,7 +47,7 @@
         class="form-control"
         formControlName="kmParcouru"
         type="number"
-      />
+        />
     </div>
 
     <div class="form-group">
@@ -57,7 +57,7 @@
         class="form-control"
         formControlName="essenceConsomme"
         type="number"
-      />
+        />
     </div>
 
     <div class="form-group">
@@ -67,7 +67,7 @@
         class="form-control"
         formControlName="essencePrice"
         type="number"
-      />
+        />
     </div>
 
     <div class="form-group">
@@ -77,7 +77,7 @@
         class="form-control"
         formControlName="commentaire"
         type="text"
-      />
+        />
     </div>
 
     <div class="form-group">
@@ -87,7 +87,7 @@
         class="form-control"
         formControlName="kilometrage"
         type="number"
-      />
+        />
     </div>
 
     <div class="form-group">
@@ -97,21 +97,23 @@
         class="form-control"
         formControlName="depenseType"
         (change)="onTypeSelection($event)"
-      >
-        <option *ngFor="let type of depensesType" [ngValue]="type.id.toString()">
-          {{ type.name }}
-        </option>
+        >
+        @for (type of depensesType; track type) {
+          <option [ngValue]="type.id.toString()">
+            {{ type.name }}
+          </option>
+        }
       </select>
       @if (selectedType == '0') {
-      <div>
-        <input type="text" class="form-control" placeholder="Autre dépense" formControlName="autre_depense">
-      </div>
+        <div>
+          <input type="text" class="form-control" placeholder="Autre dépense" formControlName="autre_depense">
+        </div>
       }
     </div>
     @if(!form.get('depenseType')?.valid && submitted){
-    <div class="error-message">
-    {{ depenseTypeErrorMessage }}
-    </div>
+      <div class="error-message">
+        {{ depenseTypeErrorMessage }}
+      </div>
     }
 
     <div class="form-group">
@@ -120,20 +122,22 @@
         id="moto"
         class="form-control"
         formControlName="moto"
-      >
-        <option *ngFor="let moto of motoList" [ngValue]="moto.id.toString()">
-          {{ moto.name }}
-        </option>
+        >
+        @for (moto of motoList; track moto) {
+          <option [ngValue]="moto.id.toString()">
+            {{ moto.name }}
+          </option>
+        }
       </select>
     </div>
     @if(!form.get('moto')?.valid && submitted){
-    <div class="error-message">
-    {{ motoErrorMessage }}
-    </div>
+      <div class="error-message">
+        {{ motoErrorMessage }}
+      </div>
     }
 
     <div class="form-submit">
-<!--      <button type="submit" class="secondary-button" [disabled]="!form.valid">-->
+      <!--      <button type="submit" class="secondary-button" [disabled]="!form.valid">-->
       <button type="submit" class="secondary-button">
         {{ buttonLabel }}
       </button>

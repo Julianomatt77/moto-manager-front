@@ -1,20 +1,16 @@
 import {Component, EventEmitter, Inject, Input, Output} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Depense} from "../../models/Depense";
-import {Entretien} from "../../models/Entretien";
 import {Moto} from "../../models/Moto";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {EntretiensService} from "../../services/entretiens/entretiens.service";
 import {MotoService} from "../../services/moto/moto.service";
 import {StorageService} from "../../services/storage/storage.service";
-import {DatePipe, NgForOf} from "@angular/common";
 
 @Component({
     selector: 'app-moto-form',
     imports: [
-        ReactiveFormsModule,
-        NgForOf
-    ],
+    ReactiveFormsModule
+],
     templateUrl: './moto-form.component.html',
     styleUrl: './moto-form.component.css'
 })

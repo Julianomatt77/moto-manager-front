@@ -1,12 +1,11 @@
-import {Component, Inject} from '@angular/core';
-import {CommonModule, DOCUMENT} from '@angular/common';
+import {Component, Inject, DOCUMENT} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {SidebarComponent} from "./components/sidebar/sidebar.component";
 import {Meta} from "@angular/platform-browser";
 
 @Component({
     selector: 'app-root',
-    imports: [CommonModule, RouterOutlet, SidebarComponent],
+    imports: [RouterOutlet, SidebarComponent],
     templateUrl: './app.component.html',
     styleUrl: './app.component.css'
 })

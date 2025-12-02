@@ -1,6 +1,8 @@
 # MotoManager
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.1 and updated to angular 18.2.5 on 25/09/2024.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.1.
+- updated to angular 18.2.5 on 25/09/2024.
+- updated to angular 20.3.15 on 02/12/2025.
 
 Node v20 is necessary to run this project.
 

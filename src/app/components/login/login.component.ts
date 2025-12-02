@@ -2,16 +2,14 @@ import { Component } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AuthService} from "../../services/auth/auth.service";
 import {ActivatedRoute, Router, RouterModule} from "@angular/router";
-import {CommonModule} from "@angular/common";
 import {StorageService} from "../../services/storage/storage.service";
 
 @Component({
     selector: 'app-login',
     imports: [
-        ReactiveFormsModule,
-        CommonModule,
-        RouterModule
-    ],
+    ReactiveFormsModule,
+    RouterModule
+],
     templateUrl: './login.component.html',
     styleUrl: './login.component.css',
     providers: [AuthService]

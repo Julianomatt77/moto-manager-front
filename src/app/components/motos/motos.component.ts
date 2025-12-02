@@ -1,5 +1,4 @@
 import {Component, inject} from '@angular/core';
-import {CommonModule} from "@angular/common";
 import {User} from "../../models/User";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {ConfirmationDialogComponent} from "../confirmation-dialog/confirmation-dialog.component";
@@ -12,7 +11,7 @@ import {catchError, forkJoin, map, Observable} from "rxjs";
 
 @Component({
     selector: 'app-motos',
-    imports: [CommonModule],
+    imports: [],
     templateUrl: './motos.component.html',
     styleUrl: './motos.component.css'
 })
