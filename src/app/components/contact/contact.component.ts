@@ -1,19 +1,16 @@
 import { Component } from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MailService} from "../../services/mail/mail.service";
-import {NgIf} from "@angular/common";
 import {Router, RouterModule} from "@angular/router";
 
 @Component({
-  selector: 'app-contact',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    NgIf,
-    RouterModule
-  ],
-  templateUrl: './contact.component.html',
-  styleUrl: './contact.component.css'
+    selector: 'app-contact',
+    imports: [
+        ReactiveFormsModule,
+        RouterModule
+    ],
+    templateUrl: './contact.component.html',
+    styleUrl: './contact.component.css'
 })
 export class ContactComponent {
   contactForm: FormGroup;

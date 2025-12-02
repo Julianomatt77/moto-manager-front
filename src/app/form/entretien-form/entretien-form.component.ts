@@ -10,18 +10,16 @@ import {EntretiensService} from "../../services/entretiens/entretiens.service";
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 @Component({
-  selector: 'app-entretien-form',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    DatePipe,
-    NgForOf,
-    MatSlideToggleModule,
-    FormsModule
-  ],
-  providers: [DatePipe],
-  templateUrl: './entretien-form.component.html',
-  styleUrl: './entretien-form.component.css'
+    selector: 'app-entretien-form',
+    imports: [
+        ReactiveFormsModule,
+        NgForOf,
+        MatSlideToggleModule,
+        FormsModule
+    ],
+    providers: [DatePipe],
+    templateUrl: './entretien-form.component.html',
+    styleUrl: './entretien-form.component.css'
 })
 export class EntretienFormComponent {
   @Output() formSubmitted: EventEmitter<Depense>;

@@ -14,16 +14,15 @@ import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {EntretiensService} from "../../services/entretiens/entretiens.service";
 
 @Component({
-  selector: 'app-upload-popup',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    NgForOf,
-    FormsModule,
-    MatProgressBarModule
-  ],
-  templateUrl: './upload-popup.component.html',
-  styleUrl: './upload-popup.component.css'
+    selector: 'app-upload-popup',
+    imports: [
+        ReactiveFormsModule,
+        NgForOf,
+        FormsModule,
+        MatProgressBarModule
+    ],
+    templateUrl: './upload-popup.component.html',
+    styleUrl: './upload-popup.component.css'
 })
 export class UploadPopupComponent {
   @Output() formSubmitted: EventEmitter<Depense>;

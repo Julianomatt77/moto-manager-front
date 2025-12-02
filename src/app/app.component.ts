@@ -5,11 +5,10 @@ import {SidebarComponent} from "./components/sidebar/sidebar.component";
 import {Meta} from "@angular/platform-browser";
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [CommonModule, RouterOutlet, SidebarComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+    selector: 'app-root',
+    imports: [CommonModule, RouterOutlet, SidebarComponent],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.css'
 })
 export class AppComponent {
   constructor(private metaService: Meta, @Inject(DOCUMENT) private document: Document) {

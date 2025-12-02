@@ -11,11 +11,10 @@ import {EntretiensService} from "../../services/entretiens/entretiens.service";
 import {catchError, forkJoin, map, Observable} from "rxjs";
 
 @Component({
-  selector: 'app-motos',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './motos.component.html',
-  styleUrl: './motos.component.css'
+    selector: 'app-motos',
+    imports: [CommonModule],
+    templateUrl: './motos.component.html',
+    styleUrl: './motos.component.css'
 })
 export class MotosComponent {
   motos: any[] = [];

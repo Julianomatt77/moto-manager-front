@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, inject, input, ViewChild} from '@angular/c
 import {DepensesService} from "../../services/depenses/depenses.service";
 import {StorageService} from "../../services/storage/storage.service";
 import {User} from "../../models/User";
-import {DatePipe, DecimalPipe, NgForOf, NgIf} from "@angular/common";
+import {DatePipe, DecimalPipe, NgForOf} from "@angular/common";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {DepenseFormComponent} from "../../form/depense-form/depense-form.component";
 import {ConfirmationDialogComponent} from "../confirmation-dialog/confirmation-dialog.component";
@@ -21,11 +21,10 @@ import {DepenseType} from "../../models/DepenseType";
 import {DepensesTypeService} from "../../services/depensesType/depenses-type.service";
 
 @Component({
-  selector: 'app-depenses',
-  standalone: true,
-  imports: [NgForOf, NgIf, DatePipe, MatPaginatorModule, DecimalPipe, ReactiveFormsModule, MatFormFieldModule, MatOptionModule, MatInputModule, MatSelectModule],
-  templateUrl: './depenses.component.html',
-  styleUrl: './depenses.component.css',
+    selector: 'app-depenses',
+    imports: [NgForOf, DatePipe, MatPaginatorModule, DecimalPipe, ReactiveFormsModule, MatFormFieldModule, MatOptionModule, MatInputModule, MatSelectModule],
+    templateUrl: './depenses.component.html',
+    styleUrl: './depenses.component.css'
 })
 export class DepensesComponent {
 

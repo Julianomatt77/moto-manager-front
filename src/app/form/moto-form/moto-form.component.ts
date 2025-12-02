@@ -10,14 +10,13 @@ import {StorageService} from "../../services/storage/storage.service";
 import {DatePipe, NgForOf} from "@angular/common";
 
 @Component({
-  selector: 'app-moto-form',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    NgForOf
-  ],
-  templateUrl: './moto-form.component.html',
-  styleUrl: './moto-form.component.css'
+    selector: 'app-moto-form',
+    imports: [
+        ReactiveFormsModule,
+        NgForOf
+    ],
+    templateUrl: './moto-form.component.html',
+    styleUrl: './moto-form.component.css'
 })
 export class MotoFormComponent {
   @Output() formSubmitted: EventEmitter<Depense>;
