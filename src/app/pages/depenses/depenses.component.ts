@@ -10,7 +10,7 @@ import { IconComponent } from '../../shared/icon.component';
 import { PaginatorComponent } from '../../shared/paginator.component';
 import { DepenseFormComponent } from '../../form/depense-form/depense-form.component';
 import { UploadPopupComponent } from '../../form/upload-popup/upload-popup.component';
-import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from '../../components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-depenses',

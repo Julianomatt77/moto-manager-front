@@ -6,7 +6,7 @@ import { ExportService } from '../../services/export/export.service';
 import { DialogComponent } from '../../shared/dialog.component';
 import { IconComponent } from '../../shared/icon.component';
 import { PaginatorComponent } from '../../shared/paginator.component';
-import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from '../../components/confirmation-dialog/confirmation-dialog.component';
 import { EntretienFormComponent } from '../../form/entretien-form/entretien-form.component';
 import { UploadPopupComponent } from '../../form/upload-popup/upload-popup.component';
 

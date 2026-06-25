@@ -6,7 +6,7 @@ import { StorageService } from '../../services/storage/storage.service';
 import { DialogComponent } from '../../shared/dialog.component';
 import { IconComponent } from '../../shared/icon.component';
 import { MotoFormComponent } from '../../form/moto-form/moto-form.component';
-import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from '../../components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-motos',

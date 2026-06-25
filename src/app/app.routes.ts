@@ -1,13 +1,13 @@
 import { Routes } from '@angular/router';
-import {AccueilComponent} from "./components/accueil/accueil.component";
+import {AccueilComponent} from "./pages/accueil/accueil.component";
 import {ErrorComponent} from "./components/error/error.component";
 import {LoginComponent} from "./components/login/login.component";
-import {DepensesComponent} from "./components/depenses/depenses.component";
+import {DepensesComponent} from "./pages/depenses/depenses.component";
 import {authGuard} from "./guards/auth.guard";
-import {EntretienComponent} from "./components/entretien/entretien.component";
-import {MotosComponent} from "./components/motos/motos.component";
+import {EntretienComponent} from "./pages/entretien/entretien.component";
+import {MotosComponent} from "./pages/motos/motos.component";
 import {CguComponent} from "./pages/cgu/cgu.component";
-import {ContactComponent} from "./components/contact/contact.component";
+import {ContactComponent} from "./pages/contact/contact.component";
 
 export const routes: Routes = [
   { path: '', component: AccueilComponent },
