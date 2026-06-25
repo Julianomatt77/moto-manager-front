@@ -16,7 +16,7 @@
     >
       <app-icon name="upload" />
     </button>
-    <span class="text-blue-800 font-['Fira_Sans']">{{ fileName || "Aucun fichier uploadé pour l'instant." }}</span>
+    <span class="text-blue-800 ">{{ fileName || "Aucun fichier uploadé pour l'instant." }}</span>
   </div>
 
   @if (!fileImported && submitted) {
@@ -47,7 +47,7 @@
       <div class="w-full bg-gray-200 rounded-full h-4 max-w-md">
         <div class="bg-blue-600 h-4 rounded-full transition-all duration-300" [style.width.%]="progress()"></div>
       </div>
-      <span class="text-sm text-blue-800 font-['Fira_Sans']">{{ progress() }}%</span>
+      <span class="text-sm text-blue-800 ">{{ progress() }}%</span>
     </div>
   }
 
@@ -73,7 +73,7 @@
       <button
         type="submit"
         [disabled]="form().invalid() || isLoading || !fileImported()"
-        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 cursor-pointer font-['Fira_Sans'] disabled:opacity-50"
+        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 cursor-pointer  disabled:opacity-50"
         title="Importer"
       >
         Importer
@@ -82,7 +82,7 @@
         <button
           type="button"
           (click)="cancelled.emit()"
-          class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-150 cursor-pointer font-['Fira_Sans']"
+          class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-150 cursor-pointer "
         >
           Fermer
         </button>
