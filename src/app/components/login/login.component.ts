@@ -1,9 +1,9 @@
-import {Component, inject, ChangeDetectionStrategy} from '@angular/core';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {AuthService} from "../../services/auth/auth.service";
-import {ActivatedRoute, Router, RouterModule} from "@angular/router";
-import {StorageService} from "../../services/storage/storage.service";
-import {IconComponent} from '../../shared/icon.component';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthService } from '../../services/auth/auth.service';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { StorageService } from '../../services/storage/storage.service';
+import { IconComponent } from '../../shared/icon.component';
 
 @Component({
   selector: 'app-login',
@@ -44,7 +44,7 @@ export class LoginComponent {
     });
   }
 
-  onSubmit() {
+  async onSubmit() {
     const username = this.loginForm.value.username?.toLowerCase() || '';
     const password = this.loginForm.value.password || '';
     this.submitted = true;
@@ -52,14 +52,22 @@ export class LoginComponent {
       this.error = '';
       this.isLoginFailed = false;
       if (!this.isRegistration) {
-        this.logInUser(username, password);
+        await this.logInUser(username, password);
       } else {
         this.validatePasswordsMatch();
         if (this.isPasswordConfirmed) {
-          this.authService.register(username, password).subscribe({
-            next: (data) => { if (data.status) { this.logInUser(username, password); } else { this.error = data.message; this.isLoginFailed = true; } },
-            error: (error) => { this.error = error.error.message; this.isLoginFailed = true; },
-          });
+          try {
+            const data = await this.authService.register(username, password);
+            if (data.status) {
+              await this.logInUser(username, password);
+            } else {
+              this.error = data.message;
+              this.isLoginFailed = true;
+            }
+          } catch (error: any) {
+            this.error = error.error.message;
+            this.isLoginFailed = true;
+          }
         } else {
           this.isLoginFailed = true;
           this.error = "Erreur lors de l'inscription.";
@@ -68,24 +76,22 @@ export class LoginComponent {
     }
   }
 
-  logInUser(username: string, password: string) {
-    this.authService.login(username, password).subscribe({
-      next: (data) => {
-        this.token = data.token;
-        this.isLoginFailed = false;
-        this.authService.saveToken(this.token);
-        this.isLoggedIn = true;
-        this.authService.getUserInfos().subscribe({
-          next: (data) => {
-            this.storageService.saveUser(data);
-            this.email = this.storageService.getUser().email;
-            window.sessionStorage.removeItem('mm_hasReloaded');
-            setTimeout(() => this.router.navigateByUrl(''), 2000);
-          },
-        });
-      },
-      error: (error) => { this.error = error.error.message; this.isLoginFailed = true; },
-    });
+  async logInUser(username: string, password: string) {
+    try {
+      const data = await this.authService.login(username, password);
+      this.token = data.token;
+      this.isLoginFailed = false;
+      this.authService.saveToken(this.token);
+      this.isLoggedIn = true;
+      const userInfo = await this.authService.getUserInfos();
+      this.storageService.saveUser(userInfo);
+      this.email = this.storageService.getUser().email;
+      window.sessionStorage.removeItem('mm_hasReloaded');
+      setTimeout(() => this.router.navigateByUrl(''), 2000);
+    } catch (error: any) {
+      this.error = error.error.message;
+      this.isLoginFailed = true;
+    }
   }
 
   togglePasswordVisibility() {

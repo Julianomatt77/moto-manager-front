@@ -1,39 +1,35 @@
-import { Component, input, output, inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, input, output, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { read, utils } from 'xlsx';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { form, FormField, submit, required } from '@angular/forms/signals';
 import { DepensesService } from '../../services/depenses/depenses.service';
 import { DepensesTypeService } from '../../services/depensesType/depenses-type.service';
 import { MotoService } from '../../services/moto/moto.service';
 import { EntretiensService } from '../../services/entretiens/entretiens.service';
-import { forkJoin } from 'rxjs';
 import { IconComponent } from '../../shared/icon.component';
 
 @Component({
   selector: 'app-upload-popup',
-  imports: [ReactiveFormsModule, IconComponent],
+  imports: [FormField, IconComponent],
   templateUrl: './upload-popup.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UploadPopupComponent implements OnInit {
+export class UploadPopupComponent {
   type = input<'depense' | 'entretien'>('depense');
   saved = output<void>();
   cancelled = output<void>();
 
-  private fb = inject(FormBuilder);
   private depensesService = inject(DepensesService);
   private entretiensService = inject(EntretiensService);
   private depensesTypeService = inject(DepensesTypeService);
   private motoService = inject(MotoService);
-  private cdr = inject(ChangeDetectorRef);
 
-  form = this.fb.group({
-    moto: ['', [Validators.required]]
+  readonly model = signal({ moto: '' });
+  readonly form = form(this.model, (s) => {
+    required(s.moto, { message: 'La moto est obligatoire.' });
   });
 
   fileName = '';
   uploadData: any[] = [];
-  depensesType: any[] = [];
-  motoList: { id: string; name: string }[] = [];
   selectedType = '';
   submitted = false;
   depenseList: any[] = [];
@@ -43,26 +39,24 @@ export class UploadPopupComponent implements OnInit {
   fileErrorMessage = '';
   templateName = '';
 
+  depensesType = computed(() => {
+    const data = this.depensesTypeService.depensesTypes.value();
+    if (!data) return [];
+    return [...data.map((t: any) => ({ id: t.id, name: t.name })), { id: 0, name: 'autre' }];
+  });
+
+  motoList = computed(() => {
+    const data = this.motoService.motos.value();
+    if (!data) return [];
+    return data.map((m: any) => ({ id: m.id.toString(), name: m.modele }));
+  });
+
   ngOnInit(): void {
     if (this.type() === 'depense') {
-      this.depensesTypeService.getDepensesTypes().subscribe((data: any[]) => {
-        this.depensesType = data.map((t: any) => ({ id: t.id, name: t.name }));
-        this.depensesType.push({ id: 0, name: 'autre' });
-      });
       this.templateName = 'depense-moto-template.xlsx';
     } else {
       this.templateName = 'entretien-moto-template.xlsx';
     }
-
-    this.motoService.getMotos().subscribe({
-      next: (data: any[]) => {
-        this.motoList = data.map((m: any) => ({ id: m.id.toString(), name: m.modele }));
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.cdr.markForCheck();
-      }
-    });
   }
 
   onFileSelected(event: any): void {
@@ -97,7 +91,6 @@ export class UploadPopupComponent implements OnInit {
           this.fileErrorMessage = error;
           this.isLoading = false;
         }
-        this.cdr.markForCheck();
       };
       reader.readAsArrayBuffer(file);
     } else {
@@ -105,31 +98,30 @@ export class UploadPopupComponent implements OnInit {
     }
   }
 
-  onSubmitUpload(): void {
+  async onSubmitUpload(): Promise<void> {
     this.submitted = true;
-    if (this.form.valid && !this.fileErrorMessage) {
+    if (this.form().valid() && !this.fileErrorMessage) {
       this.isLoading = true;
+      const motoId = this.model().moto;
+
       if (this.type() === 'depense') {
-        const saveDepenseObservables = this.depenseList.map((depense: any) => {
-          depense.moto = this.form.value.moto!;
-          return this.depensesService.saveDepense(depense);
-        });
-
-        forkJoin(saveDepenseObservables).subscribe(() => {
-          this.isLoading = false;
-          this.saved.emit();
-        });
+        await Promise.all(
+          this.depenseList.map(async (depense: any) => {
+            depense.moto = motoId;
+            await this.depensesService.save(depense);
+          })
+        );
       } else {
-        const saveEntretienObservables = this.entretienList.map((entretien: any) => {
-          entretien.moto = this.form.value.moto!;
-          return this.entretiensService.saveEntretien(entretien);
-        });
-
-        forkJoin(saveEntretienObservables).subscribe(() => {
-          this.isLoading = false;
-          this.saved.emit();
-        });
+        await Promise.all(
+          this.entretienList.map(async (entretien: any) => {
+            entretien.moto = motoId;
+            await this.entretiensService.save(entretien);
+          })
+        );
       }
+
+      this.isLoading = false;
+      this.saved.emit();
     }
   }
 
@@ -242,22 +234,17 @@ export class UploadPopupComponent implements OnInit {
   }
 
   private async processDepenseType(depense: any): Promise<void> {
-    const matchingType = this.depensesType.find((type: any) => type.name === depense.depenseType);
+    const matchingType = this.depensesType().find((type: any) => type.name === depense.depenseType);
 
     if (matchingType) {
       depense.depenseType = matchingType.id;
     } else {
       const newTypeData = await this.saveDepenseType(depense.depenseType);
-      this.depensesType.push({ id: newTypeData.id, name: depense.depenseType });
       depense.depenseType = newTypeData.id;
     }
   }
 
-  private saveDepenseType(depenseTypeName: string): Promise<any> {
-    return new Promise<any>((resolve) => {
-      this.depensesTypeService.saveDepenseType(depenseTypeName).subscribe((newTypeData) => {
-        resolve(newTypeData);
-      });
-    });
+  private async saveDepenseType(depenseTypeName: string): Promise<any> {
+    return this.depensesTypeService.save(depenseTypeName);
   }
 }

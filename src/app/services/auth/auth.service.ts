@@ -1,41 +1,32 @@
-import { Injectable } from '@angular/core';
+import { Service, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { httpResource } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import {BehaviorSubject, Observable, tap} from 'rxjs';
-import {StorageService} from "../storage/storage.service";
-import {Router} from "@angular/router";
+import { StorageService } from '../storage/storage.service';
+import { Router } from '@angular/router';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class AuthService {
-
-  public isAuthenticatedSubject!: BehaviorSubject<boolean>;
-  isAuthenticated!: Observable<boolean>;
-
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  private storageService = inject(StorageService);
   private baseUrl = environment.baseUrl;
   private tokenName = environment.token_name;
+
+  readonly #isAuthenticated = signal(this.getToken() !== null);
+  readonly isAuthenticated = this.#isAuthenticated.asReadonly();
+
   private loginUrl = this.baseUrl + 'login_check';
   private registerUrl = this.baseUrl + 'register';
-  private userInfosUrl = this.baseUrl + 'users-infos';
 
-  constructor(private http: HttpClient, private router: Router, private storageService: StorageService) {
-    this.isAuthenticatedSubject = new BehaviorSubject<boolean>(this.getToken() !== null);
-    this.isAuthenticated = this.isAuthenticatedSubject.asObservable();
-  }
-
-  login(username: string, password?: string): Observable<any> {
-    this.isAuthenticatedSubject.next(true);
-    return this.http
-      .post(this.loginUrl, {
-        username,
-        password,
-      })
-      .pipe(
-        tap(() => {
-          this.isAuthenticatedSubject.next(true);
-        })
-      );
+  async login(username: string, password?: string): Promise<any> {
+    this.#isAuthenticated.set(true);
+    const result = await lastValueFrom(
+      this.http.post<any>(this.loginUrl, { username, password })
+    );
+    this.#isAuthenticated.set(true);
+    return result;
   }
 
   saveToken(token: string): void {
@@ -50,23 +41,21 @@ export class AuthService {
     return this.getToken() !== null;
   }
 
-  logout(): Observable<any> {
+  async logout(): Promise<void> {
     this.storageService.clean();
-    this.isAuthenticatedSubject.next(false);
+    this.#isAuthenticated.set(false);
     this.router.navigateByUrl('');
-
-    return this.isAuthenticatedSubject;
   }
 
-  getUserInfos(): Observable<any> {
-    return this.http.get(this.userInfosUrl);
+  async getUserInfos(): Promise<any> {
+    return lastValueFrom(
+      this.http.get(this.baseUrl + 'users-infos')
+    );
   }
 
-  register(email: string, password: string){
-    return this.http.post<any>(this.registerUrl, {
-      email,
-      password,
-    });
+  async register(email: string, password: string): Promise<any> {
+    return lastValueFrom(
+      this.http.post<any>(this.registerUrl, { email, password })
+    );
   }
-
 }

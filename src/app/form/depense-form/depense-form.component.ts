@@ -1,53 +1,70 @@
-import { Component, input, output, inject, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Component, input, output, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+import { form, FormField, submit, required, hidden } from '@angular/forms/signals';
 import { DepensesService } from '../../services/depenses/depenses.service';
 import { DepensesTypeService } from '../../services/depensesType/depenses-type.service';
 import { MotoService } from '../../services/moto/moto.service';
 
 @Component({
   selector: 'app-depense-form',
-  imports: [ReactiveFormsModule],
+  imports: [FormField],
   templateUrl: './depense-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DepenseFormComponent implements OnInit, OnDestroy {
+export class DepenseFormComponent {
   addOrEdit = input<'add' | 'edit'>('add');
   depense = input<any | null>(null);
   saved = output<void>();
   cancelled = output<void>();
 
-  private fb = inject(FormBuilder);
   private depensesService = inject(DepensesService);
   private depensesTypeService = inject(DepensesTypeService);
   private motoService = inject(MotoService);
 
-  private typeSub: Subscription | null = null;
-
-  form = this.fb.group({
-    montant: [null as number | null, [Validators.required]],
-    kmParcouru: [null as number | null],
-    essenceConsomme: [null as number | null],
-    essencePrice: [null as number | null],
-    commentaire: [''],
-    kilometrage: [null as number | null],
-    date: [null as string | null, [Validators.required]],
-    depenseType: ['', [Validators.required]],
-    autre_depense: [''],
-    moto: ['', [Validators.required]]
-  });
+  readonly model;
+  readonly form;
 
   buttonLabel = '';
-  depensesType: { id: string; name: string }[] = [];
-  motoList: { id: string; name: string }[] = [];
-  selectedType = '';
-  submitted = false;
   editId = '';
-  autreDepenseError = '';
   montantErrorMessage = 'Le montant est obligatoire.';
   dateErrorMessage = 'La date est obligatoire.';
   depenseTypeErrorMessage = 'Le type de dépense est obligatoire.';
   motoErrorMessage = 'La moto est obligatoire.';
+
+  depensesType = computed(() => {
+    const types = this.depensesTypeService.depensesTypes.value();
+    if (!types) return [];
+    return [...types.map((t: any) => ({ id: t.id.toString(), name: t.name })), { id: '0', name: 'autre' }];
+  });
+
+  motoList = computed(() => {
+    const data = this.motoService.motos.value();
+    if (!data) return [];
+    return data.map((m: any) => ({ id: m.id.toString(), name: m.modele }));
+  });
+
+  constructor() {
+    const dep = this.depense();
+    this.model = signal({
+      montant: dep?.montant ?? 0,
+      kmParcouru: dep?.kmParcouru ?? 0,
+      essenceConsomme: dep?.essenceConsomme ?? 0,
+      essencePrice: dep?.essencePrice ?? 0,
+      commentaire: dep?.commentaire ?? '',
+      kilometrage: dep?.kilometrage ?? 0,
+      date: dep ? new Date(dep.date).toISOString().substring(0, 16) : '',
+      depenseType: dep?.depenseType?.id?.toString() ?? dep?.depenseType?.toString() ?? '',
+      autre_depense: '',
+      moto: dep?.moto?.id?.toString() ?? dep?.moto?.toString() ?? '',
+    });
+
+    this.form = form(this.model, (s) => {
+      required(s.montant, { message: 'Le montant est obligatoire.' });
+      required(s.date, { message: 'La date est obligatoire.' });
+      required(s.depenseType, { message: 'Le type de dépense est obligatoire.' });
+      required(s.moto, { message: 'La moto est obligatoire.' });
+      hidden(s.autre_depense, { when: ({ valueOf }) => valueOf(s.depenseType) !== '0' });
+    });
+  }
 
   ngOnInit(): void {
     this.buttonLabel = this.addOrEdit() === 'edit' ? 'Mettre à jour' : 'Ajouter';
@@ -55,73 +72,37 @@ export class DepenseFormComponent implements OnInit, OnDestroy {
     const dep = this.depense();
     if (this.addOrEdit() === 'edit' && dep) {
       this.editId = dep.id;
-      const dateObject = new Date(dep.date);
-      const formattedDate = dateObject.toISOString().substring(0, 16);
-
-      this.form.patchValue({
+      this.model.set({
         montant: dep.montant,
         kmParcouru: dep.kmParcouru,
         essenceConsomme: dep.essenceConsomme,
         essencePrice: dep.essencePrice,
         commentaire: dep.commentaire,
         kilometrage: dep.kilometrage,
-        date: formattedDate,
+        date: new Date(dep.date).toISOString().substring(0, 16),
         depenseType: dep.depenseType?.id?.toString() ?? dep.depenseType?.toString() ?? '',
-        moto: dep.moto?.id?.toString() ?? dep.moto?.toString() ?? ''
+        autre_depense: '',
+        moto: dep.moto?.id?.toString() ?? dep.moto?.toString() ?? '',
       });
     }
+  }
 
-    this.depensesTypeService.getDepensesTypes().subscribe((data: any[]) => {
-      this.depensesType = data.map((t: any) => ({ id: t.id.toString(), name: t.name }));
-      this.depensesType.push({ id: '0', name: 'autre' });
-    });
+  async onSubmit() {
+    submit(this.form, async () => {
+      const { autre_depense, ...data } = this.model();
+      let finalData: any = { ...data };
 
-    this.motoService.getMotos().subscribe((data: any[]) => {
-      this.motoList = data.map((m: any) => ({ id: m.id.toString(), name: m.modele }));
-    });
-
-    this.typeSub = this.form.get('depenseType')?.valueChanges.subscribe(value => {
-      this.selectedType = value as string;
-      this.autreDepenseError = '';
-      if (value !== '0') {
-        this.form.get('autre_depense')?.setValue('');
+      if (data.depenseType === '0' && autre_depense) {
+        const newType = await this.depensesTypeService.save(autre_depense);
+        finalData.depenseType = newType.id;
       }
-    }) ?? null;
-  }
 
-  ngOnDestroy(): void {
-    this.typeSub?.unsubscribe();
-  }
-
-  onSubmitDepense(): void {
-    this.submitted = true;
-    this.autreDepenseError = '';
-
-    if (this.form.get('depenseType')?.value === '0' && !this.form.get('autre_depense')?.value) {
-      this.autreDepenseError = 'Le type de dépense est obligatoire.';
-      return;
-    }
-
-    if (this.form.valid) {
-      const formValue = this.form.value;
-      const depenseData = { ...formValue };
-
-      if (formValue.depenseType === '0' && formValue.autre_depense) {
-        this.depensesTypeService.saveDepenseType(formValue.autre_depense).subscribe((newType: any) => {
-          depenseData.depenseType = newType.id.toString();
-          this.saveDepense(depenseData);
-        });
+      if (this.addOrEdit() === 'add') {
+        await this.depensesService.save(finalData);
       } else {
-        this.saveDepense(depenseData);
+        await this.depensesService.patch(this.editId, finalData);
       }
-    }
-  }
-
-  private saveDepense(data: any): void {
-    if (this.addOrEdit() === 'add') {
-      this.depensesService.saveDepense(data).subscribe(() => this.saved.emit());
-    } else {
-      this.depensesService.patchDepense(this.editId, data).subscribe(() => this.saved.emit());
-    }
+      this.saved.emit();
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { DepensesService } from '../../services/depenses/depenses.service';
 import { StorageService } from '../../services/storage/storage.service';
@@ -18,7 +18,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
   templateUrl: './depenses.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DepensesComponent implements OnInit {
+export class DepensesComponent {
   private depensesService = inject(DepensesService);
   private motoService = inject(MotoService);
   private depensesTypesService = inject(DepensesTypeService);
@@ -27,11 +27,17 @@ export class DepensesComponent implements OnInit {
 
   user = this.storageService.getUser();
 
-  isLoading = signal(true);
-  error = signal<string | null>(null);
-  depenses = signal<any[]>([]);
-  motos = signal<any[]>([]);
-  depensesTypes = signal<any[]>([]);
+  isLoading = computed(() => this.depensesService.depenses.isLoading());
+  error = computed(() => this.depensesService.depenses.error()?.message || null);
+
+  depenses = computed(() => this.depensesService.depenses.value() ?? []);
+  motos = computed(() => this.motoService.motos.value() ?? []);
+  depensesTypes = computed(() => {
+    const types = this.depensesTypesService.depensesTypes.value();
+    if (!types) return [];
+    return [...types].sort((a: any, b: any) => a.name.localeCompare(b.name));
+  });
+
   availableYears = signal<number[]>(this.generateYears());
 
   motoFilter = signal('');
@@ -78,45 +84,6 @@ export class DepensesComponent implements OnInit {
     this.filteredDepenses().reduce((sum, d) => sum + (d.montant || 0), 0)
   );
 
-  ngOnInit(): void {
-    this.loadData();
-  }
-
-  private loadData(): void {
-    this.getAllDepenses();
-    this.getAllMotos();
-    this.getAllDepensesTypes();
-  }
-
-  getAllDepenses(): void {
-    this.depensesService.getDepenses().subscribe({
-      next: (data) => {
-        this.depenses.set(data);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        this.error.set(err.error?.message || 'Erreur lors du chargement');
-        this.isLoading.set(false);
-      }
-    });
-  }
-
-  getAllMotos(): void {
-    this.motoService.getMotos().subscribe({
-      next: (data) => this.motos.set(data),
-      error: (err) => this.error.set(err.error?.message || 'Erreur motos')
-    });
-  }
-
-  getAllDepensesTypes(): void {
-    this.depensesTypesService.getDepensesTypes().subscribe({
-      next: (data) => {
-        this.depensesTypes.set(data.sort((a: any, b: any) => a.name.localeCompare(b.name)));
-      },
-      error: (err) => this.error.set(err.error?.message || 'Erreur types')
-    });
-  }
-
   private generateYears(): number[] {
     const current = new Date().getFullYear();
     const years: number[] = [];
@@ -144,8 +111,6 @@ export class DepensesComponent implements OnInit {
 
   onFormSaved(): void {
     this.showFormDialog.set(false);
-    this.isLoading.set(true);
-    this.getAllDepenses();
   }
 
   openConfirmation(depense: any): void {
@@ -154,15 +119,12 @@ export class DepensesComponent implements OnInit {
     this.showConfirmDialog.set(true);
   }
 
-  onConfirmDelete(): void {
+  async onConfirmDelete(): Promise<void> {
     const item = this.itemToDelete();
     if (item) {
-      this.depensesService.deleteDepense(item.id).subscribe(() => {
-        this.showConfirmDialog.set(false);
-        this.itemToDelete.set(null);
-        this.isLoading.set(true);
-        this.getAllDepenses();
-      });
+      await this.depensesService.delete(item.id);
+      this.showConfirmDialog.set(false);
+      this.itemToDelete.set(null);
     }
   }
 
@@ -172,14 +134,11 @@ export class DepensesComponent implements OnInit {
 
   onUploadSaved(): void {
     this.showUploadDialog.set(false);
-    this.isLoading.set(true);
-    this.getAllDepenses();
   }
 
-  export(): void {
-    this.exportService.exportDepenses().subscribe(response => {
-      this.exportService.handleCsvDownload(response, 'depenses');
-    });
+  async export(): Promise<void> {
+    const blob = await this.exportService.exportDepenses();
+    this.exportService.downloadBlob(blob, 'depenses');
   }
 
   onChangePage(index: number): void {

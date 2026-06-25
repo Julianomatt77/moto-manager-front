@@ -1,13 +1,12 @@
-import {Component, inject, ChangeDetectionStrategy, OnInit, signal} from '@angular/core';
-import {forkJoin} from 'rxjs';
-import {MotoService} from '../../services/moto/moto.service';
-import {DepensesService} from '../../services/depenses/depenses.service';
-import {EntretiensService} from '../../services/entretiens/entretiens.service';
-import {StorageService} from '../../services/storage/storage.service';
-import {DialogComponent} from '../../shared/dialog.component';
-import {IconComponent} from '../../shared/icon.component';
-import {MotoFormComponent} from '../../form/moto-form/moto-form.component';
-import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
+import { Component, inject, ChangeDetectionStrategy, signal, computed } from '@angular/core';
+import { MotoService } from '../../services/moto/moto.service';
+import { DepensesService } from '../../services/depenses/depenses.service';
+import { EntretiensService } from '../../services/entretiens/entretiens.service';
+import { StorageService } from '../../services/storage/storage.service';
+import { DialogComponent } from '../../shared/dialog.component';
+import { IconComponent } from '../../shared/icon.component';
+import { MotoFormComponent } from '../../form/moto-form/moto-form.component';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-motos',
@@ -15,17 +14,36 @@ import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-d
   templateUrl: './motos.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MotosComponent implements OnInit {
+export class MotosComponent {
   private motosService = inject(MotoService);
   private depensesService = inject(DepensesService);
   private entretiensService = inject(EntretiensService);
   private storageService = inject(StorageService);
 
   user = this.storageService.getUser();
-  motos = signal<any[]>([]);
-  deactivatedMotos = signal<any[]>([]);
-  isLoading = signal(true);
-  error = signal<string | null>(null);
+
+  isLoading = computed(() =>
+    this.motosService.motos.isLoading() ||
+    this.depensesService.depenses.isLoading() ||
+    this.entretiensService.entretiens.isLoading()
+  );
+
+  error = computed(() => {
+    return this.motosService.motos.error()?.message
+      || this.depensesService.depenses.error()?.message
+      || this.entretiensService.entretiens.error()?.message
+      || null;
+  });
+
+  motos = computed(() => {
+    const motosData = this.motosService.motos.value();
+    const depensesData = this.depensesService.depenses.value();
+    const entretiensData = this.entretiensService.entretiens.value();
+    if (!motosData || !depensesData || !entretiensData) return [];
+    return this.computeMotoStats(motosData, depensesData, entretiensData);
+  });
+
+  deactivatedMotos = computed(() => this.motosService.deactivatedMotos.value() ?? []);
 
   showFormDialog = signal(false);
   showConfirmDialog = signal(false);
@@ -33,37 +51,11 @@ export class MotosComponent implements OnInit {
   selectedMoto = signal<any | null>(null);
   addOrEdit = signal<'add' | 'edit'>('add');
 
-  ngOnInit(): void {
-    this.loadMotosData();
-  }
-
-  loadMotosData(): void {
-    this.isLoading.set(true);
-    this.error.set(null);
-
-    forkJoin({
-      motos: this.motosService.getAllMotos(),
-      deactivated: this.motosService.getDeactivatedMotos(),
-      depenses: this.depensesService.getDepenses(),
-      entretiens: this.entretiensService.getEntretiens(),
-    }).subscribe({
-      next: (data) => {
-        this.motos.set(this.computeMotoStats(data.motos, data.depenses, data.entretiens));
-        this.deactivatedMotos.set(data.deactivated);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        this.error.set(err.error?.message || 'Une erreur est survenue');
-        this.isLoading.set(false);
-      },
-    });
-  }
-
   private computeMotoStats(motos: any[], depenses: any[], entretiens: any[]): any[] {
     const aujourdHui = new Date();
 
     return motos.map((moto) => {
-      const motoDepenses = depenses.filter((d) => d.moto.id === moto.id);
+      const motoDepenses = depenses.filter((d) => d.moto?.id === moto.id);
       let montantTotal = 0;
       const km: number[] = [];
       const consos: number[] = [];
@@ -85,7 +77,7 @@ export class MotosComponent implements OnInit {
           ? Number((consos.reduce((a, v) => a + v, 0) / consos.length).toFixed(2))
           : 0;
 
-      const motoEntretiens = entretiens.filter((e) => e.moto.id === moto.id);
+      const motoEntretiens = entretiens.filter((e) => e.moto?.id === moto.id);
 
       const diffDays = (dateStr: string) =>
         Math.floor((aujourdHui.getTime() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24));
@@ -122,7 +114,6 @@ export class MotosComponent implements OnInit {
 
   onFormSaved(): void {
     this.showFormDialog.set(false);
-    this.loadMotosData();
   }
 
   onFormCancelled(): void {
@@ -137,14 +128,12 @@ export class MotosComponent implements OnInit {
     this.showConfirmDialog.set(true);
   }
 
-  onDeleteConfirmed(): void {
+  async onDeleteConfirmed(): Promise<void> {
     const moto = this.selectedMoto();
     if (!moto) return;
-    this.motosService.deleteMoto(moto.id).subscribe(() => {
-      this.showConfirmDialog.set(false);
-      this.selectedMoto.set(null);
-      this.loadMotosData();
-    });
+    await this.motosService.delete(moto.id);
+    this.showConfirmDialog.set(false);
+    this.selectedMoto.set(null);
   }
 
   onDeleteCancelled(): void {
@@ -152,9 +141,7 @@ export class MotosComponent implements OnInit {
     this.selectedMoto.set(null);
   }
 
-  reactivateMoto(moto: any): void {
-    this.motosService.reactivateMoto(moto.id).subscribe(() => {
-      this.loadMotosData();
-    });
+  async reactivateMoto(moto: any): Promise<void> {
+    await this.motosService.reactivate(moto.id);
   }
 }

@@ -14,7 +14,7 @@
        routerLinkActive="bg-blue-50 text-blue-900 font-medium">
       <app-icon name="home" /> Accueil
     </a>
-    @if (isLoggedIn) {
+    @if (isLoggedIn()) {
       <a [routerLink]="['depenses']"
          class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline"
          routerLinkActive="bg-blue-50 text-blue-900 font-medium">
@@ -43,14 +43,14 @@
        routerLinkActive="bg-blue-50 text-blue-900 font-medium">
       <app-icon name="mail" /> Contact
     </a>
-    @if (!isLoggedIn) {
+    @if (!isLoggedIn()) {
       <a [routerLink]="['login']"
          class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline"
          routerLinkActive="bg-blue-50 text-blue-900 font-medium">
         <app-icon name="user" /> Connexion
       </a>
     }
-    @if (isLoggedIn) {
+    @if (isLoggedIn()) {
       <button (click)="logout()"
               class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 transition-colors duration-200 cursor-pointer w-full text-left">
         <app-icon name="user-off" /> Déconnexion
@@ -79,7 +79,7 @@
         <a [routerLink]="['']" class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline">
           <app-icon name="home" /> Accueil
         </a>
-        @if (isLoggedIn) {
+        @if (isLoggedIn()) {
           <a [routerLink]="['depenses']" class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline">
             <app-icon name="filter" /> Dépenses
           </a>
@@ -96,12 +96,12 @@
         <a [routerLink]="['contact']" class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline">
           <app-icon name="mail" /> Contact
         </a>
-        @if (!isLoggedIn) {
+        @if (!isLoggedIn()) {
           <a [routerLink]="['login']" class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline">
             <app-icon name="user" /> Connexion
           </a>
         }
-        @if (isLoggedIn) {
+        @if (isLoggedIn()) {
           <button (click)="logout()" class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 transition-colors duration-200 cursor-pointer w-full text-left">
             <app-icon name="user-off" /> Déconnexion
           </button>

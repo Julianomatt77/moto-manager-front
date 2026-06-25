@@ -1,47 +1,42 @@
-import { Injectable } from '@angular/core';
-import { environment } from "../../../environments/environment";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Service, inject } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ExportService {
+  private http = inject(HttpClient);
   private baseUrl = environment.baseUrl;
-  private depensesUrl = this.baseUrl + 'depenses';
 
-  constructor(private http: HttpClient) { }
-
-  exportDepenses(){
-    let url = this.baseUrl + 'exportDepenses'
+  async exportDepenses(): Promise<Blob> {
+    const url = this.baseUrl + 'exportDepenses';
     const headers = new HttpHeaders({
       'Content-Type': 'text/csv',
       'Accept': 'text/csv'
     });
-
-    return this.http.get(url, { headers, observe: 'response', responseType: 'blob' });
+    const response = await lastValueFrom(
+      this.http.get(url, { headers, observe: 'response', responseType: 'blob' })
+    );
+    return response.body!;
   }
 
-  exportEntretiens(){
-    let url = this.baseUrl + 'exportEntretiens'
+  async exportEntretiens(): Promise<Blob> {
+    const url = this.baseUrl + 'exportEntretiens';
     const headers = new HttpHeaders({
       'Content-Type': 'text/csv',
       'Accept': 'text/csv'
     });
-
-    return this.http.get(url, { headers, observe: 'response', responseType: 'blob' });
+    const response = await lastValueFrom(
+      this.http.get(url, { headers, observe: 'response', responseType: 'blob' })
+    );
+    return response.body!;
   }
 
-  handleCsvDownload(response: any, filename: string) {
-    const fileName = filename +'.csv';
-
-    const blob = new Blob([response.body], { type: 'text/csv' });
-
-    // Créer un lien invisible pour télécharger le fichier
+  downloadBlob(blob: Blob, filename: string): void {
+    const fileName = filename + '.csv';
     const link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
     link.download = fileName;
-
-    // Ajouter le lien au DOM et déclencher le téléchargement
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

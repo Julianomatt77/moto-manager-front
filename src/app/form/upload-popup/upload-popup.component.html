@@ -33,20 +33,21 @@
     </div>
   }
 
-  <form [formGroup]="form" (submit)="onSubmitUpload()" class="space-y-4">
+  <form (submit)="onSubmitUpload(); $event.preventDefault()" class="space-y-4">
     @if (!isLoading) {
       <div>
         <label for="moto" class="block text-sm font-medium text-blue-800 mb-1">Moto</label>
         <select
           id="moto"
           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-          formControlName="moto"
+          [formField]="form.moto"
         >
-          @for (moto of motoList; track moto.id) {
-            <option [ngValue]="moto.id">{{ moto.name }}</option>
+          <option value="">Sélectionner une moto</option>
+          @for (moto of motoList(); track moto.id) {
+            <option [value]="moto.id">{{ moto.name }}</option>
           }
         </select>
-        @if (!form.get('moto')?.valid && submitted) {
+        @if (form.moto().touched() && form.moto().errors().length) {
           <p class="text-red-500 text-sm mt-1">La moto est obligatoire !</p>
         }
       </div>
@@ -54,7 +55,8 @@
       <div class="pt-4">
         <button
           type="submit"
-          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 cursor-pointer font-['Fira_Sans']"
+          [disabled]="form().invalid()"
+          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 cursor-pointer font-['Fira_Sans'] disabled:opacity-50"
           title="Importer"
         >
           Importer

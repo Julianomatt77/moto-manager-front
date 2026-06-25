@@ -1,7 +1,7 @@
 <section class="p-6">
   <h2 class="text-2xl font-['Fira_Code'] text-blue-800 mb-6">{{ buttonLabel }} une moto</h2>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmitMoto()" class="space-y-4">
+  <form (submit)="onSubmit(); $event.preventDefault()" class="space-y-4">
 
     <div>
       <label for="marque" class="block text-sm font-medium text-blue-800 mb-1">Marque</label>
@@ -9,10 +9,10 @@
         id="marque"
         type="text"
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-        formControlName="marque"
+        [formField]="form.marque"
       />
-      @if (!form.get('marque')?.valid && submitted) {
-        <p class="text-red-500 text-sm mt-1">{{ marqueErrorMessage }}</p>
+      @if (form.marque().touched() && form.marque().errors().length) {
+        <p class="text-red-500 text-sm mt-1">{{ form.marque().errors()[0].message }}</p>
       }
     </div>
 
@@ -22,10 +22,10 @@
         id="modele"
         type="text"
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-        formControlName="modele"
+        [formField]="form.modele"
       />
-      @if (!form.get('modele')?.valid && submitted) {
-        <p class="text-red-500 text-sm mt-1">{{ modeleErrorMessage }}</p>
+      @if (form.modele().touched() && form.modele().errors().length) {
+        <p class="text-red-500 text-sm mt-1">{{ form.modele().errors()[0].message }}</p>
       }
     </div>
 
@@ -34,8 +34,9 @@
       <select
         id="year"
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-        formControlName="year"
+        [formField]="form.year"
       >
+        <option value="0">Année</option>
         @for (year of years; track year) {
           <option [value]="year">{{ year }}</option>
         }
@@ -53,7 +54,8 @@
       </button>
       <button
         type="submit"
-        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 cursor-pointer font-['Fira_Sans']"
+        [disabled]="form().invalid()"
+        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 cursor-pointer font-['Fira_Sans'] disabled:opacity-50"
         title="{{ buttonLabel }}"
       >
         {{ buttonLabel }}

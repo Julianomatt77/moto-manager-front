@@ -1,18 +1,19 @@
 <section class="p-6">
   <h2 class="text-2xl font-['Fira_Code'] text-blue-800 mb-6">{{ buttonLabel }} une dépense</h2>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmitDepense()" class="space-y-4">
+  <form (submit)="onSubmit(); $event.preventDefault()" class="space-y-4">
 
     <div>
       <label for="montant" class="block text-sm font-medium text-blue-800 mb-1">Montant</label>
       <input
         id="montant"
         type="number"
+        step="any"
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-        formControlName="montant"
+        [formField]="form.montant"
       />
-      @if (!form.get('montant')?.valid && submitted) {
-        <p class="text-red-500 text-sm mt-1">{{ montantErrorMessage }}</p>
+      @if (form.montant().touched() && form.montant().errors().length) {
+        <p class="text-red-500 text-sm mt-1">{{ form.montant().errors()[0].message }}</p>
       }
     </div>
 
@@ -22,10 +23,10 @@
         id="date"
         type="datetime-local"
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-        formControlName="date"
+        [formField]="form.date"
       />
-      @if (!form.get('date')?.valid && submitted) {
-        <p class="text-red-500 text-sm mt-1">{{ dateErrorMessage }}</p>
+      @if (form.date().touched() && form.date().errors().length) {
+        <p class="text-red-500 text-sm mt-1">{{ form.date().errors()[0].message }}</p>
       }
     </div>
 
@@ -34,8 +35,9 @@
       <input
         id="kmParcouru"
         type="number"
+        step="any"
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-        formControlName="kmParcouru"
+        [formField]="form.kmParcouru"
       />
     </div>
 
@@ -44,8 +46,9 @@
       <input
         id="essenceConsomme"
         type="number"
+        step="any"
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-        formControlName="essenceConsomme"
+        [formField]="form.essenceConsomme"
       />
     </div>
 
@@ -54,8 +57,9 @@
       <input
         id="essencePrice"
         type="number"
+        step="any"
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-        formControlName="essencePrice"
+        [formField]="form.essencePrice"
       />
     </div>
 
@@ -65,7 +69,7 @@
         id="commentaire"
         type="text"
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-        formControlName="commentaire"
+        [formField]="form.commentaire"
       />
     </div>
 
@@ -74,8 +78,9 @@
       <input
         id="kilometrage"
         type="number"
+        step="any"
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-        formControlName="kilometrage"
+        [formField]="form.kilometrage"
       />
     </div>
 
@@ -84,41 +89,45 @@
       <select
         id="depenseType"
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-        formControlName="depenseType"
+        [formField]="form.depenseType"
       >
-        @for (type of depensesType; track type.id) {
-          <option [ngValue]="type.id">{{ type.name }}</option>
+        <option value="">Sélectionner un type</option>
+        @for (type of depensesType(); track type.id) {
+          <option [value]="type.id">{{ type.name }}</option>
         }
       </select>
-      @if (selectedType === '0') {
-        <input
-          type="text"
-          placeholder="Autre dépense"
-          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 mt-2"
-          formControlName="autre_depense"
-        />
-        @if (autreDepenseError) {
-          <p class="text-red-500 text-sm mt-1">{{ autreDepenseError }}</p>
-        }
-      }
-      @if (!form.get('depenseType')?.valid && submitted) {
-        <p class="text-red-500 text-sm mt-1">{{ depenseTypeErrorMessage }}</p>
+      @if (form.depenseType().touched() && form.depenseType().errors().length) {
+        <p class="text-red-500 text-sm mt-1">{{ form.depenseType().errors()[0].message }}</p>
       }
     </div>
+
+    @if (!form.autre_depense().hidden()) {
+      <div>
+        <label for="autre_depense" class="block text-sm font-medium text-blue-800 mb-1">Autre dépense</label>
+        <input
+          id="autre_depense"
+          type="text"
+          placeholder="Nom du type de dépense"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+          [formField]="form.autre_depense"
+        />
+      </div>
+    }
 
     <div>
       <label for="moto" class="block text-sm font-medium text-blue-800 mb-1">Moto</label>
       <select
         id="moto"
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-        formControlName="moto"
+        [formField]="form.moto"
       >
-        @for (moto of motoList; track moto.id) {
-          <option [ngValue]="moto.id">{{ moto.name }}</option>
+        <option value="">Sélectionner une moto</option>
+        @for (moto of motoList(); track moto.id) {
+          <option [value]="moto.id">{{ moto.name }}</option>
         }
       </select>
-      @if (!form.get('moto')?.valid && submitted) {
-        <p class="text-red-500 text-sm mt-1">{{ motoErrorMessage }}</p>
+      @if (form.moto().touched() && form.moto().errors().length) {
+        <p class="text-red-500 text-sm mt-1">{{ form.moto().errors()[0].message }}</p>
       }
     </div>
 
@@ -133,7 +142,8 @@
       </button>
       <button
         type="submit"
-        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 cursor-pointer font-['Fira_Sans']"
+        [disabled]="form().invalid()"
+        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 cursor-pointer font-['Fira_Sans'] disabled:opacity-50"
         title="{{ buttonLabel }}"
       >
         {{ buttonLabel }}

@@ -1,15 +1,16 @@
 <section class="p-6">
   <h2 class="text-2xl font-['Fira_Code'] text-blue-800 mb-6">{{ buttonLabel }} un entretien</h2>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmitEntretien()" class="space-y-4">
+  <form (submit)="onSubmit(); $event.preventDefault()" class="space-y-4">
 
     <div>
       <label for="kilometrage" class="block text-sm font-medium text-blue-800 mb-1">Kilométrage</label>
       <input
         id="kilometrage"
         type="number"
+        step="any"
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-        formControlName="kilometrage"
+        [formField]="form.kilometrage"
       />
     </div>
 
@@ -19,26 +20,26 @@
         id="date"
         type="datetime-local"
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-        formControlName="date"
+        [formField]="form.date"
       />
-      @if (!form.get('date')?.valid && submitted) {
-        <p class="text-red-500 text-sm mt-1">{{ dateErrorMessage }}</p>
+      @if (form.date().touched() && form.date().errors().length) {
+        <p class="text-red-500 text-sm mt-1">{{ form.date().errors()[0].message }}</p>
       }
     </div>
 
     <div>
       <label class="block text-sm font-medium text-blue-800 mb-1">Graissage</label>
       <app-toggle
-        [checked]="form.get('graissage')?.value ?? false"
-        (changed)="onGraissageChange($event)"
+        [checked]="model().graissage"
+        (changed)="model.update(m => ({...m, graissage: $event}))"
       />
     </div>
 
     <div>
       <label class="block text-sm font-medium text-blue-800 mb-1">Lavage</label>
       <app-toggle
-        [checked]="form.get('lavage')?.value ?? false"
-        (changed)="onLavageChange($event)"
+        [checked]="model().lavage"
+        (changed)="model.update(m => ({...m, lavage: $event}))"
       />
     </div>
 
@@ -47,8 +48,9 @@
       <input
         id="pressionAv"
         type="number"
+        step="any"
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-        formControlName="pressionAv"
+        [formField]="form.pressionAv"
       />
     </div>
 
@@ -57,8 +59,9 @@
       <input
         id="pressionAr"
         type="number"
+        step="any"
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-        formControlName="pressionAr"
+        [formField]="form.pressionAr"
       />
     </div>
 
@@ -67,14 +70,15 @@
       <select
         id="moto"
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-        formControlName="moto"
+        [formField]="form.moto"
       >
-        @for (moto of motoList; track moto.id) {
-          <option [ngValue]="moto.id">{{ moto.name }}</option>
+        <option value="">Sélectionner une moto</option>
+        @for (moto of motoList(); track moto.id) {
+          <option [value]="moto.id">{{ moto.name }}</option>
         }
       </select>
-      @if (!form.get('moto')?.valid && submitted) {
-        <p class="text-red-500 text-sm mt-1">{{ motoErrorMessage }}</p>
+      @if (form.moto().touched() && form.moto().errors().length) {
+        <p class="text-red-500 text-sm mt-1">{{ form.moto().errors()[0].message }}</p>
       }
     </div>
 
@@ -89,7 +93,8 @@
       </button>
       <button
         type="submit"
-        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 cursor-pointer font-['Fira_Sans']"
+        [disabled]="form().invalid()"
+        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 cursor-pointer font-['Fira_Sans'] disabled:opacity-50"
         title="{{ buttonLabel }}"
       >
         {{ buttonLabel }}

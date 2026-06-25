@@ -1,14 +1,14 @@
-import {Component, inject, OnInit, ChangeDetectionStrategy, signal, computed} from '@angular/core';
-import {DatePipe} from '@angular/common';
-import {EntretiensService} from '../../services/entretiens/entretiens.service';
-import {StorageService} from '../../services/storage/storage.service';
-import {ExportService} from '../../services/export/export.service';
-import {DialogComponent} from '../../shared/dialog.component';
-import {IconComponent} from '../../shared/icon.component';
-import {PaginatorComponent} from '../../shared/paginator.component';
-import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
-import {EntretienFormComponent} from '../../form/entretien-form/entretien-form.component';
-import {UploadPopupComponent} from '../../form/upload-popup/upload-popup.component';
+import { Component, inject, ChangeDetectionStrategy, signal, computed } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { EntretiensService } from '../../services/entretiens/entretiens.service';
+import { StorageService } from '../../services/storage/storage.service';
+import { ExportService } from '../../services/export/export.service';
+import { DialogComponent } from '../../shared/dialog.component';
+import { IconComponent } from '../../shared/icon.component';
+import { PaginatorComponent } from '../../shared/paginator.component';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { EntretienFormComponent } from '../../form/entretien-form/entretien-form.component';
+import { UploadPopupComponent } from '../../form/upload-popup/upload-popup.component';
 
 @Component({
   selector: 'app-entretien',
@@ -24,14 +24,15 @@ import {UploadPopupComponent} from '../../form/upload-popup/upload-popup.compone
   templateUrl: './entretien.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EntretienComponent implements OnInit {
+export class EntretienComponent {
   private entretiensService = inject(EntretiensService);
   private storageService = inject(StorageService);
   private exportService = inject(ExportService);
 
-  entretiens = signal<any[]>([]);
-  isLoading = signal(true);
-  error = signal<string | null>(null);
+  entretiens = computed(() => this.entretiensService.entretiens.value() ?? []);
+  isLoading = computed(() => this.entretiensService.entretiens.isLoading());
+  error = computed(() => this.entretiensService.entretiens.error()?.message || null);
+
   currentPage = signal(0);
   pageSize = signal(10);
 
@@ -51,24 +52,6 @@ export class EntretienComponent implements OnInit {
 
   user = this.storageService.getUser();
 
-  ngOnInit(): void {
-    this.loadEntretiens();
-  }
-
-  loadEntretiens(): void {
-    this.isLoading.set(true);
-    this.entretiensService.getEntretiens().subscribe({
-      next: (data) => {
-        this.entretiens.set(data);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        this.error.set(err.error?.message || 'Erreur lors du chargement');
-        this.isLoading.set(false);
-      },
-    });
-  }
-
   onPageChange(page: number): void {
     this.currentPage.set(page);
   }
@@ -87,7 +70,6 @@ export class EntretienComponent implements OnInit {
 
   onFormSaved(): void {
     this.formDialogOpen.set(false);
-    this.loadEntretiens();
   }
 
   onFormCancelled(): void {
@@ -99,14 +81,12 @@ export class EntretienComponent implements OnInit {
     this.confirmationDialogOpen.set(true);
   }
 
-  onDeleteConfirmed(): void {
+  async onDeleteConfirmed(): Promise<void> {
     const target = this.deleteTarget();
     if (!target) return;
-    this.entretiensService.deleteEntretien(target.id).subscribe(() => {
-      this.confirmationDialogOpen.set(false);
-      this.deleteTarget.set(null);
-      this.loadEntretiens();
-    });
+    await this.entretiensService.delete(target.id);
+    this.confirmationDialogOpen.set(false);
+    this.deleteTarget.set(null);
   }
 
   onDeleteCancelled(): void {
@@ -120,7 +100,6 @@ export class EntretienComponent implements OnInit {
 
   onUploadSaved(): void {
     this.uploadDialogOpen.set(false);
-    this.loadEntretiens();
   }
 
   onUploadCancelled(): void {
@@ -132,9 +111,8 @@ export class EntretienComponent implements OnInit {
     this.currentPage.set(0);
   }
 
-  exportCsv(): void {
-    this.exportService.exportEntretiens().subscribe((response) => {
-      this.exportService.handleCsvDownload(response, 'entretiens');
-    });
+  async exportCsv(): Promise<void> {
+    const blob = await this.exportService.exportEntretiens();
+    this.exportService.downloadBlob(blob, 'entretiens');
   }
 }

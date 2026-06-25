@@ -1,35 +1,30 @@
-import {Component, inject, ChangeDetectionStrategy} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {MailService} from "../../services/mail/mail.service";
-import {RouterModule} from "@angular/router";
-import {IconComponent} from '../../shared/icon.component';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { form, FormField, submit, required, email } from '@angular/forms/signals';
+import { MailService } from '../../services/mail/mail.service';
+import { RouterModule } from '@angular/router';
+import { IconComponent } from '../../shared/icon.component';
 
 @Component({
   selector: 'app-contact',
-  imports: [ReactiveFormsModule, RouterModule, IconComponent],
+  imports: [FormField, RouterModule, IconComponent],
   templateUrl: 'contact.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContactComponent {
-  private fb = inject(FormBuilder);
   private mailService = inject(MailService);
 
-  contactForm: FormGroup;
+  readonly model = signal({ from: '', subject: '', message: '' });
+  readonly form = form(this.model, (s) => {
+    required(s.from, { message: 'Une adresse email est obligatoire' });
+    email(s.from, { message: 'Adresse email invalide' });
+    required(s.subject, { message: 'Un sujet est obligatoire' });
+    required(s.message, { message: 'Un message est obligatoire' });
+  });
+
   submitted = false;
   error = '';
   messageSent = false;
   messageFailed = false;
-  fromErrorMessage = 'Une adresse email est obligatoire';
-  subjectErrorMessage = 'Un sujet est obligatoire';
-  messageErrorMessage = 'Un message est obligatoire';
-
-  constructor() {
-    this.contactForm = this.fb.group({
-      from: ['', [Validators.required, Validators.email]],
-      subject: ['', Validators.required],
-      message: ['', Validators.required],
-    });
-  }
 
   ngOnInit() {
     this.messageSent = false;
@@ -37,21 +32,16 @@ export class ContactComponent {
   }
 
   onSubmit() {
-    this.submitted = true;
-    this.error = '';
-    if (this.contactForm.valid) {
-      const { from, subject, message } = this.contactForm.value;
-      this.mailService.contact(from, subject, message).subscribe({
-        next: () => {
-          this.messageSent = true;
-          this.contactForm.reset();
-        },
-        error: (err) => {
-          this.messageFailed = true;
-          this.error = "Erreur lors de l'envoi de l'e-mail";
-          console.error("Erreur lors de l'envoi de l'e-mail:", err.error);
-        },
-      });
-    }
+    submit(this.form, async () => {
+      try {
+        await this.mailService.contact(this.model().from, this.model().subject, this.model().message);
+        this.messageSent = true;
+        this.model.set({ from: '', subject: '', message: '' });
+      } catch (err) {
+        this.messageFailed = true;
+        this.error = "Erreur lors de l'envoi de l'e-mail";
+        console.error("Erreur lors de l'envoi de l'e-mail:", err);
+      }
+    });
   }
 }
