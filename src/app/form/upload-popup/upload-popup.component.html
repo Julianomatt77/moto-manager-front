@@ -27,42 +27,67 @@
     <p class="text-red-500 text-sm mb-4">{{ fileErrorMessage }}</p>
   }
 
-  @if (isLoading) {
+  @if (uploadErrors().length) {
+    <div class="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+      <p class="font-semibold mb-1">Erreurs lors de l'import :</p>
+      @for (err of uploadErrors(); track $index) {
+        <p>{{ err }}</p>
+      }
+    </div>
+  }
+
+  @if (isLoading && !fileImported()) {
     <div class="flex justify-center py-4">
       <div class="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
     </div>
   }
 
-  <form (submit)="onSubmitUpload(); $event.preventDefault()" class="space-y-4">
-    @if (!isLoading) {
-      <div>
-        <label for="moto" class="block text-sm font-medium text-blue-800 mb-1">Moto</label>
-        <select
-          id="moto"
-          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-          [formField]="form.moto"
-        >
-          <option value="">Sélectionner une moto</option>
-          @for (moto of motoList(); track moto.id) {
-            <option [value]="moto.id">{{ moto.name }}</option>
-          }
-        </select>
-        @if (form.moto().touched() && form.moto().errors().length) {
-          <p class="text-red-500 text-sm mt-1">La moto est obligatoire !</p>
-        }
+  @if (isLoading && fileImported()) {
+    <div class="flex flex-col items-center py-4 gap-2">
+      <div class="w-full bg-gray-200 rounded-full h-4 max-w-md">
+        <div class="bg-blue-600 h-4 rounded-full transition-all duration-300" [style.width.%]="progress()"></div>
       </div>
+      <span class="text-sm text-blue-800 font-['Fira_Sans']">{{ progress() }}%</span>
+    </div>
+  }
 
-      <div class="pt-4">
+  <form (submit)="onSubmitUpload(); $event.preventDefault()" class="space-y-4">
+    <div>
+      <label for="moto" class="block text-sm font-medium text-blue-800 mb-1">Moto</label>
+      <select
+        id="moto"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+        [formField]="form.moto"
+      >
+        <option value="">Sélectionner une moto</option>
+        @for (moto of motoList(); track moto.id) {
+          <option [value]="moto.id">{{ moto.name }}</option>
+        }
+      </select>
+      @if (form.moto().touched() && form.moto().errors().length) {
+        <p class="text-red-500 text-sm mt-1">La moto est obligatoire !</p>
+      }
+    </div>
+
+    <div class="flex gap-4 pt-4">
+      <button
+        type="submit"
+        [disabled]="form().invalid() || isLoading || !fileImported()"
+        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 cursor-pointer font-['Fira_Sans'] disabled:opacity-50"
+        title="Importer"
+      >
+        Importer
+      </button>
+      @if (uploadErrors().length > 0) {
         <button
-          type="submit"
-          [disabled]="form().invalid()"
-          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 cursor-pointer font-['Fira_Sans'] disabled:opacity-50"
-          title="Importer"
+          type="button"
+          (click)="cancelled.emit()"
+          class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-150 cursor-pointer font-['Fira_Sans']"
         >
-          Importer
+          Fermer
         </button>
-      </div>
-    }
+      }
+    </div>
   </form>
 
   <div class="mt-6">

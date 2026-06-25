@@ -1,4 +1,6 @@
 import { Component, input, output, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
 import { read, utils } from 'xlsx';
 import { form, FormField, submit, required } from '@angular/forms/signals';
 import { DepensesService } from '../../services/depenses/depenses.service';
@@ -6,6 +8,7 @@ import { DepensesTypeService } from '../../services/depensesType/depenses-type.s
 import { MotoService } from '../../services/moto/moto.service';
 import { EntretiensService } from '../../services/entretiens/entretiens.service';
 import { IconComponent } from '../../shared/icon.component';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-upload-popup',
@@ -18,6 +21,7 @@ export class UploadPopupComponent {
   saved = output<void>();
   cancelled = output<void>();
 
+  private http = inject(HttpClient);
   private depensesService = inject(DepensesService);
   private entretiensService = inject(EntretiensService);
   private depensesTypeService = inject(DepensesTypeService);
@@ -35,9 +39,11 @@ export class UploadPopupComponent {
   depenseList: any[] = [];
   entretienList: any[] = [];
   isLoading = false;
-  fileImported = false;
+  fileImported = signal(false);
   fileErrorMessage = '';
+  uploadErrors = signal<string[]>([]);
   templateName = '';
+  progress = signal(0);
 
   depensesType = computed(() => {
     const data = this.depensesTypeService.depensesTypes.value();
@@ -62,6 +68,8 @@ export class UploadPopupComponent {
   onFileSelected(event: any): void {
     this.isLoading = true;
     this.fileErrorMessage = '';
+    this.progress.set(0);
+    this.uploadErrors.set([]);
     const file: File = event.target.files[0];
 
     if (file) {
@@ -80,12 +88,12 @@ export class UploadPopupComponent {
 
         if (!error) {
           if (this.type() === 'depense') {
-            this.uploadData = await this.transformDepenseType(this.uploadData);
+            await this.transformDepenseType(this.uploadData);
             this.transformDataToDepense(this.uploadData);
           } else {
             this.transformDataToEntretien(this.uploadData);
           }
-          this.fileImported = true;
+          this.fileImported.set(true);
           this.isLoading = false;
         } else {
           this.fileErrorMessage = error;
@@ -100,27 +108,35 @@ export class UploadPopupComponent {
 
   async onSubmitUpload(): Promise<void> {
     this.submitted = true;
-    if (this.form().valid() && !this.fileErrorMessage) {
-      this.isLoading = true;
-      const motoId = this.model().moto;
+    if (this.form().invalid() || this.fileErrorMessage) return;
 
-      if (this.type() === 'depense') {
-        await Promise.all(
-          this.depenseList.map(async (depense: any) => {
-            depense.moto = motoId;
-            await this.depensesService.save(depense);
-          })
-        );
-      } else {
-        await Promise.all(
-          this.entretienList.map(async (entretien: any) => {
-            entretien.moto = motoId;
-            await this.entretiensService.save(entretien);
-          })
-        );
+    this.isLoading = true;
+    this.progress.set(0);
+    this.uploadErrors.set([]);
+
+    const motoId = this.model().moto;
+    const items = this.type() === 'depense' ? this.depenseList : this.entretienList;
+    const total = items.length;
+    const errors: string[] = [];
+
+    for (let i = 0; i < total; i++) {
+      try {
+        const item = { ...items[i], moto: motoId };
+        if (this.type() === 'depense') {
+          await this.depensesService.save(item);
+        } else {
+          await this.entretiensService.save(item);
+        }
+      } catch (e: any) {
+        errors.push(`Ligne ${i + 1}: ${e.error?.message || e.message || 'Erreur inconnue'}`);
       }
+      this.progress.set(Math.round(((i + 1) / total) * 100));
+    }
 
-      this.isLoading = false;
+    this.uploadErrors.set(errors);
+    this.isLoading = false;
+
+    if (errors.length === 0) {
       this.saved.emit();
     }
   }
@@ -234,17 +250,23 @@ export class UploadPopupComponent {
   }
 
   private async processDepenseType(depense: any): Promise<void> {
-    const matchingType = this.depensesType().find((type: any) => type.name === depense.depenseType);
+    const name = depense.depenseType?.toLowerCase();
+    const matchingType = this.depensesType().find((type: any) => type.name.toLowerCase() === name);
 
     if (matchingType) {
       depense.depenseType = matchingType.id;
     } else {
-      const newTypeData = await this.saveDepenseType(depense.depenseType);
-      depense.depenseType = newTypeData.id;
+      try {
+        const newTypeData = await this.depensesTypeService.save(depense.depenseType);
+        depense.depenseType = newTypeData.id;
+      } catch {
+        const baseUrl = environment.baseUrl;
+        const types = await lastValueFrom(this.http.get<any[]>(baseUrl + 'depensesTypes'));
+        const existing = types.find((t: any) => t.name.toLowerCase() === name);
+        if (existing) {
+          depense.depenseType = existing.id;
+        }
+      }
     }
-  }
-
-  private async saveDepenseType(depenseTypeName: string): Promise<any> {
-    return this.depensesTypeService.save(depenseTypeName);
   }
 }
