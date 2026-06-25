@@ -73,8 +73,8 @@
     </div>
 
     @if (paginatedDepenses().length > 0) {
-      <app-paginator [length]="totalLength()" [pageSize]="pageSize()" [pageIndex]="currentPage()" (changePage)="onChangePage($event)" />
-      <div class="space-y-4">
+      <app-paginator [length]="totalLength()" [pageSize]="pageSize()" [pageIndex]="currentPage()" (changePage)="onChangePage($event)" (pageSizeChange)="onPageSizeChange($event)" />
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @for (depense of paginatedDepenses(); track depense.id) {
           <div class="rounded-2xl shadow-lg p-6 bg-white hover:shadow-xl transition-shadow duration-200">
             <div class="flex items-start justify-between mb-4">
@@ -99,25 +99,25 @@
             <div class="grid grid-cols-2 gap-3 mb-4">
               @if (depense.kmParcouru) {
                 <div class="text-sm">
-                  <span class="text-gray-500">Distance parcourue:</span>
+                  <span class="text-gray-500">Distance parcourue:</span><br />
                   <span class="text-blue-800 font-medium ml-1">{{ depense.kmParcouru }} Km</span>
                 </div>
               }
               @if (depense.essenceConsomme) {
                 <div class="text-sm">
-                  <span class="text-gray-500">Essence consommé:</span>
+                  <span class="text-gray-500">Essence consommé:</span><br />
                   <span class="text-blue-800 font-medium ml-1">{{ depense.essenceConsomme }} L</span>
                 </div>
               }
               @if (depense.consoMoyenne) {
                 <div class="text-sm">
-                  <span class="text-gray-500">Conso moyenne:</span>
+                  <span class="text-gray-500">Conso moyenne:</span><br />
                   <span class="text-blue-800 font-medium ml-1">{{ depense.consoMoyenne }} l/100</span>
                 </div>
               }
               @if (depense.essencePrice) {
                 <div class="text-sm">
-                  <span class="text-gray-500">Prix essence:</span>
+                  <span class="text-gray-500">Prix essence:</span><br />
                   <span class="text-blue-800 font-medium ml-1">{{ depense.essencePrice }} €/L</span>
                 </div>
               }
@@ -129,7 +129,7 @@
               </div>
             }
 
-            <div class="flex justify-end gap-2 pt-3 border-t border-gray-100">
+            <div class="flex justify-end flex-wrap gap-2 pt-3 border-t border-gray-100">
               <button (click)="editDepense(depense)"
                       class="flex items-center gap-1 px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 cursor-pointer text-sm font-['Fira_Sans']"
                       type="button"
@@ -147,7 +147,7 @@
         }
       </div>
 
-      <app-paginator [length]="totalLength()" [pageSize]="pageSize()" [pageIndex]="currentPage()" (changePage)="onChangePage($event)" />
+      <app-paginator [length]="totalLength()" [pageSize]="pageSize()" [pageIndex]="currentPage()" (changePage)="onChangePage($event)" (pageSizeChange)="onPageSizeChange($event)" />
     } @else {
       <div class="text-center py-16">
         <p class="text-gray-400 text-lg font-['Fira_Sans']">Vous n'avez aucune dépense</p>

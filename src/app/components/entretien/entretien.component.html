@@ -39,8 +39,8 @@
         [pageSize]="pageSize()"
         [pageIndex]="currentPage()"
         (changePage)="onPageChange($event)"
+        (pageSizeChange)="onPageSizeChange($event)"
       />
-
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @for (entretien of paginatedEntretiens(); track entretien.id) {
           <div class="rounded-2xl shadow-lg p-6 bg-white">
@@ -72,7 +72,7 @@
               }
             </div>
 
-            <div class="flex justify-end gap-2 pt-3 border-t border-gray-100">
+            <div class="flex flex-wrap justify-end gap-2 pt-3 border-t border-gray-100">
               <button (click)="openEditDialog(entretien)"
                       class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 cursor-pointer"
                       title="Éditer">
@@ -97,6 +97,7 @@
         [pageSize]="pageSize()"
         [pageIndex]="currentPage()"
         (changePage)="onPageChange($event)"
+        (pageSizeChange)="onPageSizeChange($event)"
       />
     }
   </div>

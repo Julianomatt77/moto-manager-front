@@ -4,7 +4,7 @@
       <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
         <span class="text-white font-['Fira_Code'] font-bold text-lg">M</span>
       </div>
-      <span class="font-['Fira_Code'] font-semibold text-lg">MotoManager</span>
+      <span class="font-['Fira_Code'] font-semibold text-lg">Moto Manager</span>
     </a>
   </div>
   <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
@@ -17,12 +17,12 @@
       <a [routerLink]="['depenses']"
          class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline"
          routerLinkActive="bg-blue-50 text-blue-900 font-medium">
-        <app-icon name="filter" /> Dépenses
+        <app-icon name="euro" /> Dépenses
       </a>
       <a [routerLink]="['entretien']"
          class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline"
          routerLinkActive="bg-blue-50 text-blue-900 font-medium">
-        <app-icon name="moto" /> Entretiens
+        <app-icon name="wrench" /> Entretiens
       </a>
       <a [routerLink]="['motos']"
          class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline"
@@ -35,7 +35,7 @@
     <a [routerLink]="['cgu']"
        class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline"
        routerLinkActive="bg-blue-50 text-blue-900 font-medium">
-      CGU
+      <app-icon name="scale" /> CGU
     </a>
     <a [routerLink]="['contact']"
        class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline"

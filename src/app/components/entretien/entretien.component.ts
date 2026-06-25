@@ -127,6 +127,11 @@ export class EntretienComponent implements OnInit {
     this.uploadDialogOpen.set(false);
   }
 
+  onPageSizeChange(size: number): void {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+  }
+
   exportCsv(): void {
     this.exportService.exportEntretiens().subscribe((response) => {
       this.exportService.handleCsvDownload(response, 'entretiens');

@@ -186,6 +186,11 @@ export class DepensesComponent implements OnInit {
     this.currentPage.set(index);
   }
 
+  onPageSizeChange(size: number): void {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+  }
+
   resetAllFilters(): void {
     this.motoFilter.set('');
     this.yearFilter.set(0);

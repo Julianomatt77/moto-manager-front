@@ -1,6 +1,6 @@
 {
   "name": "moto-manager",
-  "version": "1.5.2",
+  "version": "2.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
