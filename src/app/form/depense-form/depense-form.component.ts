@@ -1,171 +1,127 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output, ChangeDetectionStrategy} from '@angular/core';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {DepensesService} from "../../services/depenses/depenses.service";
-import {Depense} from "../../models/Depense";
-import {StorageService} from "../../services/storage/storage.service";
-import {DepensesTypeService} from "../../services/depensesType/depenses-type.service";
-import { DatePipe } from "@angular/common";
-import {MotoService} from "../../services/moto/moto.service";
+import { Component, input, output, inject, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { DepensesService } from '../../services/depenses/depenses.service';
+import { DepensesTypeService } from '../../services/depensesType/depenses-type.service';
+import { MotoService } from '../../services/moto/moto.service';
 
 @Component({
-    selector: 'app-depense-form',
-    imports: [
-    ReactiveFormsModule,
-    FormsModule
-],
-    providers: [DatePipe],
-    templateUrl: './depense-form.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
-    styleUrl: './depense-form.component.css'
+  selector: 'app-depense-form',
+  imports: [ReactiveFormsModule],
+  templateUrl: './depense-form.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DepenseFormComponent implements OnInit{
-  @Output() formSubmitted: EventEmitter<Depense>;
-  @Input() id!: string;
+export class DepenseFormComponent implements OnInit, OnDestroy {
+  addOrEdit = input<'add' | 'edit'>('add');
+  depense = input<any | null>(null);
+  saved = output<void>();
+  cancelled = output<void>();
 
-  form!: FormGroup;
-  depense!: Depense;
-  addOrEdit!: string;
-  buttonLabel!: string;
-  userId!: string;
-  depensesType: any[] = [];
-  motoList: any[] = [];
-  selectedType: string = '';
-  submitted: boolean = false;
+  private fb = inject(FormBuilder);
+  private depensesService = inject(DepensesService);
+  private depensesTypeService = inject(DepensesTypeService);
+  private motoService = inject(MotoService);
 
-  montantErrorMessage = '';
-  dateErrorMessage = '';
-  depenseTypeErrorMessage = '';
-  motoErrorMessage = '';
-  formattedDate: string;
+  private typeSub: Subscription | null = null;
 
-  constructor(
-    private fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) private data: any,
-    private depensesService: DepensesService,
-    private depensesTypeService: DepensesTypeService,
-    private motoService: MotoService,
-    private storageService: StorageService,
-    public dialogRef: MatDialogRef<DepenseFormComponent>,
-    public datePipe: DatePipe
-  ) {
-    this.formSubmitted = new EventEmitter<Depense>();
-    if (data.addOrEdit == 'edit') {
-      this.addOrEdit = 'edit';
-      this.buttonLabel = 'Mettre à jour';
-      this.depense = data.depense;
-      this.id = this.depense.id
-      this.depense.moto = data.depense.moto.id.toString()
-      this.depense.depenseType = data.depense.depenseType.id.toString()
+  form = this.fb.group({
+    montant: [null as number | null, [Validators.required]],
+    kmParcouru: [null as number | null],
+    essenceConsomme: [null as number | null],
+    essencePrice: [null as number | null],
+    commentaire: [''],
+    kilometrage: [null as number | null],
+    date: [null as string | null, [Validators.required]],
+    depenseType: ['', [Validators.required]],
+    autre_depense: [''],
+    moto: ['', [Validators.required]]
+  });
 
-      //Correction de l'erreur de l'affichage de la date
-      const dateObject = new Date(this.depense.date);
-      this.formattedDate = dateObject.toISOString().substring(0, 16);
-    } else {
-      this.addOrEdit = 'add';
-      this.buttonLabel = 'Ajouter';
-      this.depense = new Depense(
-        '',
-        0,
-        0,
-        0,
-        0,
-        0,
-        '',
-        0,
-        new Date(Date.now()),
-        '',
-        '',
-      )
-    }
-  }
+  buttonLabel = '';
+  depensesType: { id: string; name: string }[] = [];
+  motoList: { id: string; name: string }[] = [];
+  selectedType = '';
+  submitted = false;
+  editId = '';
+  autreDepenseError = '';
+  montantErrorMessage = 'Le montant est obligatoire.';
+  dateErrorMessage = 'La date est obligatoire.';
+  depenseTypeErrorMessage = 'Le type de dépense est obligatoire.';
+  motoErrorMessage = 'La moto est obligatoire.';
 
   ngOnInit(): void {
-    if (this.addOrEdit == 'add') {
-      this.form = this.fb.group({
-        montant: [null, [Validators.required]],
-        kmParcouru: null,
-        essenceConsomme: null,
-        essencePrice: null,
-        commentaire: null,
-        kilometrage: null,
-        date: [null, [Validators.required]],
-        depenseType: ['', [Validators.required]],
-        autre_depense: '',
-        moto: ['', [Validators.required]]
-      })
-    } else {
-      this.form = this.fb.group({
-        montant: [this.depense.montant, [Validators.required]],
-        kmParcouru: this.depense.kmParcouru,
-        essenceConsomme: this.depense.essenceConsomme,
-        essencePrice: this.depense.essencePrice,
-        commentaire: this.depense.commentaire,
-        kilometrage: this.depense.kilometrage,
-        date: [this.formattedDate, [Validators.required]],
-        depenseType: [this.depense.depenseType, [Validators.required]],
-        autre_depense: '',
-        moto: [this.depense.moto, [Validators.required]]
-      })
+    this.buttonLabel = this.addOrEdit() === 'edit' ? 'Mettre à jour' : 'Ajouter';
+
+    const dep = this.depense();
+    if (this.addOrEdit() === 'edit' && dep) {
+      this.editId = dep.id;
+      const dateObject = new Date(dep.date);
+      const formattedDate = dateObject.toISOString().substring(0, 16);
+
+      this.form.patchValue({
+        montant: dep.montant,
+        kmParcouru: dep.kmParcouru,
+        essenceConsomme: dep.essenceConsomme,
+        essencePrice: dep.essencePrice,
+        commentaire: dep.commentaire,
+        kilometrage: dep.kilometrage,
+        date: formattedDate,
+        depenseType: dep.depenseType?.id?.toString() ?? dep.depenseType?.toString() ?? '',
+        moto: dep.moto?.id?.toString() ?? dep.moto?.toString() ?? ''
+      });
     }
 
-    this.montantErrorMessage = 'Le montant est obligatoire.';
-    this.dateErrorMessage = 'La date est obligatoire.';
-    this.depenseTypeErrorMessage = 'Le type de dépense est obligatoire.';
-    this.motoErrorMessage = 'La moto est obligatoire.';
+    this.depensesTypeService.getDepensesTypes().subscribe((data: any[]) => {
+      this.depensesType = data.map((t: any) => ({ id: t.id.toString(), name: t.name }));
+      this.depensesType.push({ id: '0', name: 'autre' });
+    });
 
-    this.depensesTypeService.getDepensesTypes().subscribe((data) => {
-      data.forEach((type) => {
-        this.depensesType.push({'id': type.id, 'name': type.name})
-      })
-      this.depensesType.push({'id': 0, 'name': 'autre'})
-    })
+    this.motoService.getMotos().subscribe((data: any[]) => {
+      this.motoList = data.map((m: any) => ({ id: m.id.toString(), name: m.modele }));
+    });
 
-    this.motoService.getMotos().subscribe(data => {
-      data.forEach(moto => {
-        this.motoList.push({'id': moto.id, 'name': moto.modele})
-      })
-    })
+    this.typeSub = this.form.get('depenseType')?.valueChanges.subscribe(value => {
+      this.selectedType = value as string;
+      this.autreDepenseError = '';
+      if (value !== '0') {
+        this.form.get('autre_depense')?.setValue('');
+      }
+    }) ?? null;
+  }
+
+  ngOnDestroy(): void {
+    this.typeSub?.unsubscribe();
   }
 
   onSubmitDepense(): void {
-    this.depense = this.form.value;
     this.submitted = true;
-    if (this.form.valid){
-      if (this.form.value['depenseType'] == '0' && this.form.value['autre_depense']){
-        let newTypeName = this.form.value['autre_depense'];
-        this.depensesTypeService.saveDepenseType(newTypeName).subscribe((data) => {
-          this.depense.depenseType = data.id
-          this.saveDepense();
-        })
+    this.autreDepenseError = '';
+
+    if (this.form.get('depenseType')?.value === '0' && !this.form.get('autre_depense')?.value) {
+      this.autreDepenseError = 'Le type de dépense est obligatoire.';
+      return;
+    }
+
+    if (this.form.valid) {
+      const formValue = this.form.value;
+      const depenseData = { ...formValue };
+
+      if (formValue.depenseType === '0' && formValue.autre_depense) {
+        this.depensesTypeService.saveDepenseType(formValue.autre_depense).subscribe((newType: any) => {
+          depenseData.depenseType = newType.id.toString();
+          this.saveDepense(depenseData);
+        });
       } else {
-        this.saveDepense();
+        this.saveDepense(depenseData);
       }
     }
   }
 
-  saveDepense(){
-    if (this.addOrEdit == 'add'){
-      this.depensesService.saveDepense(this.depense).subscribe(() => {
-        this.dialogRef.close();
-      });
+  private saveDepense(data: any): void {
+    if (this.addOrEdit() === 'add') {
+      this.depensesService.saveDepense(data).subscribe(() => this.saved.emit());
     } else {
-      this.depensesService.patchDepense(this.id, this.depense).subscribe(() => {
-        this.dialogRef.close();
-      });
+      this.depensesService.patchDepense(this.editId, data).subscribe(() => this.saved.emit());
     }
   }
-
-  changeFn(e: any) {
-    this.depense.date = e.target.value;
-  }
-
-  onTypeSelection(e: any) {
-    this.selectedType = e.target.value.split(':')[1].trim()
-  }
-
-  closePopup(){
-    this.dialogRef.close();
-  }
-
 }

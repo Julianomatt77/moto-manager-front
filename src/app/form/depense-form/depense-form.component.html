@@ -1,147 +1,144 @@
-<div class="popup">
-  <div class="popup-close">
-    <a href="javascript:;" (click)="closePopup()" class="material-symbols-outlined">close</a>
-  </div>
+<section class="p-6">
+  <h2 class="text-2xl font-['Fira_Code'] text-blue-800 mb-6">{{ buttonLabel }} une dépense</h2>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmitDepense()" class="form-container">
+  <form [formGroup]="form" (ngSubmit)="onSubmitDepense()" class="space-y-4">
 
-    <h3>{{ buttonLabel }} une dépense</h3>
-
-    <div class="form-group">
-      <div><label for="montant">Montant</label></div>
+    <div>
+      <label for="montant" class="block text-sm font-medium text-blue-800 mb-1">Montant</label>
       <input
         id="montant"
-        class="form-control"
-        formControlName="montant"
         type="number"
-        />
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+        formControlName="montant"
+      />
+      @if (!form.get('montant')?.valid && submitted) {
+        <p class="text-red-500 text-sm mt-1">{{ montantErrorMessage }}</p>
+      }
     </div>
-    @if(!form.get('montant')?.valid && submitted){
-      <div class="error-message">
-        {{ montantErrorMessage }}
-      </div>
-    }
 
-    <div class="form-group">
-      <div><label for="date">Date de l'opération</label></div>
+    <div>
+      <label for="date" class="block text-sm font-medium text-blue-800 mb-1">Date de l'opération</label>
       <input
         id="date"
         type="datetime-local"
-        class="form-control"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
         formControlName="date"
-        />
-    </div>
-    @if(!form.get('date')?.valid && submitted){
-      <div class="error-message">
-        {{ dateErrorMessage }}
-      </div>
-    }
-
-    <div class="form-group">
-      <div>
-        <label for="kmParcouru">Km parcouru</label>
-      </div>
-
-      <input
-        id="kmParcouru"
-        class="form-control"
-        formControlName="kmParcouru"
-        type="number"
-        />
-    </div>
-
-    <div class="form-group">
-      <div><label for="essenceConsomme">Essence consommée</label></div>
-      <input
-        id="essenceConsomme"
-        class="form-control"
-        formControlName="essenceConsomme"
-        type="number"
-        />
-    </div>
-
-    <div class="form-group">
-      <div><label for="essencePrice">Prix de l'essence</label></div>
-      <input
-        id="essencePrice"
-        class="form-control"
-        formControlName="essencePrice"
-        type="number"
-        />
-    </div>
-
-    <div class="form-group">
-      <div><label for="commentaire">Commentaire</label></div>
-      <input
-        id="commentaire"
-        class="form-control"
-        formControlName="commentaire"
-        type="text"
-        />
-    </div>
-
-    <div class="form-group">
-      <div><label for="kilometrage">Kilométrage</label></div>
-      <input
-        id="kilometrage"
-        class="form-control"
-        formControlName="kilometrage"
-        type="number"
-        />
-    </div>
-
-    <div class="form-group">
-      <div><label for="depenseType">Type de dépense</label></div>
-      <select
-        id="depenseType"
-        class="form-control"
-        formControlName="depenseType"
-        (change)="onTypeSelection($event)"
-        >
-        @for (type of depensesType; track type) {
-          <option [ngValue]="type.id.toString()">
-            {{ type.name }}
-          </option>
-        }
-      </select>
-      @if (selectedType == '0') {
-        <div>
-          <input type="text" class="form-control" placeholder="Autre dépense" formControlName="autre_depense">
-        </div>
+      />
+      @if (!form.get('date')?.valid && submitted) {
+        <p class="text-red-500 text-sm mt-1">{{ dateErrorMessage }}</p>
       }
     </div>
-    @if(!form.get('depenseType')?.valid && submitted){
-      <div class="error-message">
-        {{ depenseTypeErrorMessage }}
-      </div>
-    }
 
-    <div class="form-group">
-      <div><label for="moto">Moto</label></div>
+    <div>
+      <label for="kmParcouru" class="block text-sm font-medium text-blue-800 mb-1">Km parcouru</label>
+      <input
+        id="kmParcouru"
+        type="number"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+        formControlName="kmParcouru"
+      />
+    </div>
+
+    <div>
+      <label for="essenceConsomme" class="block text-sm font-medium text-blue-800 mb-1">Essence consommée</label>
+      <input
+        id="essenceConsomme"
+        type="number"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+        formControlName="essenceConsomme"
+      />
+    </div>
+
+    <div>
+      <label for="essencePrice" class="block text-sm font-medium text-blue-800 mb-1">Prix de l'essence</label>
+      <input
+        id="essencePrice"
+        type="number"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+        formControlName="essencePrice"
+      />
+    </div>
+
+    <div>
+      <label for="commentaire" class="block text-sm font-medium text-blue-800 mb-1">Commentaire</label>
+      <input
+        id="commentaire"
+        type="text"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+        formControlName="commentaire"
+      />
+    </div>
+
+    <div>
+      <label for="kilometrage" class="block text-sm font-medium text-blue-800 mb-1">Kilométrage</label>
+      <input
+        id="kilometrage"
+        type="number"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+        formControlName="kilometrage"
+      />
+    </div>
+
+    <div>
+      <label for="depenseType" class="block text-sm font-medium text-blue-800 mb-1">Type de dépense</label>
       <select
-        id="moto"
-        class="form-control"
-        formControlName="moto"
-        >
-        @for (moto of motoList; track moto) {
-          <option [ngValue]="moto.id.toString()">
-            {{ moto.name }}
-          </option>
+        id="depenseType"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+        formControlName="depenseType"
+      >
+        @for (type of depensesType; track type.id) {
+          <option [ngValue]="type.id">{{ type.name }}</option>
         }
       </select>
+      @if (selectedType === '0') {
+        <input
+          type="text"
+          placeholder="Autre dépense"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 mt-2"
+          formControlName="autre_depense"
+        />
+        @if (autreDepenseError) {
+          <p class="text-red-500 text-sm mt-1">{{ autreDepenseError }}</p>
+        }
+      }
+      @if (!form.get('depenseType')?.valid && submitted) {
+        <p class="text-red-500 text-sm mt-1">{{ depenseTypeErrorMessage }}</p>
+      }
     </div>
-    @if(!form.get('moto')?.valid && submitted){
-      <div class="error-message">
-        {{ motoErrorMessage }}
-      </div>
-    }
 
-    <div class="form-submit">
-      <!--      <button type="submit" class="secondary-button" [disabled]="!form.valid">-->
-      <button type="submit" class="secondary-button">
+    <div>
+      <label for="moto" class="block text-sm font-medium text-blue-800 mb-1">Moto</label>
+      <select
+        id="moto"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+        formControlName="moto"
+      >
+        @for (moto of motoList; track moto.id) {
+          <option [ngValue]="moto.id">{{ moto.name }}</option>
+        }
+      </select>
+      @if (!form.get('moto')?.valid && submitted) {
+        <p class="text-red-500 text-sm mt-1">{{ motoErrorMessage }}</p>
+      }
+    </div>
+
+    <div class="flex gap-4 pt-4">
+      <button
+        type="button"
+        (click)="cancelled.emit()"
+        class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-150 cursor-pointer font-['Fira_Sans']"
+        title="Annuler"
+      >
+        Annuler
+      </button>
+      <button
+        type="submit"
+        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 cursor-pointer font-['Fira_Sans']"
+        title="{{ buttonLabel }}"
+      >
         {{ buttonLabel }}
       </button>
     </div>
 
   </form>
-</div>
+</section>

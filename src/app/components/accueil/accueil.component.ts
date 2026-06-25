@@ -1,29 +1,16 @@
-import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
-import {StorageService} from "../../services/storage/storage.service";
-import {RouterModule} from "@angular/router";
+import {Component, ChangeDetectionStrategy, inject} from '@angular/core';
+import {StorageService} from '../../services/storage/storage.service';
+import {RouterModule} from '@angular/router';
+import {NgOptimizedImage} from '@angular/common';
+import {IconComponent} from '../../shared/icon.component';
 
 @Component({
-    selector: 'app-accueil',
-    imports: [RouterModule],
-    templateUrl: './accueil.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
-    styleUrl: './accueil.component.css'
+  selector: 'app-accueil',
+  imports: [RouterModule, NgOptimizedImage, IconComponent],
+  templateUrl: './accueil.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AccueilComponent implements OnInit{
-  isPageReloaded: boolean = false;
-  isLoggedIn: boolean;
-
-  constructor(private storageService: StorageService) {}
-
-  ngOnInit(): void {
-    const hasReloaded = window.sessionStorage.getItem('mm_hasReloaded');
-    if (!hasReloaded) {
-      window.sessionStorage.setItem('mm_hasReloaded', 'true');
-      window.location.reload();
-    }
-
-    if (this.storageService.isLoggedIn()) {
-      this.isLoggedIn = true;
-    }
-  }
+export class AccueilComponent {
+  private storageService = inject(StorageService);
+  isLoggedIn: boolean = this.storageService.isLoggedIn();
 }

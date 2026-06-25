@@ -1,135 +1,88 @@
-import {Component, EventEmitter, Inject, Input, Output, ChangeDetectionStrategy} from '@angular/core';
-import {Depense} from "../../models/Depense";
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {Entretien} from "../../models/Entretien";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MotoService} from "../../services/moto/moto.service";
-import {StorageService} from "../../services/storage/storage.service";
-import { DatePipe } from "@angular/common";
-import {EntretiensService} from "../../services/entretiens/entretiens.service";
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { Component, input, output, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { EntretiensService } from '../../services/entretiens/entretiens.service';
+import { MotoService } from '../../services/moto/moto.service';
+import { ToggleComponent } from '../../shared/toggle.component';
 
 @Component({
-    selector: 'app-entretien-form',
-    imports: [
-    ReactiveFormsModule,
-    MatSlideToggleModule,
-    FormsModule
-],
-    providers: [DatePipe],
-    templateUrl: './entretien-form.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
-    styleUrl: './entretien-form.component.css'
+  selector: 'app-entretien-form',
+  imports: [ReactiveFormsModule, ToggleComponent],
+  templateUrl: './entretien-form.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EntretienFormComponent {
-  @Output() formSubmitted: EventEmitter<Depense>;
-  @Input() id!: string;
+export class EntretienFormComponent implements OnInit {
+  addOrEdit = input<'add' | 'edit'>('add');
+  entretien = input<any | null>(null);
+  saved = output<void>();
+  cancelled = output<void>();
 
-  form!: FormGroup;
-  entretien!: Entretien
-  addOrEdit!: string;
-  buttonLabel!: string;
-  userId!: string;
-  motoList: any[] = [];
-  submitted: boolean = false;
-  dateErrorMessage = '';
-  motoErrorMessage = '';
-  formattedDate: string;
+  private fb = inject(FormBuilder);
+  private entretiensService = inject(EntretiensService);
+  private motoService = inject(MotoService);
 
-  constructor(private fb: FormBuilder,
-              @Inject(MAT_DIALOG_DATA) private data: any,
-              private entretiensService: EntretiensService,
-              private motoService: MotoService,
-              private storageService: StorageService,
-              public dialogRef: MatDialogRef<EntretienFormComponent>,
-              public datePipe: DatePipe
-  ) {
-    this.formSubmitted = new EventEmitter<Depense>();
-    if (data.addOrEdit == 'edit') {
-      this.addOrEdit = 'edit';
-      this.buttonLabel = 'Mettre à jour';
-      this.entretien = data.entretien;
-      this.id = this.entretien.id
-      this.entretien.moto = data.entretien.moto.id.toString()
+  form = this.fb.group({
+    graissage: [false],
+    lavage: [false],
+    pressionAv: [null as number | null],
+    pressionAr: [null as number | null],
+    kilometrage: [null as number | null],
+    date: [null as string | null, [Validators.required]],
+    moto: ['', [Validators.required]]
+  });
 
-      //Correction de l'erreur de l'affichage de la date
-      const dateObject = new Date(this.entretien.date);
-      this.formattedDate = dateObject.toISOString().substring(0, 16);
-    } else {
-      this.addOrEdit = 'add';
-      this.buttonLabel = 'Ajouter';
-      this.entretien = new Entretien(
-        '',
-        false,
-        false,
-        0,
-        0,
-        0,
-        new Date(Date.now()),
-        '',
-      )
-    }
-  }
+  buttonLabel = '';
+  motoList: { id: string; name: string }[] = [];
+  submitted = false;
+  editId = '';
+  dateErrorMessage = 'La date est obligatoire.';
+  motoErrorMessage = 'La moto est obligatoire.';
 
   ngOnInit(): void {
-    if (this.addOrEdit == 'add') {
-      this.form = this.fb.group({
-        graissage: null,
-        lavage: null,
-        pressionAv: null,
-        pressionAr: null,
-        kilometrage: null,
-        date: [null, [Validators.required]],
-        moto: ['', [Validators.required]]
-      })
-    } else {
-      this.form = this.fb.group({
-        graissage: this.entretien.graissage,
-        lavage: this.entretien.lavage,
-        pressionAv: this.entretien.pressionAv,
-        pressionAr: this.entretien.pressionAr,
-        kilometrage: this.entretien.kilometrage,
-        date: [this.formattedDate, [Validators.required]],
-        moto: [this.entretien.moto, [Validators.required]]
-      })
+    this.buttonLabel = this.addOrEdit() === 'edit' ? 'Mettre à jour' : 'Ajouter';
+
+    const ent = this.entretien();
+    if (this.addOrEdit() === 'edit' && ent) {
+      this.editId = ent.id;
+      const dateObject = new Date(ent.date);
+      const formattedDate = dateObject.toISOString().substring(0, 16);
+
+      this.form.patchValue({
+        graissage: ent.graissage ?? false,
+        lavage: ent.lavage ?? false,
+        pressionAv: ent.pressionAv,
+        pressionAr: ent.pressionAr,
+        kilometrage: ent.kilometrage,
+        date: formattedDate,
+        moto: ent.moto?.id?.toString() ?? ent.moto?.toString() ?? ''
+      });
     }
 
-    this.dateErrorMessage = 'La date est obligatoire.';
-    this.motoErrorMessage = 'La moto est obligatoire.';
-
-    this.motoService.getMotos().subscribe(data => {
-      data.forEach(moto => {
-        this.motoList.push({'id': moto.id, 'name': moto.modele})
-      })
-    })
+    this.motoService.getMotos().subscribe((data: any[]) => {
+      this.motoList = data.map((m: any) => ({ id: m.id.toString(), name: m.modele }));
+    });
   }
 
   onSubmitEntretien(): void {
-    this.entretien = this.form.value;
     this.submitted = true;
-    if (this.form.valid){
-        this.saveEntretien();
+    if (this.form.valid) {
+      const formValue = this.form.value;
+      this.saveEntretien(formValue);
     }
   }
 
-  saveEntretien(){
-    if (this.addOrEdit == 'add'){
-      this.entretiensService.saveEntretien(this.entretien).subscribe(() => {
-        this.dialogRef.close();
-      });
+  private saveEntretien(data: any): void {
+    if (this.addOrEdit() === 'add') {
+      this.entretiensService.saveEntretien(data).subscribe(() => this.saved.emit());
     } else {
-      this.entretiensService.patchEntretien(this.id, this.entretien).subscribe(() => {
-        this.dialogRef.close();
-      });
+      this.entretiensService.patchEntretien(this.editId, data).subscribe(() => this.saved.emit());
     }
   }
 
-  changeFn(e: any) {
-    this.entretien.date = e.target.value;
+  onGraissageChange(value: boolean): void {
+    this.form.patchValue({ graissage: value });
   }
 
-  closePopup(){
-    this.dialogRef.close();
+  onLavageChange(value: boolean): void {
+    this.form.patchValue({ lavage: value });
   }
-
 }

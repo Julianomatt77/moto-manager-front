@@ -1,231 +1,160 @@
-import {Component, inject, ChangeDetectionStrategy} from '@angular/core';
-import {User} from "../../models/User";
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {ConfirmationDialogComponent} from "../confirmation-dialog/confirmation-dialog.component";
-import {StorageService} from "../../services/storage/storage.service";
-import {MotoService} from "../../services/moto/moto.service";
-import {MotoFormComponent} from "../../form/moto-form/moto-form.component";
-import {DepensesService} from "../../services/depenses/depenses.service";
-import {EntretiensService} from "../../services/entretiens/entretiens.service";
-import {catchError, forkJoin, map, Observable} from "rxjs";
+import {Component, inject, ChangeDetectionStrategy, OnInit, signal} from '@angular/core';
+import {forkJoin} from 'rxjs';
+import {MotoService} from '../../services/moto/moto.service';
+import {DepensesService} from '../../services/depenses/depenses.service';
+import {EntretiensService} from '../../services/entretiens/entretiens.service';
+import {StorageService} from '../../services/storage/storage.service';
+import {DialogComponent} from '../../shared/dialog.component';
+import {IconComponent} from '../../shared/icon.component';
+import {MotoFormComponent} from '../../form/moto-form/moto-form.component';
+import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
 
 @Component({
-    selector: 'app-motos',
-    imports: [],
-    templateUrl: './motos.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
-    styleUrl: './motos.component.css'
+  selector: 'app-motos',
+  imports: [DialogComponent, IconComponent, MotoFormComponent, ConfirmationDialogComponent],
+  templateUrl: './motos.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MotosComponent {
-  motos: any[] = [];
-  deactivatedMotos: any[] = [];
-  user: User;
-  isLoading = true;
-  error: string;
-  dialogRef!: MatDialogRef<ConfirmationDialogComponent>;
-  depenses: any[] = [];
-  entretiens: any[] = [];
+export class MotosComponent implements OnInit {
+  private motosService = inject(MotoService);
+  private depensesService = inject(DepensesService);
+  private entretiensService = inject(EntretiensService);
+  private storageService = inject(StorageService);
 
-  motosService = inject(MotoService);
-  storageService = inject(StorageService);
-  dialog = inject(MatDialog);
-  depensesService = inject(DepensesService);
-  entretiensServices = inject(EntretiensService);
+  user = this.storageService.getUser();
+  motos = signal<any[]>([]);
+  deactivatedMotos = signal<any[]>([]);
+  isLoading = signal(true);
+  error = signal<string | null>(null);
+
+  showFormDialog = signal(false);
+  showConfirmDialog = signal(false);
+  confirmMessage = signal('');
+  selectedMoto = signal<any | null>(null);
+  addOrEdit = signal<'add' | 'edit'>('add');
 
   ngOnInit(): void {
-    this.user = this.storageService.getUser();
     this.loadMotosData();
   }
 
   loadMotosData(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
+    this.error.set(null);
 
-    const motos$ = this.motosService.getAllMotos();
-    const deactivatedMotos$ = this.getAllDeactivatedMotos();
-
-    forkJoin([motos$, deactivatedMotos$]).subscribe({
-      next: ([motos, deactivatedMotos]) => {
-        this.motos = motos;
-        this.deactivatedMotos = deactivatedMotos;
-        this.getStatsDepenses();
-        this.getStatsEntretiens();
-      },
-      error: (err) => {
-        this.error = err.error.message;
-        this.isLoading = false;
-      }
-    });
-  }
-
-  getAllDeactivatedMotos(): Observable<any> {
-    return this.motosService.getDeactivatedMotos().pipe(
-      map(data => data), // Vous pouvez transformer les données ici si nécessaire
-    );
-  }
-
-  /*************** CRUD *******************/
-  addMoto() {
-    this.dialog
-      .open(MotoFormComponent, {
-        data: {
-          addOrEdit: 'add',
-        },
-        width: '80vw',
-        height: '50vh',
-      })
-      .afterClosed()
-      .subscribe(() => {
-        this.loadMotosData();
-      });
-
-  }
-
-  editMoto(moto: any){
-    this.dialog
-      .open(MotoFormComponent, {
-        data: {
-          moto: moto,
-          addOrEdit: 'edit',
-        },
-        width: '80vw',
-        height: '50vh',
-      })
-      .afterClosed()
-      .subscribe(() => {
-        this.loadMotosData();
-      });
-  }
-
-  openConfirmation(moto: any) {
-    this.dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      disableClose: false,
-    });
-    this.dialogRef.componentInstance.confirmMessage =
-      'Etes vous sûr de vouloir supprimer cette moto (' + moto.marque + ' ' + moto.modele + ')?';
-
-    this.dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.deleteMoto(moto);
-      }
-    });
-  }
-
-  deleteMoto(moto: any){
-    this.motosService.deleteMoto(moto.id).subscribe(()=>{
-      this.isLoading = true;
-      this.loadMotosData();
-    })
-  }
-
-  reactivateMoto(moto: any){
-    this.motosService.reactivateMoto(moto.id).subscribe(()=> {
-      this.isLoading = true;
-      this.loadMotosData();
-    })
-
-  }
-  /**************** Stats ************************/
-  getStatsDepenses(){
-    this.depensesService.getDepenses().subscribe({
+    forkJoin({
+      motos: this.motosService.getAllMotos(),
+      deactivated: this.motosService.getDeactivatedMotos(),
+      depenses: this.depensesService.getDepenses(),
+      entretiens: this.entretiensService.getEntretiens(),
+    }).subscribe({
       next: (data) => {
-        this.depenses = data;
-
-        this.motos.forEach((moto: any)=>{
-          let dep = 0;
-          let km: number[] = []
-          let consos: number[] = []
-          let consoMoyenne = 0;
-          let litresTotal = 0;
-
-          this.depenses.forEach((depense)=> {
-            if (depense.moto.id === moto.id){
-              dep += depense.montant
-              km.push(depense.kilometrage)
-
-              if (depense.consoMoyenne) {
-                consos.push(depense.consoMoyenne)
-              }
-
-              if (depense.essenceConsomme){
-                litresTotal += depense.essenceConsomme
-                litresTotal = Math.round(litresTotal);
-              }
-
-            }
-          })
-
-          const minKm = Math.min(...km);
-          const maxKm = Math.max(...km);
-          const kmParcouru = maxKm - minKm;
-
-          // Prix de revient au km
-          let prk = kmParcouru> 0 ? dep / kmParcouru : 0
-          prk = Number(prk.toFixed(2))
-
-          // Consommation moyenne
-          if (consos.length > 0){
-            // Calculer la somme des éléments du tableau
-            const somme = consos.reduce((acc, valeur) => acc + valeur, 0);
-            // Calculer la moyenne
-            consoMoyenne = somme / consos.length;
-            consoMoyenne = Number(consoMoyenne.toFixed(2))
-          }
-
-          moto.prk = prk
-          moto.consoMoyenne = consoMoyenne;
-          moto.litresTotal = litresTotal;
-        })
-
-        this.isLoading = false;
+        this.motos.set(this.computeMotoStats(data.motos, data.depenses, data.entretiens));
+        this.deactivatedMotos.set(data.deactivated);
+        this.isLoading.set(false);
       },
       error: (err) => {
-        this.isLoading = false;
-        this.error = err.error.message
-      }
-    })
-
-  }
-
-  private getStatsEntretiens() {
-    this.entretiensServices.getEntretiens().subscribe({
-      next: (data)=> {
-        this.entretiens =  data;
-
-        this.motos.forEach((moto: any)=>{
-          let graissageDates: number[] = [];
-          let pressionDates:number[] = [];
-
-          this.entretiens.forEach((entretien) => {
-            if (entretien.moto.id === moto.id){
-
-                if (entretien.graissage){
-                  graissageDates.push(this.differenceDate(entretien.date))
-                }
-
-                if (entretien.pressionAv > 0){
-                  pressionDates.push(this.differenceDate(entretien.date))
-                }
-
-            }
-          })
-
-          moto.dateLastGraissage = graissageDates.length > 0 ? Math.min(...graissageDates) : null
-          moto.dateLastPression = pressionDates.length > 0 ? Math.min(...pressionDates) : null
-        })
+        this.error.set(err.error?.message || 'Une erreur est survenue');
+        this.isLoading.set(false);
       },
-      error: (err) => {
-        this.error = err.error.message
-      }
-    })
+    });
   }
 
-  private differenceDate(entretienDate: any){
+  private computeMotoStats(motos: any[], depenses: any[], entretiens: any[]): any[] {
     const aujourdHui = new Date();
 
-    const dateEntretien = new Date(entretienDate);
-    // Calculez la différence en millisecondes
-    const differenceEnMillisecondes =  aujourdHui.getTime() - dateEntretien.getTime();
-    // Convertissez la différence en jours
-    return Math.floor(differenceEnMillisecondes / (1000 * 60 * 60 * 24));
+    return motos.map((moto) => {
+      const motoDepenses = depenses.filter((d) => d.moto.id === moto.id);
+      let montantTotal = 0;
+      const km: number[] = [];
+      const consos: number[] = [];
+      let litresTotal = 0;
+
+      for (const d of motoDepenses) {
+        montantTotal += d.montant;
+        km.push(d.kilometrage);
+        if (d.consoMoyenne) consos.push(d.consoMoyenne);
+        if (d.essenceConsomme) litresTotal += Math.round(d.essenceConsomme);
+      }
+
+      const minKm = km.length > 0 ? Math.min(...km) : 0;
+      const maxKm = km.length > 0 ? Math.max(...km) : 0;
+      const kmParcouru = maxKm - minKm;
+      const prk = kmParcouru > 0 ? Number((montantTotal / kmParcouru).toFixed(2)) : 0;
+      const consoMoyenne =
+        consos.length > 0
+          ? Number((consos.reduce((a, v) => a + v, 0) / consos.length).toFixed(2))
+          : 0;
+
+      const motoEntretiens = entretiens.filter((e) => e.moto.id === moto.id);
+
+      const diffDays = (dateStr: string) =>
+        Math.floor((aujourdHui.getTime() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24));
+
+      const graissageDates = motoEntretiens
+        .filter((e) => e.graissage)
+        .map((e) => diffDays(e.date));
+      const pressionDates = motoEntretiens
+        .filter((e) => e.pressionAv > 0)
+        .map((e) => diffDays(e.date));
+
+      return {
+        ...moto,
+        litresTotal,
+        consoMoyenne,
+        prk,
+        dateLastGraissage: graissageDates.length > 0 ? Math.min(...graissageDates) : null,
+        dateLastPression: pressionDates.length > 0 ? Math.min(...pressionDates) : null,
+      };
+    });
+  }
+
+  addMoto(): void {
+    this.selectedMoto.set(null);
+    this.addOrEdit.set('add');
+    this.showFormDialog.set(true);
+  }
+
+  editMoto(moto: any): void {
+    this.selectedMoto.set(moto);
+    this.addOrEdit.set('edit');
+    this.showFormDialog.set(true);
+  }
+
+  onFormSaved(): void {
+    this.showFormDialog.set(false);
+    this.loadMotosData();
+  }
+
+  onFormCancelled(): void {
+    this.showFormDialog.set(false);
+  }
+
+  openConfirmation(moto: any): void {
+    this.selectedMoto.set(moto);
+    this.confirmMessage.set(
+      `Êtes-vous sûr de vouloir supprimer cette moto (${moto.marque} ${moto.modele})?`
+    );
+    this.showConfirmDialog.set(true);
+  }
+
+  onDeleteConfirmed(): void {
+    const moto = this.selectedMoto();
+    if (!moto) return;
+    this.motosService.deleteMoto(moto.id).subscribe(() => {
+      this.showConfirmDialog.set(false);
+      this.selectedMoto.set(null);
+      this.loadMotosData();
+    });
+  }
+
+  onDeleteCancelled(): void {
+    this.showConfirmDialog.set(false);
+    this.selectedMoto.set(null);
+  }
+
+  reactivateMoto(moto: any): void {
+    this.motosService.reactivateMoto(moto.id).subscribe(() => {
+      this.loadMotosData();
+    });
   }
 }

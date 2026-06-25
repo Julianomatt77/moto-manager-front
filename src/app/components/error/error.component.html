@@ -1,3 +1,16 @@
-<h1>Oups une erreur c'est produite, cette page n'existe pas !</h1>
-
-<a [routerLink]= "['']"> Retour à la page d'accueil</a>
+<section class="min-h-screen flex flex-col items-center justify-center bg-[#EFF6FF] px-4">
+  <div class="text-center max-w-md">
+    <h1 class="font-['Fira_Code'] text-8xl font-bold text-[#2563EB] mb-4">404</h1>
+    <h2 class="font-['Fira_Code'] text-2xl font-semibold text-[#1E40AF] mb-6">
+      Oups, cette page n'existe pas !
+    </h2>
+    <p class="font-['Fira_Sans'] text-[#1E40AF]/70 mb-8">
+      La page que vous cherchez a été déplacée, supprimée ou n'existe plus.
+    </p>
+    <a [routerLink]="['']"
+       class="inline-flex items-center gap-2 font-['Fira_Sans'] font-medium text-white bg-[#2563EB] hover:bg-[#3B82F6] rounded-2xl px-8 py-3 transition-all duration-200 cursor-pointer no-underline">
+      <app-icon name="home" />
+      Retour à l'accueil
+    </a>
+  </div>
+</section>

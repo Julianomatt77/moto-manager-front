@@ -1,7 +1,7 @@
 # AGENTS.md - MotoManager Frontend
 
 ## Project Overview
-Angular 22 application for motorcycle management (expenses, maintenance, moto tracking). Uses Angular Material, RxJS, HashLocationStrategy.
+Angular 22 application for motorcycle management (expenses, maintenance, moto tracking). Uses Tailwind CSS v4, Heroicons, HashLocationStrategy.
 
 ## Commands
 - `npm start` / `ng serve` - dev server at `http://localhost:4200`
@@ -34,9 +34,23 @@ Angular 22 application for motorcycle management (expenses, maintenance, moto tr
 - Zone.js polyfill included
 
 ## Dependencies
-- Angular 22 (core, material, router, forms, animations, platform-browser)
+- Angular 22 (core, router, forms, animations, platform-browser)
 - RxJS 7.8, zone.js 0.15, xlsx 0.18.5
 - Dev: Angular CLI 22, TypeScript 6.0, Karma 6.4
+
+## Shared Components (`src/app/shared/`)
+- `<app-icon name="">` — inline Heroicons SVG (home, plus, edit, delete, close, upload, download, user, user-off, menu, eye, eye-off, chevron-left/right, filter, mail, send, moto, xlsx)
+- `<app-dialog [isOpen] (close) [wide]>` — modal overlay with backdrop blur
+- `<app-paginator [length] [pageSize] [pageIndex] (changePage)>` — pagination controls
+- `<app-toggle [checked] [disabled] (changed)>` — toggle switch
+
+## UI Conventions
+- **No component CSS files** — all styling via Tailwind utility classes
+- **Design system**: primary #2563EB, secondary #3B82F6, cta #F97316, bg #EFF6FF, text #1E40AF
+- **Typography**: Fira Code headings, Fira Sans body (Google Fonts import in styles.css)
+- **Cards**: `rounded-2xl shadow-lg p-6 bg-white hover:shadow-xl transition-shadow duration-200`
+- **Buttons**: `cursor-pointer transition-colors duration-200` on clickable elements
+- **Dialogs**: Use `<app-dialog>` wrapping form/confirmation content — no `MatDialog`
 
 ## Rules & Skills
 - **Rules** (auto-loaded): `.opencode/rules/instructions.md`, `.opencode/rules/workflow.md`

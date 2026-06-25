@@ -1,60 +1,64 @@
-<div class="popup">
-  <div class="popup-close">
-    <a href="javascript:;" (click)="closePopup()" class="material-symbols-outlined">close</a>
-  </div>
-  <form [formGroup]="form" (ngSubmit)="onSubmitMoto()" class="form-container">
+<section class="p-6">
+  <h2 class="text-2xl font-['Fira_Code'] text-blue-800 mb-6">{{ buttonLabel }} une moto</h2>
 
-    <h3>{{ buttonLabel }} une moto</h3>
+  <form [formGroup]="form" (ngSubmit)="onSubmitMoto()" class="space-y-4">
 
-    <div class="form-group">
-      <div><label for="marque">Marque</label></div>
+    <div>
+      <label for="marque" class="block text-sm font-medium text-blue-800 mb-1">Marque</label>
       <input
         id="marque"
-        class="form-control"
-        formControlName="marque"
         type="text"
-        />
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+        formControlName="marque"
+      />
+      @if (!form.get('marque')?.valid && submitted) {
+        <p class="text-red-500 text-sm mt-1">{{ marqueErrorMessage }}</p>
+      }
     </div>
-    @if(!form.get('marque')?.valid && submitted){
-      <div class="error-message">
-        {{ marqueErrorMessage }}
-      </div>
-    }
 
-    <div class="form-group">
-      <div><label for="modele">Modèle</label></div>
+    <div>
+      <label for="modele" class="block text-sm font-medium text-blue-800 mb-1">Modèle</label>
       <input
         id="modele"
-        class="form-control"
-        formControlName="modele"
         type="text"
-        />
-    </div>
-    @if(!form.get('modele')?.valid && submitted){
-      <div class="error-message">
-        {{ modeleErrorMessage }}
-      </div>
-    }
-
-    <div class="form-group">
-      <div><label for="year">Year:</label></div>
-    </div>
-    <select
-      id="year"
-      class="form-control"
-      formControlName="year">
-      @for (year of years; track year) {
-        <option [value]="year">{{ year }}</option>
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+        formControlName="modele"
+      />
+      @if (!form.get('modele')?.valid && submitted) {
+        <p class="text-red-500 text-sm mt-1">{{ modeleErrorMessage }}</p>
       }
-    </select>
+    </div>
 
-    <div class="form-submit">
-      <button type="submit" class="secondary-button">
+    <div>
+      <label for="year" class="block text-sm font-medium text-blue-800 mb-1">Année</label>
+      <select
+        id="year"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+        formControlName="year"
+      >
+        @for (year of years; track year) {
+          <option [value]="year">{{ year }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="flex gap-4 pt-4">
+      <button
+        type="button"
+        (click)="cancelled.emit()"
+        class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-150 cursor-pointer font-['Fira_Sans']"
+        title="Annuler"
+      >
+        Annuler
+      </button>
+      <button
+        type="submit"
+        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 cursor-pointer font-['Fira_Sans']"
+        title="{{ buttonLabel }}"
+      >
         {{ buttonLabel }}
       </button>
     </div>
 
   </form>
-</div>
-
-
+</section>

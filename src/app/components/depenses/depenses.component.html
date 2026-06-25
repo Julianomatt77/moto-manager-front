@@ -1,156 +1,175 @@
-@if (isLoading){
-  <div class="ring">Loading
-    <span class="loading"></span>
-  </div>
+@if (isLoading()) {
+<div class="flex items-center justify-center py-20">
+  <div class="text-blue-800 font-['Fira_Sans'] text-lg">Chargement...</div>
+</div>
 }
 
-<section id="depenses-list">
-  <h1>Liste des dépenses</h1>
-  <div class="flex-center mb-1">
-    <div>
-      <a href="javascript:;" (click)="addDepense()" class="material-symbols-outlined" title="ajouter une dépense">add_circle</a>
-    </div>
-
-    <div>
-      <a href="javascript:;" (click)="openUploadDialog()" class="material-symbols-outlined" title="importer des dépenses depuis un fichier">upload_file</a>
-    </div>
-
-    <div>
-      <button (click)="export()" download class="material-symbols-outlined export-button" title="Exporter vos dépenses">download</button>
+<section class="max-w-6xl mx-auto px-4 py-6 font-['Fira_Sans']">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-['Fira_Code'] font-bold text-blue-800">Liste des dépenses</h1>
+    <div class="flex items-center gap-3">
+      <button (click)="addDepense()"
+              class="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors duration-200 cursor-pointer font-['Fira_Sans'] text-sm font-medium"
+              type="button"
+              title="Ajouter une dépense">
+        <app-icon name="plus" /> Ajouter
+      </button>
+      <button (click)="openUploadDialog()"
+              class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors duration-200 cursor-pointer font-['Fira_Sans'] text-sm font-medium"
+              type="button"
+              title="Importer depuis un fichier">
+        <app-icon name="upload" /> Importer
+      </button>
+      <button (click)="export()"
+              class="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-800 rounded-xl hover:bg-blue-100 transition-colors duration-200 cursor-pointer font-['Fira_Sans'] text-sm font-medium border border-blue-200"
+              type="button"
+              title="Exporter en CSV">
+        <app-icon name="download" /> Exporter
+      </button>
     </div>
   </div>
 
-  @if (!isLoading) {
-    <div class="depenses-recap mb-1 mt-2">Dépenses : <span class="badge">{{depensesTotal | number: "1.0-2"}} €</span></div>
+  @if (!isLoading()) {
+    <div class="mb-6">
+      <span class="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-800 rounded-xl font-['Fira_Code'] text-sm font-semibold">
+        Dépenses : {{ depensesTotal() | number:"1.0-2" }} €
+      </span>
+    </div>
 
-    <div class="flex-center mt-2 mb-2 justify-content-center gap-3 wrap">
-      <form [formGroup]="formMotoFiltered" (ngSubmit)="onSubmitMotoFilter()" title="Filtrer par moto">
-        <div class="d-flex align-items-center">
-          <mat-form-field>
-            <mat-label>Filtrer par moto</mat-label>
-            <mat-select formControlName="moto" (selectionChange)="onSubmitMotoFilter()">
-              <mat-option value="">Toutes les motos</mat-option>
-              @for (moto of motos ; track moto) {
-                <mat-option value="{{ moto.id }}">{{moto.modele}}</mat-option>
+    @if (error(); as err) {
+      <div class="mb-4 p-3 bg-red-50 text-red-700 rounded-xl text-sm">{{ err }}</div>
+    }
+
+    <div class="flex flex-wrap items-center gap-4 mb-6 p-4 bg-white rounded-2xl shadow-lg">
+      <select [value]="motoFilter()" (change)="motoFilter.set($any($event.target).value); currentPage.set(0)"
+              class="px-3 py-2 bg-blue-50 border border-blue-200 text-blue-800 rounded-lg text-sm font-['Fira_Sans'] outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer">
+        <option value="">Toutes les motos</option>
+        @for (moto of motos(); track moto.id) {
+          <option [value]="moto.id">{{ moto.modele }}</option>
+        }
+      </select>
+
+      <select [value]="typeFilter()" (change)="typeFilter.set($any($event.target).value); currentPage.set(0)"
+              class="px-3 py-2 bg-blue-50 border border-blue-200 text-blue-800 rounded-lg text-sm font-['Fira_Sans'] outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer">
+        <option value="">Tous les types</option>
+        @for (type of depensesTypes(); track type.id) {
+          <option [value]="type.id">{{ type.name }}</option>
+        }
+      </select>
+
+      <select [value]="yearFilter()" (change)="yearFilter.set(+$any($event.target).value); currentPage.set(0)"
+              class="px-3 py-2 bg-blue-50 border border-blue-200 text-blue-800 rounded-lg text-sm font-['Fira_Sans'] outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer">
+        <option value="0">Toutes les années</option>
+        @for (year of availableYears(); track year) {
+          <option [value]="year">{{ year }}</option>
+        }
+      </select>
+
+      <button (click)="resetAllFilters()"
+              class="px-3 py-2 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors duration-200 cursor-pointer font-['Fira_Sans']"
+              type="button">
+        Supprimer les filtres
+      </button>
+    </div>
+
+    @if (paginatedDepenses().length > 0) {
+      <app-paginator [length]="totalLength()" [pageSize]="pageSize()" [pageIndex]="currentPage()" (changePage)="onChangePage($event)" />
+      <div class="space-y-4">
+        @for (depense of paginatedDepenses(); track depense.id) {
+          <div class="rounded-2xl shadow-lg p-6 bg-white hover:shadow-xl transition-shadow duration-200">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <h2 class="text-lg font-['Fira_Code'] font-semibold text-blue-800">{{ depense.depenseType?.name }}</h2>
+                <p class="text-sm text-gray-500 mt-1">{{ depense.date | date:"dd/MM/y" }}</p>
+              </div>
+              <div class="text-right">
+                <span class="inline-block px-3 py-1 bg-orange-50 text-orange-600 font-['Fira_Code'] font-bold rounded-lg text-lg">
+                  {{ depense.montant | number:"1.0-2" }} €
+                </span>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg">{{ depense.moto?.modele }}</span>
+              @if (depense.kilometrage) {
+                <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg">{{ depense.kilometrage }} Km</span>
               }
-            </mat-select>
-          </mat-form-field>
-        </div>
-      </form>
+            </div>
 
-      <form [formGroup]="formTypeFiltered" (ngSubmit)="onSubmitTypeFilter()" title="Filtrer par type">
-        <div class="d-flex align-items-center">
-          <mat-form-field>
-            <mat-label>Filtrer par type</mat-label>
-            <mat-select formControlName="type" (selectionChange)="onSubmitTypeFilter()">
-              <mat-option value="">Tous</mat-option>
-              @for (type of depensesTypes ; track type) {
-                <mat-option value="{{ type.id }}">{{type.name}}</mat-option>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+              @if (depense.kmParcouru) {
+                <div class="text-sm">
+                  <span class="text-gray-500">Distance parcourue:</span>
+                  <span class="text-blue-800 font-medium ml-1">{{ depense.kmParcouru }} Km</span>
+                </div>
               }
-            </mat-select>
-          </mat-form-field>
-        </div>
-      </form>
-
-      <form [formGroup]="formYearFiltered" (ngSubmit)="onSubmitYearFilter()" title="Filtrer par année">
-        <div class="d-flex align-items-center">
-          <mat-form-field>
-            <mat-label>Filtrer par année</mat-label>
-            <mat-select formControlName="year" (selectionChange)="onSubmitYearFilter()">
-              <mat-option value="">Toutes les années</mat-option>
-              @for (year of availableYears ; track year) {
-                <mat-option value="{{ year }}">{{year}}</mat-option>
+              @if (depense.essenceConsomme) {
+                <div class="text-sm">
+                  <span class="text-gray-500">Essence consommé:</span>
+                  <span class="text-blue-800 font-medium ml-1">{{ depense.essenceConsomme }} L</span>
+                </div>
               }
-            </mat-select>
-          </mat-form-field>
-        </div>
-      </form>
+              @if (depense.consoMoyenne) {
+                <div class="text-sm">
+                  <span class="text-gray-500">Conso moyenne:</span>
+                  <span class="text-blue-800 font-medium ml-1">{{ depense.consoMoyenne }} l/100</span>
+                </div>
+              }
+              @if (depense.essencePrice) {
+                <div class="text-sm">
+                  <span class="text-gray-500">Prix essence:</span>
+                  <span class="text-blue-800 font-medium ml-1">{{ depense.essencePrice }} €/L</span>
+                </div>
+              }
+            </div>
 
-      <div>
-        <button class="shadow reset-button" (click)="resetAllFilters()">Supprimer les filtres</button>
+            @if (depense.commentaire) {
+              <div class="mb-4 p-3 bg-blue-50 rounded-xl">
+                <p class="text-sm text-blue-700">{{ depense.commentaire }}</p>
+              </div>
+            }
+
+            <div class="flex justify-end gap-2 pt-3 border-t border-gray-100">
+              <button (click)="editDepense(depense)"
+                      class="flex items-center gap-1 px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 cursor-pointer text-sm font-['Fira_Sans']"
+                      type="button"
+                      title="Éditer">
+                <app-icon name="edit" /> Éditer
+              </button>
+              <button (click)="openConfirmation(depense)"
+                      class="flex items-center gap-1 px-3 py-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-200 cursor-pointer text-sm font-['Fira_Sans']"
+                      type="button"
+                      title="Supprimer">
+                <app-icon name="delete" /> Supprimer
+              </button>
+            </div>
+          </div>
+        }
       </div>
 
-    </div>
-
-    <mat-paginator
-      (page)="handlePageEvent($event)"
-      [length]="length"
-      [pageSize]="pageSize"
-      [disabled]="disabled"
-      [showFirstLastButtons]="showFirstLastButtons"
-      [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
-      [hidePageSize]="hidePageSize"
-      [pageIndex]="currentPage"
-      aria-label="Select page">
-    </mat-paginator>
-
-    <div class="depenses-container">
-      @for (depense of dataSource; track depense.id){
-        <div class="card">
-          <div class="card-top pt-1 pb-1">
-            <div class="card-title-div">
-              <div><h2 class="card-title">{{depense.depenseType.name}}</h2></div>
-              <div><p class="badge m-0 card-montant">{{depense.montant | number: "1.0-2"}} €</p></div>
-            </div>
-
-            <div class="card-moto">
-              <p class="badge">{{depense.moto.modele}}</p>
-              <p class="badge">{{depense.kilometrage}} Km</p>
-            </div>
-
-            <div class="flex-end pr-1">{{depense.date | date: "dd/MM/y" }}</div>
-          </div>
-
-          <div class="card-body">
-            <div class="card-left">
-              @if (depense.kmParcouru){
-                <div class="card-info card-info-1"><p>Distance parcourue:</p><p>{{depense.kmParcouru}} Km</p></div>
-              }
-
-              @if (depense.essenceConsomme){
-                <div class="card-info card-info-2"><p>Essence consommé:</p><p>{{depense.essenceConsomme}} L</p></div>
-              }
-            </div>
-            <div class="card-right">
-              @if (depense.consoMoyenne){
-                <div class="card-info card-info-3"><p>Conso moyenne:</p><p>{{depense.consoMoyenne}} l/100</p></div>
-              }
-              @if (depense.essencePrice){
-                <div class="card-info card-info-4"><p>Prix de l'essence:</p><p>{{depense.essencePrice}} €/L</p></div>
-              }
-            </div>
-          </div>
-
-          <div class="card-body">
-            @if (depense.commentaire){
-              <p class="badge-secondary">{{depense.commentaire}}</p>
-            }
-          </div>
-
-          <div class="flex-evenly">
-            <div>
-              <a href="javascript:;" (click)="editDepense(depense)" class="material-symbols-outlined" title="éditer la dépense">edit_note</a>
-            </div>
-            <div>
-              <a href="javascript:;" (click)="openConfirmation(depense)" class="material-symbols-outlined badge-delete mb-1" title="supprimer la dépense">delete</a>
-            </div>
-          </div>
-
-        </div>
-        } @empty {
-        <span>Vous n'avez aucune dépense</span>
-      }
-    </div>
-    <mat-paginator
-      (page)="handlePageEvent($event)"
-      [length]="length"
-      [pageSize]="pageSize"
-      [disabled]="disabled"
-      [showFirstLastButtons]="showFirstLastButtons"
-      [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
-      [hidePageSize]="hidePageSize"
-      [pageIndex]="currentPage"
-      aria-label="Select page">
-    </mat-paginator>
+      <app-paginator [length]="totalLength()" [pageSize]="pageSize()" [pageIndex]="currentPage()" (changePage)="onChangePage($event)" />
+    } @else {
+      <div class="text-center py-16">
+        <p class="text-gray-400 text-lg font-['Fira_Sans']">Vous n'avez aucune dépense</p>
+      </div>
+    }
   }
 </section>
+
+<app-dialog [isOpen]="showFormDialog()" (close)="closeForm()" [wide]="true">
+  @if (showFormDialog()) {
+    <app-depense-form [addOrEdit]="formMode()" [depense]="formDepense()" (saved)="onFormSaved()" (cancelled)="closeForm()" />
+  }
+</app-dialog>
+
+<app-dialog [isOpen]="showUploadDialog()" (close)="showUploadDialog.set(false)" [wide]="true">
+  @if (showUploadDialog()) {
+    <app-upload-popup type="depense" (saved)="onUploadSaved()" (cancelled)="showUploadDialog.set(false)" />
+  }
+</app-dialog>
+
+<app-dialog [isOpen]="showConfirmDialog()" (close)="showConfirmDialog.set(false)">
+  @if (showConfirmDialog()) {
+    <app-confirmation-dialog [message]="confirmMessage()" (confirmed)="onConfirmDelete()" (cancelled)="showConfirmDialog.set(false)" />
+  }
+</app-dialog>

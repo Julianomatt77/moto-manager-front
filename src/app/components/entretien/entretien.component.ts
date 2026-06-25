@@ -1,172 +1,135 @@
-import {Component, ViewChild, ChangeDetectionStrategy} from '@angular/core';
-import {User} from "../../models/User";
-import {StorageService} from "../../services/storage/storage.service";
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {EntretiensService} from "../../services/entretiens/entretiens.service";
-import {ConfirmationDialogComponent} from "../confirmation-dialog/confirmation-dialog.component";
-import {DepenseFormComponent} from "../../form/depense-form/depense-form.component";
-import {CommonModule} from "@angular/common";
-import {EntretienFormComponent} from "../../form/entretien-form/entretien-form.component";
-import {MatPaginator, MatPaginatorModule, PageEvent} from "@angular/material/paginator";
-import {MatTableDataSource} from "@angular/material/table";
-import {UploadPopupComponent} from "../../form/upload-popup/upload-popup.component";
-import {ExportService} from "../../services/export/export.service";
+import {Component, inject, OnInit, ChangeDetectionStrategy, signal, computed} from '@angular/core';
+import {DatePipe} from '@angular/common';
+import {EntretiensService} from '../../services/entretiens/entretiens.service';
+import {StorageService} from '../../services/storage/storage.service';
+import {ExportService} from '../../services/export/export.service';
+import {DialogComponent} from '../../shared/dialog.component';
+import {IconComponent} from '../../shared/icon.component';
+import {PaginatorComponent} from '../../shared/paginator.component';
+import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
+import {EntretienFormComponent} from '../../form/entretien-form/entretien-form.component';
+import {UploadPopupComponent} from '../../form/upload-popup/upload-popup.component';
 
 @Component({
-    selector: 'app-entretien',
-    imports: [
-        CommonModule,
-        MatPaginatorModule
-    ],
-    templateUrl: './entretien.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
-    styleUrl: './entretien.component.css'
+  selector: 'app-entretien',
+  imports: [
+    DatePipe,
+    DialogComponent,
+    IconComponent,
+    PaginatorComponent,
+    ConfirmationDialogComponent,
+    EntretienFormComponent,
+    UploadPopupComponent,
+  ],
+  templateUrl: './entretien.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EntretienComponent {
-  entretiens: any[] = [];
-  user: User;
-  isLoading = true;
-  error: string;
-  dialogRef!: MatDialogRef<ConfirmationDialogComponent>;
+export class EntretienComponent implements OnInit {
+  private entretiensService = inject(EntretiensService);
+  private storageService = inject(StorageService);
+  private exportService = inject(ExportService);
 
+  entretiens = signal<any[]>([]);
+  isLoading = signal(true);
+  error = signal<string | null>(null);
+  currentPage = signal(0);
+  pageSize = signal(10);
 
-  length = 50;
-  pageSize = 10;
-  currentPage = 0;
-  pageSizeOptions = [5, 10, 25];
-  pageEvent: PageEvent;
-  hidePageSize = false;
-  showPageSizeOptions = true;
-  showFirstLastButtons = true;
-  disabled = false;
-  distLastGraissage = 0;
+  formDialogOpen = signal(false);
+  formMode = signal<'add' | 'edit'>('add');
+  editTarget = signal<any | null>(null);
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  public dataSource: any;
+  confirmationDialogOpen = signal(false);
+  deleteTarget = signal<any | null>(null);
 
-  constructor(private entretiensService: EntretiensService,
-              private storageService: StorageService,
-              public dialog: MatDialog,
-              private exportService: ExportService
-  ){}
+  uploadDialogOpen = signal(false);
+
+  paginatedEntretiens = computed(() => {
+    const start = this.currentPage() * this.pageSize();
+    return this.entretiens().slice(start, start + this.pageSize());
+  });
+
+  user = this.storageService.getUser();
 
   ngOnInit(): void {
-    this.user = this.storageService.getUser();
-    this.getAllEntretiens();
+    this.loadEntretiens();
   }
 
-  /***************  DISPLAY *****************/
-  getAllEntretiens(){
-
+  loadEntretiens(): void {
+    this.isLoading.set(true);
     this.entretiensService.getEntretiens().subscribe({
       next: (data) => {
-        this.isLoading = false;
-        this.entretiens = data;
-
-        this.dataSource = new MatTableDataSource<Element>(data);
-        this.dataSource.paginator = this.paginator;
-        this.length = data.length;
-        this.iterator();
-        // console.log(this.entretiens)
+        this.entretiens.set(data);
+        this.isLoading.set(false);
       },
       error: (err) => {
-        this.error = err.error.message
-      }
-    })
-
-  }
-
-  /*************** CRUD *******************/
-  addEntretien() {
-    this.dialog
-      .open(EntretienFormComponent, {
-        data: {
-          addOrEdit: 'add',
-        },
-        width: '80vw',
-        height: '75vh',
-      })
-      .afterClosed()
-      .subscribe(() => {
-        this.getAllEntretiens();
-      });
-  }
-
-  editEntretien(entretien: any){
-    this.dialog
-      .open(EntretienFormComponent, {
-        data: {
-          entretien: entretien,
-          addOrEdit: 'edit',
-        },
-        width: '80vw',
-        height: '75vh',
-      })
-      .afterClosed()
-      .subscribe(() => {
-        this.getAllEntretiens();
-      });
-
-  }
-
-  openConfirmation(entretien: any) {
-    this.dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      disableClose: false,
-    });
-    this.dialogRef.componentInstance.confirmMessage =
-      'Etes vous sûr de vouloir supprimer cet entretien ?';
-
-    this.dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.deleteEntretien(entretien);
-      }
-    });
-  }
-
-  deleteEntretien(entretien: any){
-
-    this.entretiensService.deleteEntretien(entretien.id).subscribe(()=>{
-      this.isLoading = true;
-      this.getAllEntretiens()
-    })
-
-  }
-  /****************************************/
-  handlePageEvent(e: PageEvent) {
-    this.pageEvent = e;
-    this.length = e.length;
-    this.pageSize = e.pageSize;
-    this.currentPage = e.pageIndex;
-
-    this.iterator();
-  }
-
-  private iterator() {
-    const end = (this.currentPage + 1) * this.pageSize;
-    const start = this.currentPage * this.pageSize;
-    const part = this.entretiens.slice(start, end);
-    this.dataSource = part;
-  }
-
-  /****************** UPLOAD **********************/
-  openUploadDialog(){
-    this.dialog.open(UploadPopupComponent, {
-      data: {
-        type: 'entretien'
+        this.error.set(err.error?.message || 'Erreur lors du chargement');
+        this.isLoading.set(false);
       },
-      width: '80vw',
-      height: '50vh'
-    })
-      .afterClosed()
-      .subscribe(() => {
-        this.getAllEntretiens();
-      });
+    });
   }
 
-  /****************** EXPORT **********************/
-  export(){
-    this.exportService.exportEntretiens().subscribe(response => {
+  onPageChange(page: number): void {
+    this.currentPage.set(page);
+  }
+
+  openAddDialog(): void {
+    this.formMode.set('add');
+    this.editTarget.set(null);
+    this.formDialogOpen.set(true);
+  }
+
+  openEditDialog(entretien: any): void {
+    this.formMode.set('edit');
+    this.editTarget.set(entretien);
+    this.formDialogOpen.set(true);
+  }
+
+  onFormSaved(): void {
+    this.formDialogOpen.set(false);
+    this.loadEntretiens();
+  }
+
+  onFormCancelled(): void {
+    this.formDialogOpen.set(false);
+  }
+
+  openDeleteConfirmation(entretien: any): void {
+    this.deleteTarget.set(entretien);
+    this.confirmationDialogOpen.set(true);
+  }
+
+  onDeleteConfirmed(): void {
+    const target = this.deleteTarget();
+    if (!target) return;
+    this.entretiensService.deleteEntretien(target.id).subscribe(() => {
+      this.confirmationDialogOpen.set(false);
+      this.deleteTarget.set(null);
+      this.loadEntretiens();
+    });
+  }
+
+  onDeleteCancelled(): void {
+    this.confirmationDialogOpen.set(false);
+    this.deleteTarget.set(null);
+  }
+
+  openUploadDialog(): void {
+    this.uploadDialogOpen.set(true);
+  }
+
+  onUploadSaved(): void {
+    this.uploadDialogOpen.set(false);
+    this.loadEntretiens();
+  }
+
+  onUploadCancelled(): void {
+    this.uploadDialogOpen.set(false);
+  }
+
+  exportCsv(): void {
+    this.exportService.exportEntretiens().subscribe((response) => {
       this.exportService.handleCsvDownload(response, 'entretiens');
-    })
+    });
   }
 }

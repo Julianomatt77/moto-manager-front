@@ -10,8 +10,8 @@ import {Router} from "@angular/router";
 })
 export class AuthService {
 
-  public isAuthenticatedSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  isAuthenticated = this.isAuthenticatedSubject.asObservable();
+  public isAuthenticatedSubject!: BehaviorSubject<boolean>;
+  isAuthenticated!: Observable<boolean>;
 
   private baseUrl = environment.baseUrl;
   private tokenName = environment.token_name;
@@ -19,7 +19,10 @@ export class AuthService {
   private registerUrl = this.baseUrl + 'register';
   private userInfosUrl = this.baseUrl + 'users-infos';
 
-  constructor(private http: HttpClient, private router: Router, private storageService: StorageService) {}
+  constructor(private http: HttpClient, private router: Router, private storageService: StorageService) {
+    this.isAuthenticatedSubject = new BehaviorSubject<boolean>(this.getToken() !== null);
+    this.isAuthenticated = this.isAuthenticatedSubject.asObservable();
+  }
 
   login(username: string, password?: string): Observable<any> {
     this.isAuthenticatedSubject.next(true);

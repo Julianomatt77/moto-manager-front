@@ -18,21 +18,19 @@ export class DepensesTypeService {
   }
 
   getDepenseType(id: string){
-    return this.http.get<DepenseType>(this.depensesUrl + '/${id}');
+    return this.http.get<DepenseType>(`${this.depensesUrl}/${id}`);
   }
 
   saveDepenseType(name: string){
-    let data = {'name': name}
-    let json = JSON.stringify(data)
-    return this.http.post<DepenseType>(this.depensesUrl, json);
+    return this.http.post<DepenseType>(this.depensesUrl, { name });
   }
 
   patchDepenseType(id: string, data: any){
-    return this.http.patch<DepenseType>(this.depensesUrl + '/${id}', data);
+    return this.http.patch<DepenseType>(`${this.depensesUrl}/${id}`, data);
   }
 
   deleteDepenseType(id: string){
-    return this.http.delete<DepenseType>(this.depensesUrl + '/${id}')
+    return this.http.delete<DepenseType>(`${this.depensesUrl}/${id}`)
   }
 
 }

@@ -1,51 +1,111 @@
-<div class="burger-logo-div" (click)="toggleMenu()" [class.is-open]="isMenuOpen">
-  <span class="material-symbols-outlined burger-logo">{{ isMenuOpen ? "close" : "menu"}}</span>
+<div class="fixed left-0 top-0 h-full w-72 bg-white shadow-lg flex flex-col z-40 max-md:hidden">
+  <div class="p-6 border-b border-gray-100">
+    <a [routerLink]="['']" class="flex items-center gap-3 text-blue-700 hover:text-blue-900 transition-colors duration-200 cursor-pointer no-underline">
+      <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+        <span class="text-white font-['Fira_Code'] font-bold text-lg">M</span>
+      </div>
+      <span class="font-['Fira_Code'] font-semibold text-lg">MotoManager</span>
+    </a>
+  </div>
+  <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+    <a [routerLink]="['']"
+       class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline"
+       routerLinkActive="bg-blue-50 text-blue-900 font-medium">
+      <app-icon name="home" /> Accueil
+    </a>
+    @if (isLoggedIn) {
+      <a [routerLink]="['depenses']"
+         class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline"
+         routerLinkActive="bg-blue-50 text-blue-900 font-medium">
+        <app-icon name="filter" /> Dépenses
+      </a>
+      <a [routerLink]="['entretien']"
+         class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline"
+         routerLinkActive="bg-blue-50 text-blue-900 font-medium">
+        <app-icon name="moto" /> Entretiens
+      </a>
+      <a [routerLink]="['motos']"
+         class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline"
+         routerLinkActive="bg-blue-50 text-blue-900 font-medium">
+        <app-icon name="moto" /> Mes motos
+      </a>
+    }
+  </nav>
+  <div class="p-4 border-t border-gray-100 space-y-1">
+    <a [routerLink]="['cgu']"
+       class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline"
+       routerLinkActive="bg-blue-50 text-blue-900 font-medium">
+      CGU
+    </a>
+    <a [routerLink]="['contact']"
+       class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline"
+       routerLinkActive="bg-blue-50 text-blue-900 font-medium">
+      <app-icon name="mail" /> Contact
+    </a>
+    @if (!isLoggedIn) {
+      <a [routerLink]="['login']"
+         class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline"
+         routerLinkActive="bg-blue-50 text-blue-900 font-medium">
+        <app-icon name="user" /> Connexion
+      </a>
+    }
+    @if (isLoggedIn) {
+      <button (click)="logout()"
+              class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 transition-colors duration-200 cursor-pointer w-full text-left">
+        <app-icon name="user-off" /> Déconnexion
+      </button>
+    }
+  </div>
 </div>
 
-<nav class="nav-div" [class.is-open]="isMenuOpen">
-  <div class="menu">
-    <div>
-    <button class="primary-button sidebar-button" [routerLink]="['']" (click)="isMenuOpen && toggleMenu()" title="accueil">
-      <span class="material-symbols-outlined">home</span>
-    </button>
+<!-- Mobile hamburger -->
+<div class="md:hidden fixed top-4 left-4 z-50">
+  <button (click)="toggleMenu()"
+          class="p-2 bg-white rounded-xl shadow-lg cursor-pointer transition-colors duration-200 hover:bg-blue-50"
+          type="button" title="Menu">
+    <app-icon [name]="isMenuOpen ? 'close' : 'menu'" />
+  </button>
+</div>
 
-    @if (isLoggedIn){
-    <button class="secondary-button sidebar-button" [routerLink]="['depenses']" (click)="isMenuOpen && toggleMenu()" title="dépenses">
-      <span>Dépenses</span>
-    </button>
-
-   <button class="secondary-button sidebar-button" [routerLink]="['entretien']" (click)="isMenuOpen && toggleMenu()" title="entretiens">
-    <span>Entretiens réguliers</span>
-    </button>
-
-    <button class="secondary-button sidebar-button" [routerLink]="['motos']" (click)="isMenuOpen && toggleMenu()" title="motos">
-    <span>Mes motos</span>
-    </button>
-    }
-    </div>
-    <div class="mb-2">
-      <button class="secondary-button sidebar-button" [routerLink]="['cgu']" (click)="isMenuOpen && toggleMenu()" title="cgu">
-        <span>CGU</span>
-      </button>
-
-      <button class="secondary-button sidebar-button" [routerLink]="['contact']" (click)="isMenuOpen && toggleMenu()" title="contact">
-        <span>Contact</span>
-      </button>
-
-    @if (!isLoggedIn){
-    <button class="secondary-button sidebar-button" [routerLink]="['login']" (click)="isMenuOpen && toggleMenu()" title="Se connecter">
-      <span class="material-symbols-outlined">account_circle</span>
-    </button>
-    }
-
-    @if (isLoggedIn){
-    <button class="secondary-button sidebar-button" (click)="logout()" title="Se déconnecter">
-      <span class="material-symbols-outlined">account_circle_off</span>
-    </button>
-    }
+@if (isMenuOpen) {
+  <div class="md:hidden fixed inset-0 z-40">
+    <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" (click)="toggleMenu()"></div>
+    <div class="fixed left-0 top-0 h-full w-72 bg-white shadow-xl flex flex-col z-50">
+      <div class="p-6 border-b border-gray-100">
+        <span class="font-['Fira_Code'] font-semibold text-lg text-blue-800">Menu</span>
       </div>
+      <nav class="flex-1 p-4 space-y-1 overflow-y-auto" (click)="toggleMenu()">
+        <a [routerLink]="['']" class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline">
+          <app-icon name="home" /> Accueil
+        </a>
+        @if (isLoggedIn) {
+          <a [routerLink]="['depenses']" class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline">
+            <app-icon name="filter" /> Dépenses
+          </a>
+          <a [routerLink]="['entretien']" class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline">
+            <app-icon name="moto" /> Entretiens
+          </a>
+          <a [routerLink]="['motos']" class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline">
+            <app-icon name="moto" /> Mes motos
+          </a>
+        }
+      </nav>
+      <div class="p-4 border-t border-gray-100 space-y-1" (click)="toggleMenu()">
+        <a [routerLink]="['cgu']" class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline">CGU</a>
+        <a [routerLink]="['contact']" class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline">
+          <app-icon name="mail" /> Contact
+        </a>
+        @if (!isLoggedIn) {
+          <a [routerLink]="['login']" class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline">
+            <app-icon name="user" /> Connexion
+          </a>
+        }
+        @if (isLoggedIn) {
+          <button (click)="logout()" class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 transition-colors duration-200 cursor-pointer w-full text-left">
+            <app-icon name="user-off" /> Déconnexion
+          </button>
+        }
+      </div>
+    </div>
   </div>
-</nav>
-
-
-
+}
