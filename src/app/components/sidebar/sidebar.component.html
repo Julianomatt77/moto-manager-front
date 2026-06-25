@@ -73,7 +73,7 @@
     <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" (click)="toggleMenu()"></div>
     <div class="fixed left-0 top-0 h-full w-72 bg-white shadow-xl flex flex-col z-50">
       <div class="p-6 border-b border-gray-100">
-        <span class="font-semibold text-lg text-blue-800">Menu</span>
+        <span class="font-semibold text-lg text-blue-800 ml-10">Menu</span>
       </div>
       <nav class="flex-1 p-4 space-y-1 overflow-y-auto" (click)="toggleMenu()">
         <a [routerLink]="['']" class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline">
@@ -81,10 +81,10 @@
         </a>
         @if (isLoggedIn()) {
           <a [routerLink]="['depenses']" class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline">
-            <app-icon name="filter" /> Dépenses
+            <app-icon name="euro" /> Dépenses
           </a>
           <a [routerLink]="['entretien']" class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline">
-            <app-icon name="moto" /> Entretiens
+            <app-icon name="wrench" /> Entretiens
           </a>
           <a [routerLink]="['motos']" class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline">
             <app-icon name="moto" /> Mes motos
@@ -92,7 +92,8 @@
         }
       </nav>
       <div class="p-4 border-t border-gray-100 space-y-1" (click)="toggleMenu()">
-        <a [routerLink]="['cgu']" class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline">CGU</a>
+        <a [routerLink]="['cgu']" class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline">
+          <app-icon name="scale" /> CGU</a>
         <a [routerLink]="['contact']" class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors duration-200 cursor-pointer no-underline">
           <app-icon name="mail" /> Contact
         </a>
