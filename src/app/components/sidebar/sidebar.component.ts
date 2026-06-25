@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {Router, RouterModule} from "@angular/router";
 import {StorageService} from "../../services/storage/storage.service";
 import {BehaviorSubject, Subscription} from "rxjs";
@@ -11,6 +11,7 @@ import {AuthService} from "../../services/auth/auth.service";
     ],
     templateUrl: './sidebar.component.html',
     styleUrl: './sidebar.component.css',
+    changeDetection: ChangeDetectionStrategy.Eager,
     providers: [AuthService]
 })
 export class SidebarComponent implements OnInit{

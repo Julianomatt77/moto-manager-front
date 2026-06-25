@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {User} from "../../models/User";
 import {StorageService} from "../../services/storage/storage.service";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
@@ -19,6 +19,7 @@ import {ExportService} from "../../services/export/export.service";
         MatPaginatorModule
     ],
     templateUrl: './entretien.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './entretien.component.css'
 })
 export class EntretienComponent {

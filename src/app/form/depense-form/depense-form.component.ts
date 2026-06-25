@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output, ChangeDetectionStrategy} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {DepensesService} from "../../services/depenses/depenses.service";
@@ -16,6 +16,7 @@ import {MotoService} from "../../services/moto/moto.service";
 ],
     providers: [DatePipe],
     templateUrl: './depense-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './depense-form.component.css'
 })
 export class DepenseFormComponent implements OnInit{
