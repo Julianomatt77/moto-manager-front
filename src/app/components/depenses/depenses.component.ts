@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, inject, input, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, inject, input, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {DepensesService} from "../../services/depenses/depenses.service";
 import {StorageService} from "../../services/storage/storage.service";
 import {User} from "../../models/User";
@@ -24,6 +24,7 @@ import {DepensesTypeService} from "../../services/depensesType/depenses-type.ser
     selector: 'app-depenses',
     imports: [DatePipe, MatPaginatorModule, DecimalPipe, ReactiveFormsModule, MatFormFieldModule, MatOptionModule, MatInputModule, MatSelectModule],
     templateUrl: './depenses.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './depenses.component.css'
 })
 export class DepensesComponent {

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, Output, ChangeDetectionStrategy} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {read, utils} from "xlsx";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
@@ -21,6 +21,7 @@ import {EntretiensService} from "../../services/entretiens/entretiens.service";
     MatProgressBarModule
 ],
     templateUrl: './upload-popup.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './upload-popup.component.css'
 })
 export class UploadPopupComponent {

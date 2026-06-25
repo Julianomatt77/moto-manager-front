@@ -1,4 +1,4 @@
-import {Component, Inject, DOCUMENT} from '@angular/core';
+import {Component, Inject, DOCUMENT, ChangeDetectionStrategy} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {SidebarComponent} from "./components/sidebar/sidebar.component";
 import {Meta} from "@angular/platform-browser";
@@ -7,6 +7,7 @@ import {Meta} from "@angular/platform-browser";
     selector: 'app-root',
     imports: [RouterOutlet, SidebarComponent],
     templateUrl: './app.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './app.component.css'
 })
 export class AppComponent {

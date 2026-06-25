@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, Output, ChangeDetectionStrategy} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Depense} from "../../models/Depense";
 import {Moto} from "../../models/Moto";
@@ -12,6 +12,7 @@ import {StorageService} from "../../services/storage/storage.service";
     ReactiveFormsModule
 ],
     templateUrl: './moto-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './moto-form.component.css'
 })
 export class MotoFormComponent {

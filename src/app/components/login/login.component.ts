@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AuthService} from "../../services/auth/auth.service";
 import {ActivatedRoute, Router, RouterModule} from "@angular/router";
@@ -12,6 +12,7 @@ import {StorageService} from "../../services/storage/storage.service";
 ],
     templateUrl: './login.component.html',
     styleUrl: './login.component.css',
+    changeDetection: ChangeDetectionStrategy.Eager,
     providers: [AuthService]
 })
 export class LoginComponent {

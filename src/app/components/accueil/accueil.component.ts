@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {StorageService} from "../../services/storage/storage.service";
 import {RouterModule} from "@angular/router";
 
@@ -6,6 +6,7 @@ import {RouterModule} from "@angular/router";
     selector: 'app-accueil',
     imports: [RouterModule],
     templateUrl: './accueil.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './accueil.component.css'
 })
 export class AccueilComponent implements OnInit{

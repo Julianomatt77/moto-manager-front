@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, Output, ChangeDetectionStrategy} from '@angular/core';
 import {Depense} from "../../models/Depense";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Entretien} from "../../models/Entretien";
@@ -18,6 +18,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 ],
     providers: [DatePipe],
     templateUrl: './entretien-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './entretien-form.component.css'
 })
 export class EntretienFormComponent {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MailService} from "../../services/mail/mail.service";
 import {Router, RouterModule} from "@angular/router";
@@ -10,6 +10,7 @@ import {Router, RouterModule} from "@angular/router";
         RouterModule
     ],
     templateUrl: './contact.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './contact.component.css'
 })
 export class ContactComponent {
