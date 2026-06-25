@@ -1,20 +1,12 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import {MatDialogModule, MatDialogRef} from "@angular/material/dialog";
-import {MatButtonModule} from "@angular/material/button";
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-    selector: 'app-confirmation-dialog',
-    imports: [
-        MatButtonModule,
-        MatDialogModule
-    ],
-    templateUrl: './confirmation-dialog.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
-    styleUrl: './confirmation-dialog.component.css'
+  selector: 'app-confirmation-dialog',
+  templateUrl: './confirmation-dialog.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConfirmationDialogComponent {
-  public confirmMessage!: string;
-
-  constructor(public dialogRef: MatDialogRef<ConfirmationDialogComponent>) {}
-
+  message = input<string>('');
+  confirmed = output<void>();
+  cancelled = output<void>();
 }

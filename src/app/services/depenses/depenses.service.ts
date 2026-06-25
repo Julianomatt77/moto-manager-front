@@ -1,39 +1,32 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
-import {environment} from "../../../environments/environment";
-import {Depense} from "../../models/Depense";
+import { Service, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { httpResource } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { Depense } from '../../models/Depense';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class DepensesService {
-
+  private http = inject(HttpClient);
   private baseUrl = environment.baseUrl;
   private depensesUrl = this.baseUrl + 'depenses';
 
-  constructor(private http: HttpClient) { }
+  readonly depenses = httpResource<Depense[]>(() => this.depensesUrl);
 
-  getDepenses(){
-    return this.http.get<any[]>(this.depensesUrl);
+  async save(data: any): Promise<Depense> {
+    const result = await lastValueFrom(this.http.post<Depense>(this.depensesUrl, data));
+    this.depenses.reload();
+    return result;
   }
 
-  getDepense(id: string){
-    let url = this.depensesUrl + '/' + id
-    return this.http.get<Depense>(url);
+  async patch(id: string, data: any): Promise<Depense> {
+    const result = await lastValueFrom(this.http.patch<Depense>(`${this.depensesUrl}/${id}`, data));
+    this.depenses.reload();
+    return result;
   }
 
-  saveDepense(depense: Depense){
-    return this.http.post<Depense>(this.depensesUrl, depense);
+  async delete(id: string): Promise<void> {
+    await lastValueFrom(this.http.delete(`${this.depensesUrl}/${id}`));
+    this.depenses.reload();
   }
-
-  patchDepense(id: string, data: any){
-    let url = this.depensesUrl + '/' + id
-    return this.http.patch<Depense>(url, data);
-  }
-
-  deleteDepense(id: string){
-    let url = this.depensesUrl + '/' + id
-    return this.http.delete<Depense>(url)
-  }
-
 }

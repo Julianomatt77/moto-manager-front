@@ -1,53 +1,43 @@
-import { Injectable } from '@angular/core';
-import {environment} from "../../../environments/environment";
-import { HttpClient } from "@angular/common/http";
-import { Moto } from "../../models/Moto";
-import {map, Observable} from "rxjs";
+import { Service, inject, signal } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { httpResource } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
+import { Moto } from '../../models/Moto';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class MotoService {
-  private baseUrl = environment.baseUrl;
-  private motoUrl = this.baseUrl + 'motos';
+  private http = inject(HttpClient);
+  private baseUrl = environment.baseUrl + 'motos';
 
-  constructor(private http: HttpClient) { }
+  readonly motos = httpResource<Moto[]>(() => this.baseUrl);
+  readonly deactivatedMotos = httpResource<Moto[]>(() => `${this.baseUrl}/deactivated`);
 
-  getMotos(){
-    return this.http.get<any[]>(this.motoUrl);
+  async save(data: any): Promise<Moto> {
+    const result = await lastValueFrom(this.http.post<Moto>(this.baseUrl, data));
+    this.motos.reload();
+    return result;
   }
 
-  getDeactivatedMotos(){
-    return this.http.get<any[]>(this.motoUrl + '/deactivated');
+  async patch(id: string, data: any): Promise<Moto> {
+    const result = await lastValueFrom(this.http.patch<Moto>(`${this.baseUrl}/${id}`, data));
+    this.motos.reload();
+    return result;
   }
 
-  getMoto(id: string){
-    let url = this.motoUrl + '/' + id
-    return this.http.get<Moto>(url);
+  async reactivate(id: string): Promise<Moto> {
+    const result = await lastValueFrom(this.http.patch<Moto>(`${this.baseUrl}/reactivate/${id}`, {}));
+    this.reloadAll();
+    return result;
   }
 
-  saveMoto(moto: Moto){
-    return this.http.post<Moto>(this.motoUrl, moto);
+  async delete(id: string): Promise<void> {
+    await lastValueFrom(this.http.delete(`${this.baseUrl}/${id}`));
+    this.reloadAll();
   }
 
-  patchMoto(id: string, data: any){
-    let url = this.motoUrl + '/' + id
-    return this.http.patch<Moto>(url, data);
-  }
-
-  reactivateMoto(id: string){
-    let url = this.motoUrl + '/reactivate/' + id
-    return this.http.patch<Moto>(url, {});
-  }
-
-  deleteMoto(id: string){
-    let url = this.motoUrl + '/' + id
-    return this.http.delete<Moto>(url)
-  }
-
-  getAllMotos(): Observable<any> {
-    return this.getMotos().pipe(
-      map(data => data), // Vous pouvez transformer les données ici si nécessaire
-    );
+  private reloadAll(): void {
+    this.motos.reload();
+    this.deactivatedMotos.reload();
   }
 }

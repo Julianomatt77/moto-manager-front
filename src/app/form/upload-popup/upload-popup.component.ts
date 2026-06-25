@@ -1,108 +1,79 @@
-import {Component, EventEmitter, Inject, Output, ChangeDetectionStrategy} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {read, utils} from "xlsx";
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {Depense} from "../../models/Depense";
-import {Entretien} from "../../models/Entretien";
-import {DepensesService} from "../../services/depenses/depenses.service";
-import {DepensesTypeService} from "../../services/depensesType/depenses-type.service";
-import {MotoService} from "../../services/moto/moto.service";
-import {Moto} from "../../models/Moto";
-
-import {forkJoin} from "rxjs";
-import {MatProgressBarModule} from "@angular/material/progress-bar";
-import {EntretiensService} from "../../services/entretiens/entretiens.service";
+import { Component, input, output, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
+import { read, utils } from 'xlsx';
+import { form, FormField, submit, required } from '@angular/forms/signals';
+import { DepensesService } from '../../services/depenses/depenses.service';
+import { DepensesTypeService } from '../../services/depensesType/depenses-type.service';
+import { MotoService } from '../../services/moto/moto.service';
+import { EntretiensService } from '../../services/entretiens/entretiens.service';
+import { IconComponent } from '../../shared/icon.component';
+import { environment } from '../../../environments/environment';
 
 @Component({
-    selector: 'app-upload-popup',
-    imports: [
-    ReactiveFormsModule,
-    FormsModule,
-    MatProgressBarModule
-],
-    templateUrl: './upload-popup.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
-    styleUrl: './upload-popup.component.css'
+  selector: 'app-upload-popup',
+  imports: [FormField, IconComponent],
+  templateUrl: './upload-popup.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UploadPopupComponent {
-  @Output() formSubmitted: EventEmitter<Depense>;
+  type = input<'depense' | 'entretien'>('depense');
+  saved = output<void>();
+  cancelled = output<void>();
 
-  type!: string;
+  private http = inject(HttpClient);
+  private depensesService = inject(DepensesService);
+  private entretiensService = inject(EntretiensService);
+  private depensesTypeService = inject(DepensesTypeService);
+  private motoService = inject(MotoService);
+
+  readonly model = signal({ moto: '' });
+  readonly form = form(this.model, (s) => {
+    required(s.moto, { message: 'La moto est obligatoire.' });
+  });
+
   fileName = '';
   uploadData: any[] = [];
-  form!: FormGroup;
-  depense!: Depense;
-  entretien!: Entretien
-  userId!: string;
-  depensesType: any[] = [];
-  motoList: any[] = [];
-  selectedType: string = '';
-  submitted: boolean = false;
-  depenseList: Depense[] = [];
-  entretienList: Entretien[] = [];
-  moto!: Moto;
-  // motoErrorMessage = 'La moto est obligatoire.';
+  selectedType = '';
+  submitted = false;
+  depenseList: any[] = [];
+  entretienList: any[] = [];
   isLoading = false;
-  fileImported = false;
+  fileImported = signal(false);
   fileErrorMessage = '';
+  uploadErrors = signal<string[]>([]);
   templateName = '';
+  progress = signal(0);
 
+  depensesType = computed(() => {
+    const data = this.depensesTypeService.depensesTypes.value();
+    if (!data) return [];
+    return [...data.map((t: any) => ({ id: t.id, name: t.name })), { id: 0, name: 'autre' }];
+  });
 
-  constructor(private fb: FormBuilder,
-              public dialogRef: MatDialogRef<UploadPopupComponent>,
-              @Inject(MAT_DIALOG_DATA) private data: any,
-              private depensesService: DepensesService,
-              private entretiensService: EntretiensService,
-              private depensesTypeService: DepensesTypeService,
-              private motoService: MotoService,
-  ) {
-    this.formSubmitted = new EventEmitter<Depense>();
-    if (data.type) {
-      this.type = data.type;
-    }
-
-    this.moto = new Moto(
-      '',
-      '',
-      '',
-    )
-
-  }
+  motoList = computed(() => {
+    const data = this.motoService.motos.value();
+    if (!data) return [];
+    return data.map((m: any) => ({ id: m.id.toString(), name: m.modele }));
+  });
 
   ngOnInit(): void {
-    this.form = this.fb.group({
-      moto: ['', [Validators.required]]
-    })
-
-    if (this.type == 'depense') {
-      this.depensesTypeService.getDepensesTypes().subscribe((data) => {
-        data.forEach((type) => {
-          this.depensesType.push({'id': type.id, 'name': type.name})
-        })
-        this.depensesType.push({'id': 0, 'name': 'autre'})
-      })
-
+    if (this.type() === 'depense') {
       this.templateName = 'depense-moto-template.xlsx';
     } else {
       this.templateName = 'entretien-moto-template.xlsx';
     }
-
-    this.motoService.getMotos().subscribe(data => {
-      data.forEach(moto => {
-        this.motoList.push({'id': moto.id, 'name': moto.modele})
-      })
-    })
   }
 
-  onFileSelected(event: any) {
+  onFileSelected(event: any): void {
     this.isLoading = true;
     this.fileErrorMessage = '';
+    this.progress.set(0);
+    this.uploadErrors.set([]);
     const file: File = event.target.files[0];
 
     if (file) {
-
       this.fileName = file.name;
-
       const reader = new FileReader();
       reader.onload = async (event: any) => {
         const wb = read(event.target.result);
@@ -115,177 +86,151 @@ export class UploadPopupComponent {
 
         const error = this.checkFileDataFormat(this.uploadData);
 
-        if (!error){
-          if (this.type == 'depense') {
-            this.uploadData = await this.transformDepenseType(this.uploadData);
+        if (!error) {
+          if (this.type() === 'depense') {
+            await this.transformDepenseType(this.uploadData);
             this.transformDataToDepense(this.uploadData);
           } else {
             this.transformDataToEntretien(this.uploadData);
           }
-          this.fileImported = true;
+          this.fileImported.set(true);
           this.isLoading = false;
         } else {
           this.fileErrorMessage = error;
+          this.isLoading = false;
         }
-
-      }
+      };
       reader.readAsArrayBuffer(file);
+    } else {
+      this.isLoading = false;
     }
   }
 
-  onSubmitUpload() {
+  async onSubmitUpload(): Promise<void> {
     this.submitted = true;
-    if (this.form.valid && !this.fileErrorMessage) {
-      this.isLoading = true;
-      if (this.type == 'depense') {
-        const saveDepenseObservables = this.depenseList.map((depense: Depense) => {
-          depense.moto = this.form.value['moto'];
-          return this.depensesService.saveDepense(depense);
-        });
+    if (this.form().invalid() || this.fileErrorMessage) return;
 
-        forkJoin(saveDepenseObservables).subscribe(() => {
-          this.isLoading = false;
-          this.dialogRef.close();
-        });
-      } else {
-        const saveEntretienObservables = this.entretienList.map((entretien: Entretien) => {
-          entretien.moto = this.form.value['moto'];
-          return this.entretiensService.saveEntretien(entretien);
-        });
+    this.isLoading = true;
+    this.progress.set(0);
+    this.uploadErrors.set([]);
 
-        forkJoin(saveEntretienObservables).subscribe(() => {
-          this.isLoading = false;
-          this.dialogRef.close();
-        });
+    const motoId = this.model().moto;
+    const items = this.type() === 'depense' ? this.depenseList : this.entretienList;
+    const total = items.length;
+    const errors: string[] = [];
+
+    for (let i = 0; i < total; i++) {
+      try {
+        const item = { ...items[i], moto: motoId };
+        if (this.type() === 'depense') {
+          await this.depensesService.save(item);
+        } else {
+          await this.entretiensService.save(item);
+        }
+      } catch (e: any) {
+        errors.push(`Ligne ${i + 1}: ${e.error?.message || e.message || 'Erreur inconnue'}`);
       }
+      this.progress.set(Math.round(((i + 1) / total) * 100));
+    }
+
+    this.uploadErrors.set(errors);
+    this.isLoading = false;
+
+    if (errors.length === 0) {
+      this.saved.emit();
     }
   }
 
-  closePopup() {
-    this.dialogRef.close();
-  }
-
-  transformDataToDepense(data: any) {
-
+  transformDataToDepense(data: any): void {
     this.depenseList = data
       .filter((depenseData: any) => depenseData.montant !== null && depenseData.date !== null && depenseData.depenseType !== null)
-      .map((depenseData: any) => {
-        const depense = new Depense(
-          depenseData.id || '',
-          depenseData.montant || 0,
-          depenseData.kmParcouru || 0,
-          depenseData.essenceConsomme || 0,
-          depenseData.consoMoyenne || 0,
-          depenseData.essencePrice || 0,
-          depenseData.commentaire || '',
-          depenseData.kilometrage || 0,
-          depenseData.date || new Date(),
-          depenseData.depenseType || '',
-          depenseData.moto || ''
-        );
-
-        return {
-          id: depense.id,
-          montant: depense.montant,
-          kmParcouru: depense.kmParcouru,
-          essenceConsomme: depense.essenceConsomme,
-          consoMoyenne: depense.consoMoyenne,
-          essencePrice: depense.essencePrice,
-          commentaire: depense.commentaire,
-          kilometrage: depense.kilometrage,
-          date: depense.date,
-          depenseType: depense.depenseType,
-          moto: depense.moto,
-        };
-      });
+      .map((depenseData: any) => ({
+        id: depenseData.id || '',
+        montant: depenseData.montant || 0,
+        kmParcouru: depenseData.kmParcouru || 0,
+        essenceConsomme: depenseData.essenceConsomme || 0,
+        consoMoyenne: depenseData.consoMoyenne || 0,
+        essencePrice: depenseData.essencePrice || 0,
+        commentaire: depenseData.commentaire || '',
+        kilometrage: depenseData.kilometrage || 0,
+        date: depenseData.date || new Date(),
+        depenseType: depenseData.depenseType || '',
+        moto: depenseData.moto || ''
+      }));
   }
 
-  transformDataToEntretien(data: any) {
+  transformDataToEntretien(data: any): void {
     this.entretienList = data
       .filter((entretienData: any) => entretienData.date !== null)
       .map((entretienData: any) => {
         entretienData.graissage = !!entretienData.graissage;
-        entretienData.lavage = entretienData.lavage ? true : false;
+        entretienData.lavage = !!entretienData.lavage;
 
-        const entretien = new Entretien(
-            entretienData.id || '',
-            entretienData.graissage || false,
-            entretienData.lavage || false,
-            entretienData.pressionAv || 0,
-            entretienData.pressionAr || 0,
-            entretienData.kilometrage || 0,
-            entretienData.date || new Date(),
-            entretienData.moto || '',
-          );
-
-          return {
-            id: entretien.id,
-            graissage: entretien.graissage,
-            lavage: entretien.lavage,
-            pressionAv: entretien.pressionAv,
-            pressionAr: entretien.pressionAr,
-            kilometrage: entretien.kilometrage,
-            date: entretien.date,
-            moto: entretien.moto,
-          }
-        });
+        return {
+          id: entretienData.id || '',
+          graissage: entretienData.graissage || false,
+          lavage: entretienData.lavage || false,
+          pressionAv: entretienData.pressionAv || 0,
+          pressionAr: entretienData.pressionAr || 0,
+          kilometrage: entretienData.kilometrage || 0,
+          date: entretienData.date || new Date(),
+          moto: entretienData.moto || ''
+        };
+      });
   }
 
-  checkFileDataFormat (data : any){
-    // Vérifier l'existence des colonnes attendues
-    let expectedColumns: any[] = [];
-    if (this.type == 'depense') {
+  checkFileDataFormat(data: any): string | undefined {
+    let expectedColumns: string[] = [];
+    if (this.type() === 'depense') {
       expectedColumns = ['montant', 'date', 'depenseType'];
-    } else if (this.type == 'entretien'){
+    } else if (this.type() === 'entretien') {
       expectedColumns = ['date'];
     }
+
+    if (!data.length) {
+      return 'Le fichier est vide.';
+    }
+
     const actualColumns = Object.keys(data[0]);
     if (!expectedColumns.every(col => actualColumns.includes(col))) {
-      console.error('Le fichier XLS ne contient pas toutes les colonnes requises. (montant, date, depenseType');
       return 'Le fichier XLS ne contient pas toutes les colonnes requises.';
     }
 
-    // Vérifier le type des données
-    if (this.type == 'depense') {
+    if (this.type() === 'depense') {
       const invalidData = data.find((depense: any) => {
         const isMontantInvalid = depense.montant !== null && typeof depense.montant !== 'number';
-        const isKmParcouruInvalid = depense.kmParcouru ? typeof depense.kmParcouru !== 'number' : null;
-        const isEssenceConsommeInvalid = depense.essenceConsomme ? typeof depense.essenceConsomme !== 'number' : null;
-        const isKilometrageInvalid = depense.kilometrage ? typeof depense.kilometrage !== 'number' : null;
-        const isEssencePriceInvalid = depense.essencePrice ? typeof depense.essencePrice !== 'number' : null;
+        const isKmParcouruInvalid = depense.kmParcouru ? typeof depense.kmParcouru !== 'number' : false;
+        const isEssenceConsommeInvalid = depense.essenceConsomme ? typeof depense.essenceConsomme !== 'number' : false;
+        const isKilometrageInvalid = depense.kilometrage ? typeof depense.kilometrage !== 'number' : false;
+        const isEssencePriceInvalid = depense.essencePrice ? typeof depense.essencePrice !== 'number' : false;
         const isDateInvalid = typeof depense.date !== 'string' || !/^\d{4}\/\d{2}\/\d{2}$/.test(depense.date);
 
         return isMontantInvalid || isKmParcouruInvalid || isEssenceConsommeInvalid || isKilometrageInvalid || isEssencePriceInvalid || isDateInvalid;
       });
       if (invalidData) {
-        const errorMessage = 'Certaines données ne sont pas du type attendu pour la dépense du ' + invalidData.date;
-        console.error(errorMessage);
-        return errorMessage;
+        return 'Certaines données ne sont pas du type attendu pour la dépense du ' + invalidData.date;
       }
     }
-    if (this.type == 'entretien') {
-      const invalidData = data.find((depense: any) => {
-        const isDateInvalid = typeof depense.date !== 'string' || !/^\d{4}\/\d{2}\/\d{2}$/.test(depense.date);
-        const isPressionAvInvalid = depense.pressionAv ? typeof depense.pressionAv !== 'number' : null;
-        const isPressionArInvalid = depense.pressionAr ? typeof depense.pressionAr !== 'number' : null;
 
-        return  isDateInvalid || isPressionAvInvalid || isPressionArInvalid;
+    if (this.type() === 'entretien') {
+      const invalidData = data.find((entretien: any) => {
+        const isDateInvalid = typeof entretien.date !== 'string' || !/^\d{4}\/\d{2}\/\d{2}$/.test(entretien.date);
+        const isPressionAvInvalid = entretien.pressionAv ? typeof entretien.pressionAv !== 'number' : false;
+        const isPressionArInvalid = entretien.pressionAr ? typeof entretien.pressionAr !== 'number' : false;
+
+        return isDateInvalid || isPressionAvInvalid || isPressionArInvalid;
       });
       if (invalidData) {
-        const errorMessage = 'Certaines données ne sont pas du type attendu pour l\'entretien du ' + invalidData.date
-        console.error(errorMessage);
-        return errorMessage;
+        return 'Certaines données ne sont pas du type attendu pour l\'entretien du ' + invalidData.date;
       }
     }
 
-    // Vérifier le format des dates
-    const invalidDateEntries = data.filter((depenseData: any) => !this.isValidDate(depenseData.date));
+    const invalidDateEntries = data.filter((entry: any) => !this.isValidDate(entry.date));
     if (invalidDateEntries.length > 0) {
-      console.error('Certaines dates ne sont pas valides.');
       return 'Certaines dates ne sont pas valides.';
     }
 
-    return ;
+    return undefined;
   }
 
   isValidDate(dateString: string): boolean {
@@ -293,38 +238,35 @@ export class UploadPopupComponent {
     return !isNaN(dateObject.getTime()) && dateString.trim() !== '';
   }
 
-  getFileName(){
+  getFileName(): string {
     return '../../../assets/files/' + this.templateName;
   }
 
-  // ************************************************* GESTION DES TYPES DE DEPENSE *******************************
-  private async transformDepenseType(data: any[]) {
-    // Pour chaque dépense on va vérifier le type de dépense
+  private async transformDepenseType(data: any[]): Promise<any[]> {
     for (const depense of data) {
       await this.processDepenseType(depense);
     }
     return data;
   }
 
-  private async processDepenseType(depense: any) {
-    const matchingType = this.depensesType.find(type => type.name === depense.depenseType);
+  private async processDepenseType(depense: any): Promise<void> {
+    const name = depense.depenseType?.toLowerCase();
+    const matchingType = this.depensesType().find((type: any) => type.name.toLowerCase() === name);
 
     if (matchingType) {
       depense.depenseType = matchingType.id;
     } else {
-      // Si le type de dépense n'existe pas encore, on le crée puis on l'ajoute au tableau
-      const newTypeData = await this.saveDepenseType(depense.depenseType);
-      this.depensesType.push({ 'id': newTypeData.id, 'name': depense.depenseType });
-      depense.depenseType = newTypeData.id;
+      try {
+        const newTypeData = await this.depensesTypeService.save(depense.depenseType);
+        depense.depenseType = newTypeData.id;
+      } catch {
+        const baseUrl = environment.baseUrl;
+        const types = await lastValueFrom(this.http.get<any[]>(baseUrl + 'depensesTypes'));
+        const existing = types.find((t: any) => t.name.toLowerCase() === name);
+        if (existing) {
+          depense.depenseType = existing.id;
+        }
+      }
     }
   }
-
-  private saveDepenseType(depenseTypeName: string): Promise<any> {
-    return new Promise<any>((resolve) => {
-      this.depensesTypeService.saveDepenseType(depenseTypeName).subscribe((newTypeData) => {
-        resolve(newTypeData);
-      });
-    });
-  }
-
 }

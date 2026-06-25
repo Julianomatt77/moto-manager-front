@@ -1,20 +1,17 @@
-import { Injectable } from '@angular/core';
+import { Service, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import {environment} from "../../../environments/environment";
+import { lastValueFrom } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class MailService {
+  private http = inject(HttpClient);
   private baseUrl = environment.base;
   private contactUrl = this.baseUrl + 'contact';
 
-  constructor(private http: HttpClient) { }
-
-  contact(from: string, subject: string, message: string): Observable<any> {
-    const body = { "from": from, "subject": subject, "message": message };
-    return this.http.post<any>(this.contactUrl, body)
+  async contact(from: string, subject: string, message: string): Promise<any> {
+    return lastValueFrom(
+      this.http.post<any>(this.contactUrl, { from, subject, message })
+    );
   }
-
 }

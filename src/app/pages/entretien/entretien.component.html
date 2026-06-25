@@ -1,0 +1,133 @@
+<section class="min-h-screen bg-blue-50 p-6">
+  <div class="max-w-5xl mx-auto">
+    <h1 class="text-2xl font-bold text-blue-800  mb-6">Liste des entretiens réguliers</h1>
+
+    @if (error()) {
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl  mb-4">
+        {{ error() }}
+      </div>
+    }
+
+    <div class="flex flex-wrap gap-3 mb-6">
+      <button (click)="openAddDialog()"
+              class="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors duration-200 cursor-pointer  text-sm font-medium">
+        <app-icon name="plus" />
+        <span>Ajouter</span>
+      </button>
+      <button (click)="openUploadDialog()"
+              class="flex items-center gap-2 px-4 py-2.5 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors duration-200 cursor-pointer  text-sm font-medium">
+        <app-icon name="upload" />
+        <span>Importer</span>
+      </button>
+      <button (click)="exportCsv()"
+              class="flex items-center gap-2 px-4 py-2.5 bg-white text-blue-800 border border-blue-200 rounded-xl hover:bg-blue-100 transition-colors duration-200 cursor-pointer  text-sm font-medium">
+        <app-icon name="download" />
+        <span>Exporter</span>
+      </button>
+    </div>
+
+    @if (isLoading()) {
+      <div class="flex flex-col items-center justify-center py-20">
+        <div class="animate-spin rounded-full h-10 w-10 border-4 border-blue-200 border-t-blue-600"></div>
+        <p class="mt-4 text-blue-800 ">Chargement...</p>
+      </div>
+    }
+
+    @if (!isLoading() && !error()) {
+      <app-paginator
+        [length]="entretiens().length"
+        [pageSize]="pageSize()"
+        [pageIndex]="currentPage()"
+        (changePage)="onPageChange($event)"
+        (pageSizeChange)="onPageSizeChange($event)"
+      />
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (entretien of paginatedEntretiens(); track entretien.id) {
+          <div class="rounded-2xl shadow-lg p-6 bg-white">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm text-blue-600 font-medium ">
+                {{ entretien.date | date: 'dd/MM/y' }}
+              </span>
+              <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium ">
+                {{ entretien.moto?.modele ?? entretien.moto }}
+              </span>
+            </div>
+
+            <div class="text-sm text-gray-600  space-y-1 mb-4">
+              <p>Kilométrage : <span class="font-semibold text-blue-800">{{ entretien.kilometrage }} Km</span></p>
+              @if (entretien.pressionAv) {
+                <p>Pression AV : <span class="font-semibold">{{ entretien.pressionAv }}</span></p>
+              }
+              @if (entretien.pressionAr) {
+                <p>Pression AR : <span class="font-semibold">{{ entretien.pressionAr }}</span></p>
+              }
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-4">
+              @if (entretien.graissage) {
+                <span class="px-2.5 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium ">Graissage</span>
+              }
+              @if (entretien.lavage) {
+                <span class="px-2.5 py-1 bg-cyan-100 text-cyan-700 rounded-full text-xs font-medium ">Lavage</span>
+              }
+            </div>
+
+            <div class="flex flex-wrap justify-end gap-2 pt-3 border-t border-gray-100">
+              <button (click)="openEditDialog(entretien)"
+                      class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 cursor-pointer"
+                      title="Éditer">
+                <app-icon name="edit" />
+              </button>
+              <button (click)="openDeleteConfirmation(entretien)"
+                      class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-200 cursor-pointer"
+                      title="Supprimer">
+                <app-icon name="delete" />
+              </button>
+            </div>
+          </div>
+        } @empty {
+          <div class="col-span-full text-center py-16 text-blue-800 ">
+            Vous n'avez aucun entretien
+          </div>
+        }
+      </div>
+
+      <app-paginator
+        [length]="entretiens().length"
+        [pageSize]="pageSize()"
+        [pageIndex]="currentPage()"
+        (changePage)="onPageChange($event)"
+        (pageSizeChange)="onPageSizeChange($event)"
+      />
+    }
+  </div>
+</section>
+
+<app-dialog [isOpen]="formDialogOpen()" (close)="onFormCancelled()" [wide]="true">
+  @if (formDialogOpen()) {
+    <app-entretien-form
+      [addOrEdit]="formMode()"
+      [entretien]="editTarget()"
+      (saved)="onFormSaved()"
+      (cancelled)="onFormCancelled()"
+    />
+  }
+</app-dialog>
+
+<app-dialog [isOpen]="confirmationDialogOpen()" (close)="onDeleteCancelled()">
+  <app-confirmation-dialog
+    [message]="'Êtes-vous sûr de vouloir supprimer cet entretien ?'"
+    (confirmed)="onDeleteConfirmed()"
+    (cancelled)="onDeleteCancelled()"
+  />
+</app-dialog>
+
+<app-dialog [isOpen]="uploadDialogOpen()" (close)="onUploadCancelled()" [wide]="true">
+  @if (uploadDialogOpen()) {
+    <app-upload-popup
+      [type]="'entretien'"
+      (saved)="onUploadSaved()"
+      (cancelled)="onUploadCancelled()"
+    />
+  }
+</app-dialog>

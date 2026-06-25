@@ -1,83 +1,74 @@
-<div class="login-form">
-  @if (!isLoggedIn){
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form-container">
-    <div class="form-group">
-      <div><label for="username">Adresse email</label></div>
-      <input type="email" class="form-control" id="username" formControlName="username">
-    </div>
-    @if(!loginForm.get('username')?.valid && submitted){
-    <div class="error-message">
-      {{ usernameErrorMessage }}
+<div class="min-h-screen flex items-center justify-center bg-blue-50 py-12 px-4">
+  @if (!isLoggedIn) {
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+      <h2 class="text-2xl text-blue-800 text-center mb-6">{{ label }}</h2>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5">
+        <div>
+          <label for="username" class="block text-sm font-medium text-blue-800 mb-1">Adresse email</label>
+          <input type="email" id="username" formControlName="username"
+                 class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-colors duration-200" />
+          @if (!loginForm.get('username')?.valid && submitted) {
+            <p class="text-red-500 text-sm mt-1">{{ usernameErrorMessage }}</p>
+          }
+        </div>
+        <div>
+          <label for="password" class="block text-sm font-medium text-blue-800 mb-1">Mot de passe</label>
+          <div class="relative">
+            <input [type]="passwordFieldType" id="password" formControlName="password"
+                   class="w-full px-4 py-2.5 pr-12 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-colors duration-200" />
+            <button type="button" (click)="togglePasswordVisibility()"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600 cursor-pointer transition-colors duration-200"
+                    title="Afficher/masquer le mot de passe">
+              <app-icon [name]="passwordFieldType === 'password' ? 'eye-off' : 'eye'" />
+            </button>
+          </div>
+          @if (!loginForm.get('password')?.valid && submitted) {
+            <p class="text-red-500 text-sm mt-1">{{ passwordErrorMessage }}</p>
+          }
+        </div>
+        @if (isRegistration) {
+          <div>
+            <label for="confirmPassword" class="block text-sm font-medium text-blue-800 mb-1">Confirmer le mot de passe</label>
+            <div class="relative">
+              <input [type]="passwordFieldType" id="confirmPassword" formControlName="confirmPassword"
+                     class="w-full px-4 py-2.5 pr-12 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-colors duration-200" />
+              <button type="button" (click)="togglePasswordVisibility()"
+                      class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600 cursor-pointer transition-colors duration-200"
+                      title="Afficher/masquer le mot de passe">
+                <app-icon [name]="passwordFieldType === 'password' ? 'eye-off' : 'eye'" />
+              </button>
+            </div>
+            @if (!loginForm.get('confirmPassword')?.value && submitted) {
+              <p class="text-red-500 text-sm mt-1">{{ confirmPasswordMissingErrorMessage }}</p>
+            }
+            @if (loginForm.get('confirmPassword')?.value && submitted && !isPasswordConfirmed) {
+              <p class="text-red-500 text-sm mt-1">{{ confirmPasswordErrorMessage }}</p>
+            }
+          </div>
+        }
+        <button type="submit"
+                class="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 cursor-pointer">
+          {{ label }}
+        </button>
+        @if (!isRegistration) {
+          <p class="text-center text-sm text-gray-600">
+            Vous n'avez pas encore de compte?
+            <a [routerLink]="['/register']" class="text-blue-600 hover:text-blue-800 underline font-medium">S'enregistrer</a>
+          </p>
+        }
+      </form>
     </div>
   }
-
-    <div class="form-group">
-      <div><label for="password">Password</label></div>
-      <div class="password-field">
-        <div><input
-              [type]="passwordFieldType"
-              class="form-control"
-              id="password"
-              formControlName="password"></div>
-        <div><span class="material-symbols-outlined" (click)="togglePasswordVisibility()">{{passwordFieldIcon}}</span></div>
-      </div>
+  @if (isLoginFailed) {
+    <div class="fixed bottom-4 right-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg shadow-lg" role="alert">
+      <p>La connexion a échoué: {{ error }}</p>
     </div>
-
-    @if(!loginForm.get('password')?.valid && submitted){
-    <div class="error-message">
-      {{ passwordErrorMessage }}
-    </div>
-    }
-
-<!--  Confirm password-->
-  @if(isRegistration){
-    <div class="form-group">
-      <div><label for="confirmPassword">Password</label></div>
-      <div class="password-field">
-        <div><input
-          [type]="passwordFieldType"
-          class="form-control"
-          id="confirmPassword"
-          formControlName="confirmPassword"></div>
-        <div><span class="material-symbols-outlined" (click)="togglePasswordVisibility()">{{passwordFieldIcon}}</span></div>
-      </div>
-    </div>
-
-    @if(!loginForm.get('confirmPassword')?.value && submitted){
-    <div class="error-message">
-    {{ confirmPasswordMissingErrorMessage }}
-    </div>
-    }
-
-    @if(loginForm.get('confirmPassword')?.value && submitted && !isPasswordConfirmed){
-    <div class="error-message">
-    {{ confirmPasswordErrorMessage }}
-    </div>
-    }
   }
-
-    <div class="form-submit">
-      <button type="submit" class="primary-button" title="Se connecter">{{ label}}</button>
+  @if (isLoggedIn) {
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 text-center">
+      <div class="text-green-500 text-5xl mb-4">✓</div>
+      <p class="text-gray-700">Vous êtes connecté avec l'email <strong>{{ email }}</strong>.</p>
+      <p class="text-gray-500 mt-2">Vous allez être redirigé vers la page d'accueil.</p>
     </div>
-
-    @if(!isRegistration){
-      <div class="mt-1-5">Vous n'avez pas encore de compte? <a [routerLink]="['/register']" class="underline" title="s'enregistrer"> S'enregistrer</a></div>
-    }
-
-  </form>
-  }
-
-  @if (isLoginFailed){
-  <div
-    class="error-message login-error mt-1-5"
-    role="alert">
-    La connexion a échoué: {{ error }}
-  </div>
-  }
-
-  @if (isLoggedIn){
-  <div class="alert alert-success">
-    Vous êtes connecté avec l'email {{ email }}. Vous allez être redirigé vers la page d'accueil.
-  </div>
   }
 </div>

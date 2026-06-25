@@ -1,105 +1,105 @@
-<div class="popup">
-  <div class="popup-close">
-    <a href="javascript:;" (click)="closePopup()" class="material-symbols-outlined">close</a>
-  </div>
+<section class="p-6">
+  <h2 class="text-2xl text-blue-800 mb-6">{{ buttonLabel }} un entretien</h2>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmitEntretien()" class="form-container">
+  <form (submit)="onSubmit(); $event.preventDefault()" class="space-y-4">
 
-    <h3>{{ buttonLabel }} un entretien</h3>
-
-    <div class="form-group">
-      <div><label for="kilometrage">Kilométrage</label></div>
+    <div>
+      <label for="kilometrage" class="block text-sm font-medium text-blue-800 mb-1">Kilométrage</label>
       <input
         id="kilometrage"
-        class="form-control"
-        formControlName="kilometrage"
         type="number"
-        />
+        step="any"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+        [formField]="form.kilometrage"
+      />
     </div>
 
-    <div class="form-group">
-      <div><label for="date">Date de l'opération</label></div>
+    <div>
+      <label for="date" class="block text-sm font-medium text-blue-800 mb-1">Date de l'opération</label>
       <input
         id="date"
         type="datetime-local"
-        class="form-control"
-        formControlName="date"
-        />
-    </div>
-    @if(!form.get('date')?.valid && submitted){
-      <div class="error-message">
-        {{ dateErrorMessage }}
-      </div>
-    }
-
-    <div class="form-group">
-      <div><label for="graissage">Graissage</label></div>
-      <mat-slide-toggle
-        id="graissage"
-        class="slide"
-        formControlName="graissage"
-        >
-      </mat-slide-toggle>
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+        [formField]="form.date"
+      />
+      @if (form.date().touched() && form.date().errors().length) {
+        <p class="text-red-500 text-sm mt-1">{{ form.date().errors()[0].message }}</p>
+      }
     </div>
 
-    <div class="form-group">
-      <div>
-        <label for="lavage">Lavage</label>
-      </div>
-      <mat-slide-toggle
-        id="lavage"
-        class="slide"
-        formControlName="lavage"
-        >
-      </mat-slide-toggle>
+    <div>
+      <label class="block text-sm font-medium text-blue-800 mb-1">Graissage</label>
+      <app-toggle
+        [checked]="model().graissage"
+        (changed)="model.update(m => ({...m, graissage: $event}))"
+      />
     </div>
 
-    <div class="form-group">
-      <div><label for="pressionAv">Pression avant</label></div>
+    <div>
+      <label class="block text-sm font-medium text-blue-800 mb-1">Lavage</label>
+      <app-toggle
+        [checked]="model().lavage"
+        (changed)="model.update(m => ({...m, lavage: $event}))"
+      />
+    </div>
+
+    <div>
+      <label for="pressionAv" class="block text-sm font-medium text-blue-800 mb-1">Pression avant</label>
       <input
         id="pressionAv"
-        class="form-control"
-        formControlName="pressionAv"
         type="number"
-        />
+        step="any"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+        [formField]="form.pressionAv"
+      />
     </div>
 
-    <div class="form-group">
-      <div><label for="pressionAr">Pression arrière</label></div>
+    <div>
+      <label for="pressionAr" class="block text-sm font-medium text-blue-800 mb-1">Pression arrière</label>
       <input
         id="pressionAr"
-        class="form-control"
-        formControlName="pressionAr"
         type="number"
-        />
+        step="any"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+        [formField]="form.pressionAr"
+      />
     </div>
 
-    <div class="form-group">
-      <div><label for="moto">Moto</label></div>
+    <div>
+      <label for="moto" class="block text-sm font-medium text-blue-800 mb-1">Moto</label>
       <select
         id="moto"
-        class="form-control"
-        formControlName="moto"
-        >
-        @for (moto of motoList; track moto) {
-          <option [ngValue]="moto.id.toString()">
-            {{ moto.name }}
-          </option>
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+        [formField]="form.moto"
+      >
+        <option value="">Sélectionner une moto</option>
+        @for (moto of motoList(); track moto.id) {
+          <option [value]="moto.id">{{ moto.name }}</option>
         }
       </select>
+      @if (form.moto().touched() && form.moto().errors().length) {
+        <p class="text-red-500 text-sm mt-1">{{ form.moto().errors()[0].message }}</p>
+      }
     </div>
-    @if(!form.get('moto')?.valid && submitted){
-      <div class="error-message">
-        {{ motoErrorMessage }}
-      </div>
-    }
 
-    <div class="form-submit">
-      <button type="submit" class="secondary-button">
+    <div class="flex gap-4 pt-4">
+      <button
+        type="button"
+        (click)="cancelled.emit()"
+        class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-150 cursor-pointer "
+        title="Annuler"
+      >
+        Annuler
+      </button>
+      <button
+        type="submit"
+        [disabled]="form().invalid()"
+        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 cursor-pointer  disabled:opacity-50"
+        title="{{ buttonLabel }}"
+      >
         {{ buttonLabel }}
       </button>
     </div>
 
   </form>
-</div>
-
+</section>

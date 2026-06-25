@@ -1,39 +1,32 @@
-import { Injectable } from '@angular/core';
-import { environment } from "../../../environments/environment";
-import { HttpClient } from "@angular/common/http";
-import { Entretien } from "../../models/Entretien";
+import { Service, inject } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { httpResource } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
+import { Entretien } from '../../models/Entretien';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class EntretiensService {
-
+  private http = inject(HttpClient);
   private baseUrl = environment.baseUrl;
   private entretiensUrl = this.baseUrl + 'entretiens';
 
-  constructor(private http: HttpClient) { }
+  readonly entretiens = httpResource<Entretien[]>(() => this.entretiensUrl);
 
-  getEntretiens(){
-    return this.http.get<any[]>(this.entretiensUrl);
+  async save(data: any): Promise<Entretien> {
+    const result = await lastValueFrom(this.http.post<Entretien>(this.entretiensUrl, data));
+    this.entretiens.reload();
+    return result;
   }
 
-  getEntretien(id: string){
-    let url = this.entretiensUrl + '/' + id
-    return this.http.get<Entretien>(url);
+  async patch(id: string, data: any): Promise<Entretien> {
+    const result = await lastValueFrom(this.http.patch<Entretien>(`${this.entretiensUrl}/${id}`, data));
+    this.entretiens.reload();
+    return result;
   }
 
-  saveEntretien(entretien: Entretien){
-    return this.http.post<Entretien>(this.entretiensUrl, entretien);
+  async delete(id: string): Promise<void> {
+    await lastValueFrom(this.http.delete(`${this.entretiensUrl}/${id}`));
+    this.entretiens.reload();
   }
-
-  patchEntretien(id: string, data: any){
-    let url = this.entretiensUrl + '/' + id
-    return this.http.patch<Entretien>(url, data);
-  }
-
-  deleteEntretien(id: string){
-    let url = this.entretiensUrl + '/' + id
-    return this.http.delete<Entretien>(url)
-  }
-
 }

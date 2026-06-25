@@ -1,40 +1,27 @@
-import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
-import {Router, RouterModule} from "@angular/router";
-import {StorageService} from "../../services/storage/storage.service";
-import {BehaviorSubject, Subscription} from "rxjs";
-import {AuthService} from "../../services/auth/auth.service";
+import { Component, inject, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth/auth.service';
+import { IconComponent } from '../../shared/icon.component';
 
 @Component({
-    selector: 'app-sidebar',
-    imports: [
-        RouterModule
-    ],
-    templateUrl: './sidebar.component.html',
-    styleUrl: './sidebar.component.css',
-    changeDetection: ChangeDetectionStrategy.Eager,
-    providers: [AuthService]
+  selector: 'app-sidebar',
+  imports: [RouterModule, IconComponent],
+  templateUrl: './sidebar.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SidebarComponent implements OnInit{
+export class SidebarComponent {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
+  isLoggedIn = computed(() => this.authService.isAuthenticated());
   isMenuOpen = false;
-  isLoggedIn: boolean;
 
-  constructor(private authService: AuthService, private storageService: StorageService, private router: Router) {}
-
-  ngOnInit(): void {
-    if (this.storageService.isLoggedIn()) {
-      this.isLoggedIn = true;
-    }
-  }
-
-  toggleMenu(){
+  toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
   }
 
-  logout(){
-    this.authService.logout().subscribe(() => {
-      this.router.navigateByUrl('');
-      this.storageService.clean();
-    });
-    this.isLoggedIn = false;
+  async logout() {
+    await this.authService.logout();
+    this.router.navigateByUrl('');
   }
 }

@@ -1,0 +1,135 @@
+<section class="relative bg-linear-to-b from-bg to-white overflow-hidden">
+  <div class="absolute -top-40 -left-40 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+  <div class="absolute -bottom-40 -right-40 w-120 h-120 bg-cta/5 rounded-full blur-3xl"></div>
+
+  <div class="relative max-w-6xl mx-auto px-4 pt-20 pb-12">
+    <div class="flex flex-col items-center text-center">
+      <img ngSrc="../../../assets/images/moto-manager.png"
+           class="mb-8 drop-shadow-lg"
+           alt="Moto Manager"
+           title="Moto Manager"
+           height="140"
+           width="140"
+           priority />
+
+      <h1 class="font-heading text-5xl md:text-7xl font-bold text-primary mb-6">
+        Moto Manager
+      </h1>
+
+      <p class="text-lg md:text-xl text-text-muted max-w-2xl mb-10 leading-relaxed">
+        Suivez vos dépenses et entretiens moto en toute simplicité
+      </p>
+
+      @if (!isLoggedIn) {
+        <div class="flex flex-col sm:flex-row items-center gap-4">
+          <a [routerLink]="['/register']"
+             class="inline-flex items-center gap-2 font-body font-semibold text-white bg-cta hover:bg-cta-dark rounded-2xl px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer no-underline">
+            <app-icon name="user" />
+            Créer un compte
+          </a>
+          <a [routerLink]="['/login']"
+             class="inline-flex items-center gap-2 font-body font-semibold text-primary bg-white border-2 border-primary/20 hover:border-primary/40 rounded-2xl px-8 py-4 text-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer no-underline">
+            Se connecter
+          </a>
+        </div>
+      } @else {
+        <a [routerLink]="['/depenses']"
+           class="inline-flex items-center gap-2 font-body font-semibold text-white bg-cta hover:bg-cta-dark rounded-2xl px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer no-underline">
+          <app-icon name="euro" />
+          Accéder au tableau de bord
+        </a>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="py-16 bg-white">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="text-center mb-16">
+      <h2 class="font-heading text-3xl md:text-4xl font-bold text-primary mb-4">
+        Comment ça marche ?
+      </h2>
+      <p class="text-text-muted text-lg max-w-xl mx-auto">
+        Tout ce dont vous avez besoin pour gérer l'entretien de vos motos
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="group bg-bg rounded-2xl p-8 hover:shadow-xl transition-all duration-300 cursor-pointer">
+        <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
+          <app-icon name="euro" />
+        </div>
+        <h3 class="font-heading text-xl font-semibold text-primary mb-3">Suivi des dépenses</h3>
+        <p class="text-text-muted leading-relaxed">
+          Enregistrez toutes vos dépenses : essence, assurance, entretien, pièces détachées&hellip; Gardez une trace de chaque euro dépensé.
+        </p>
+      </div>
+
+      <div class="group bg-bg rounded-2xl p-8 hover:shadow-xl transition-all duration-300 cursor-pointer">
+        <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
+          <app-icon name="wrench" />
+        </div>
+        <h3 class="font-heading text-xl font-semibold text-primary mb-3">Entretien régulier</h3>
+        <p class="text-text-muted leading-relaxed">
+          Planifiez et suivez les entretiens de vos motos : chaîne, pneus, vidange, lavage&hellip; Ne manquez aucun rendez-vous.
+        </p>
+      </div>
+
+      <div class="group bg-bg rounded-2xl p-8 hover:shadow-xl transition-all duration-300 cursor-pointer">
+        <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
+          <app-icon name="xlsx" />
+        </div>
+        <h3 class="font-heading text-xl font-semibold text-primary mb-3">Import de données</h3>
+        <p class="text-text-muted leading-relaxed">
+          Importez vos dépenses et entretiens depuis un fichier Excel grâce à notre template prêt à l'emploi.
+        </p>
+      </div>
+
+      <div class="group bg-bg rounded-2xl p-8 hover:shadow-xl transition-all duration-300 cursor-pointer">
+        <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
+          <app-icon name="moto" />
+        </div>
+        <h3 class="font-heading text-xl font-semibold text-primary mb-3">Gestion du garage</h3>
+        <p class="text-text-muted leading-relaxed">
+          Gérez plusieurs motos et visualisez l'historique complet de chacune : dépenses, entretiens, kilométrage.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+@if (!isLoggedIn) {
+  <section class="py-16 bg-linear-to-b from-white to-bg">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <h2 class="font-heading text-3xl md:text-4xl font-bold text-primary mb-6">
+        Prêt à simplifier la gestion de vos motos&nbsp;?
+      </h2>
+      <p class="text-text-muted text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
+        Rejoignez Moto Manager et prenez le contrôle de vos dépenses et entretiens.
+      </p>
+      <a [routerLink]="['/register']"
+         class="inline-flex items-center gap-2 font-body font-semibold text-white bg-cta hover:bg-cta-dark rounded-2xl px-10 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer no-underline">
+        <app-icon name="user" />
+        Commencer gratuitement
+      </a>
+    </div>
+  </section>
+}
+
+<footer class="bg-white border-t border-gray-100 py-8">
+  <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+        <span class="text-white font-heading font-bold text-sm">M</span>
+      </div>
+      <span class="font-heading text-sm text-primary/60">Moto Manager</span>
+    </div>
+    <div class="flex items-center gap-6">
+      <a [routerLink]="['/cgu']"
+         class="text-sm text-text-muted hover:text-primary transition-colors duration-200 cursor-pointer no-underline">CGU</a>
+      <a [routerLink]="['/contact']"
+         class="text-sm text-text-muted hover:text-primary transition-colors duration-200 cursor-pointer no-underline">Contact</a>
+    </div>
+    <p class="text-sm text-primary/40">&copy; 2026 Moto Manager</p>
+  </div>
+</footer>
